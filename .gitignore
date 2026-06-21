@@ -1,0 +1,4 @@
+node_modules/
+output/*.md
+.env
+.env.local

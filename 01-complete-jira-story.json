@@ -1,0 +1,354 @@
+{
+  "_schema": "complete-jira-story-v1",
+  "_purpose": "Human-readable spec สำหรับสื่อสารกับ PM, dev, QA — ใช้ก่อน sprint เริ่ม",
+  "_status": "EXAMPLE — based on PDT-2880 with QA enrichment applied",
+
+  "ids": {
+    "epic_id": "PDT-2636",
+    "story_id": "PDT-2880",
+    "uc_id": "UC-08"
+  },
+
+  "title": "View Pending Posts",
+
+  "user_story": {
+    "role": "admin with Can manage posts & comments permission",
+    "action": "see all posts awaiting approval in one place",
+    "value": "review and act on them quickly without missing anything or switching to desktop",
+    "invest_check": {
+      "independent": true,
+      "negotiable": true,
+      "valuable": true,
+      "estimable": true,
+      "small": true,
+      "testable": true
+    }
+  },
+
+  "preconditions": [
+    "Admin is signed in and on the console home",
+    "Admin has 'Can manage posts & comments' permission",
+    "Admin is assigned to at least one community",
+    "At least one post is pending approval"
+  ],
+
+  "business_rules": [
+    {
+      "br_id": "BR-01",
+      "type": "permission",
+      "statement": "Admin can only view and manage content from communities they are assigned to, across all content views.",
+      "also_used_in": ["UC-07", "UC-09", "UC-10", "UC-12", "UC-13"]
+    },
+    {
+      "br_id": "BR-02",
+      "type": "constraint",
+      "statement": "Posts are sorted by created date in descending order (latest first) by default.",
+      "also_used_in": ["UC-07"]
+    },
+    {
+      "br_id": "BR-04",
+      "type": "state",
+      "statement": "A pending post can be reviewed only once. The first action wins. Subsequent actions on the same post are rejected.",
+      "also_used_in": []
+    },
+    {
+      "br_id": "BR-10",
+      "type": "permission",
+      "statement": "Only admins with 'Can manage posts & comments' permission can approve or decline pending posts.",
+      "also_used_in": []
+    }
+  ],
+
+  "acceptance_criteria": [
+
+    {
+      "ac_id": "AC-1",
+      "scenario": "Loading state on page open",
+      "type": "default_state",
+      "source": "PM",
+      "br_ids": [],
+      "given": [
+        "admin taps the Pending filter within the Posts tab"
+      ],
+      "when": "page loads",
+      "then": [
+        "a loading indicator is shown",
+        "empty state is NOT shown until data returns"
+      ],
+      "clarifications_needed": []
+    },
+
+    {
+      "ac_id": "AC-2",
+      "scenario": "Visibility scoped to assigned communities",
+      "type": "happy_path",
+      "source": "PM",
+      "br_ids": ["BR-01"],
+      "given": [
+        "admin is assigned to Community A and Community B only",
+        "Community C has pending posts"
+      ],
+      "when": "admin views the Pending tab",
+      "then": [
+        "only posts from Community A and Community B are shown",
+        "posts from Community C are NOT visible"
+      ],
+      "clarifications_needed": []
+    },
+
+    {
+      "ac_id": "AC-3",
+      "scenario": "Default sort order",
+      "type": "happy_path",
+      "source": "PM",
+      "br_ids": ["BR-02"],
+      "given": [
+        "admin is viewing pending posts"
+      ],
+      "when": "the content list loads",
+      "then": [
+        "posts are sorted by created date descending (latest first)"
+      ],
+      "clarifications_needed": []
+    },
+
+    {
+      "ac_id": "AC-4",
+      "scenario": "Post card content",
+      "type": "happy_path",
+      "source": "PM",
+      "br_ids": [],
+      "given": [
+        "pending posts are loaded"
+      ],
+      "when": "admin views the list",
+      "then": [
+        "each card shows: author avatar, author name, community name, date and time, post content (title if any, text, media if any)",
+        "each card shows Approve button and Decline button"
+      ],
+      "clarifications_needed": [
+        {
+          "q_id": "CQ-1",
+          "question": "ถ้า author ถูก soft delete post card แสดง placeholder ยังไง? มี spec ไหม?",
+          "status": "PENDING",
+          "answer": null
+        }
+      ]
+    },
+
+    {
+      "ac_id": "AC-5",
+      "scenario": "Badge count on Pending tab",
+      "type": "happy_path",
+      "source": "PM",
+      "br_ids": [],
+      "given": [
+        "there are pending posts"
+      ],
+      "when": "the Pending tab label is visible",
+      "then": [
+        "a badge showing the count of pending posts is displayed on the Pending tab label"
+      ],
+      "clarifications_needed": [
+        {
+          "q_id": "CQ-2",
+          "question": "badge count update แบบ real-time ไหม หรือ refresh เมื่อกลับมาหน้านี้?",
+          "status": "PENDING",
+          "answer": null
+        }
+      ]
+    },
+
+    {
+      "ac_id": "AC-6",
+      "scenario": "Empty state — no pending posts",
+      "type": "default_state",
+      "source": "PM",
+      "br_ids": [],
+      "given": [
+        "there are no pending posts"
+      ],
+      "when": "admin opens the Pending tab",
+      "then": [
+        "empty state is displayed",
+        "badge is NOT shown on the Pending tab (not shown as 0, just hidden)"
+      ],
+      "clarifications_needed": []
+    },
+
+    {
+      "ac_id": "AC-7",
+      "scenario": "Approve button disabled during request",
+      "type": "happy_path",
+      "source": "PM",
+      "br_ids": ["BR-10"],
+      "given": [
+        "admin has 'Can manage posts & comments' permission",
+        "post is in pending state"
+      ],
+      "when": "admin taps Approve AND request is in progress",
+      "then": [
+        "Approve button is disabled immediately to prevent double submission"
+      ],
+      "clarifications_needed": []
+    },
+
+    {
+      "ac_id": "AC-8",
+      "scenario": "Approve post — success",
+      "type": "happy_path",
+      "source": "PM",
+      "br_ids": ["BR-10"],
+      "given": [
+        "admin has 'Can manage posts & comments' permission",
+        "post is in pending state"
+      ],
+      "when": "admin taps Approve AND the request succeeds",
+      "then": [
+        "post is immediately removed from the pending list",
+        "badge count decrements by 1",
+        "success toast is shown to the admin"
+      ],
+      "clarifications_needed": [
+        {
+          "q_id": "CQ-3",
+          "question": "เมื่อ approve สำเร็จ post จะปรากฏใน Posted tab ทันทีไหม?",
+          "status": "PENDING",
+          "answer": null
+        }
+      ]
+    },
+
+    {
+      "ac_id": "AC-9",
+      "scenario": "Decline post — success",
+      "type": "happy_path",
+      "source": "PM",
+      "br_ids": ["BR-10"],
+      "given": [
+        "admin has 'Can manage posts & comments' permission",
+        "post is in pending state"
+      ],
+      "when": "admin taps Decline AND the request succeeds",
+      "then": [
+        "post is immediately removed from the pending list",
+        "badge count decrements by 1",
+        "success toast is shown to the admin"
+      ],
+      "clarifications_needed": [
+        {
+          "q_id": "CQ-4",
+          "question": "เมื่อ decline แล้ว post owner ได้รับ notification ไหม?",
+          "status": "PENDING",
+          "answer": null
+        }
+      ]
+    },
+
+    {
+      "ac_id": "AC-10",
+      "scenario": "Post already reviewed by another admin",
+      "type": "alternative",
+      "source": "PM",
+      "br_ids": ["BR-04"],
+      "given": [
+        "another admin has already approved or declined this post"
+      ],
+      "when": "current admin taps Approve or Decline on the same post",
+      "then": [
+        "toast message shown: 'Post has been reviewed'",
+        "no action is performed"
+      ],
+      "clarifications_needed": []
+    },
+
+    {
+      "ac_id": "AC-11",
+      "scenario": "Approve post — network error",
+      "type": "error_state",
+      "source": "QA",
+      "br_ids": [],
+      "given": [
+        "admin has permission",
+        "post is in pending state"
+      ],
+      "when": "admin taps Approve AND network request fails",
+      "then": [
+        "error toast is shown",
+        "post remains in pending list — state unchanged",
+        "Approve button returns to enabled state so admin can retry"
+      ],
+      "clarifications_needed": []
+    },
+
+    {
+      "ac_id": "AC-12",
+      "scenario": "Approve last post — empty state transition",
+      "type": "edge_case",
+      "source": "QA",
+      "br_ids": [],
+      "given": [
+        "only 1 post remains in the pending list"
+      ],
+      "when": "admin approves or declines it AND request succeeds",
+      "then": [
+        "empty state is shown immediately",
+        "badge disappears entirely — does NOT show 0"
+      ],
+      "clarifications_needed": []
+    },
+
+    {
+      "ac_id": "AC-13",
+      "scenario": "Concurrent conflicting actions — first wins",
+      "type": "edge_case",
+      "source": "QA",
+      "br_ids": ["BR-04"],
+      "given": [
+        "admin A and admin B both view the same pending post",
+        "admin A taps Approve",
+        "admin B taps Decline simultaneously"
+      ],
+      "when": "admin A's request reaches the server first",
+      "then": [
+        "admin A sees a success toast",
+        "admin B sees an error message",
+        "post reflects admin A's action only — approved state"
+      ],
+      "clarifications_needed": []
+    },
+
+    {
+      "ac_id": "AC-14",
+      "scenario": "Permission revoked mid-session",
+      "type": "edge_case",
+      "source": "QA",
+      "br_ids": ["BR-10"],
+      "given": [
+        "admin is viewing the Pending tab",
+        "admin's permission is revoked by a Super Admin during the session"
+      ],
+      "when": "admin taps Approve or Decline",
+      "then": [
+        "an error message is shown",
+        "the action is not performed"
+      ],
+      "clarifications_needed": [
+        {
+          "q_id": "CQ-5",
+          "question": "ถ้า permission ถูก revoke กลางคัน admin ควรถูก redirect ออกไปไหม หรือแค่ block action?",
+          "status": "PENDING",
+          "answer": null
+        }
+      ]
+    }
+  ],
+
+  "open_questions": [
+    "CQ-1: soft deleted author placeholder spec",
+    "CQ-2: badge count real-time vs on-refresh",
+    "CQ-3: approved post visibility in Posted tab",
+    "CQ-4: post owner notification on decline",
+    "CQ-5: permission revoked — redirect or block only"
+  ]
+}

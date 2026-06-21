@@ -1,0 +1,438 @@
+{
+  "_schema": "user-flow-v1",
+  "_purpose": "Machine-readable actor-based flows สำหรับ AI/coding tools — generate test cases, unit tests, automation",
+  "_status": "EXAMPLE — requires Complete Jira Story (01-complete-jira-story.json) to be finalized first",
+  "_warning": "CQ-1 through CQ-5 are still PENDING. Flows referencing those ACs are marked with assumption flags.",
+
+  "ids": {
+    "epic_id": "PDT-2636",
+    "story_id": "PDT-2880",
+    "uc_id": "UC-08"
+  },
+
+  "actors": {
+    "admin": "User with Can manage posts & comments permission",
+    "app": "Mobile console frontend",
+    "api": "Social+ backend API",
+    "network": "Network layer between app and API",
+    "system": "Server-side background process or scheduler"
+  },
+
+  "flows": [
+
+    {
+      "flow_id": "flow-UC08-F01",
+      "name": "View pending posts list",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+      "br_ids": ["BR-01", "BR-02"],
+      "entry_from": null,
+      "summary": "Admin opens Pending tab and sees filtered, sorted, badged post list",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F01-S01",
+          "actor": "admin",
+          "action": "taps the Pending filter within the Posts tab"
+        },
+        {
+          "step_id": "F01-S02",
+          "actor": "app",
+          "action": "shows a loading indicator immediately while fetching data"
+        },
+        {
+          "step_id": "F01-S03",
+          "actor": "api",
+          "action": "returns only pending posts from communities admin is assigned to",
+          "br_ids": ["BR-01"]
+        },
+        {
+          "step_id": "F01-S04",
+          "actor": "app",
+          "action": "hides loading indicator and renders post list sorted by created date descending",
+          "br_ids": ["BR-02"]
+        },
+        {
+          "step_id": "F01-S05",
+          "actor": "app",
+          "action": "renders each post card with author avatar, author name, community name, date and time, post content, Approve button, and Decline button",
+          "ac_ids": ["AC-4"]
+        },
+        {
+          "step_id": "F01-S06",
+          "actor": "app",
+          "action": "displays badge count of pending posts on the Pending tab label",
+          "ac_ids": ["AC-5"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "render Pending tab → assert loading spinner visible before data",
+          "mock API with 3 communities (admin assigned to 2) → assert only assigned community posts shown",
+          "mock API response → assert posts ordered by created_at DESC"
+        ],
+        "scenario": [
+          "admin with 2 assigned communities: verify posts from unassigned community absent",
+          "6 pending posts: verify sorted latest-first, badge shows 6"
+        ],
+        "e2e": [
+          "navigate to Pending tab, assert loading indicator visible before list renders",
+          "verify badge count matches number of posts rendered"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC08-F02",
+      "name": "Approve post — success",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-7", "AC-8"],
+      "br_ids": ["BR-10"],
+      "entry_from": "flow-UC08-F01",
+      "summary": "Admin approves a pending post — button disables during request, post removed on success",
+      "assumptions": [
+        {
+          "assumption_id": "A-CQ3",
+          "text": "Approved post does NOT immediately appear in Posted tab — pending confirmation from CQ-3",
+          "pending_clarification": "CQ-3"
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "F02-S01",
+          "actor": "admin",
+          "action": "taps the Approve button on a pending post card"
+        },
+        {
+          "step_id": "F02-S02",
+          "actor": "app",
+          "action": "immediately disables the Approve button to prevent double submission",
+          "br_ids": ["BR-10"],
+          "state_change": {
+            "object": "approve_button",
+            "from": "enabled",
+            "to": "disabled"
+          }
+        },
+        {
+          "step_id": "F02-S03",
+          "actor": "app",
+          "action": "sends POST /posts/{id}/approve to API"
+        },
+        {
+          "step_id": "F02-S04",
+          "actor": "api",
+          "action": "validates permission, marks post as approved, returns 200 success",
+          "state_change": {
+            "object": "post",
+            "from": "pending",
+            "to": "approved"
+          }
+        },
+        {
+          "step_id": "F02-S05",
+          "actor": "app",
+          "action": "removes the post card from the pending list immediately",
+          "state_change": {
+            "object": "pending_list",
+            "operation": "remove",
+            "target": "current post"
+          }
+        },
+        {
+          "step_id": "F02-S06",
+          "actor": "app",
+          "action": "decrements the badge count on the Pending tab by 1",
+          "state_change": {
+            "object": "badge_count",
+            "operation": "decrement",
+            "by": 1
+          }
+        },
+        {
+          "step_id": "F02-S07",
+          "actor": "app",
+          "action": "shows a success toast notification to the admin",
+          "state_change": {
+            "object": "ui_feedback",
+            "value": "success_toast"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock approve API success → assert post removed from list, badge decremented by 1",
+          "assert Approve button disabled state while request pending",
+          "assert success toast triggered on 200 response"
+        ],
+        "scenario": [
+          "approve single post from list of 3 → verify list shows 2, badge shows 2",
+          "verify Approve button disabled during loading state"
+        ],
+        "e2e": [
+          "tap Approve → assert button disabled → assert post disappears → assert badge -1 → assert toast shown"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC08-F03",
+      "name": "Approve post — network error rollback",
+      "type": "error_state",
+      "source": "QA",
+      "ac_ids": ["AC-11"],
+      "br_ids": [],
+      "entry_from": "flow-UC08-F01",
+      "summary": "Network fails during approve — full rollback, post stays in pending, button re-enabled",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F03-S01",
+          "actor": "admin",
+          "action": "taps the Approve button on a pending post card"
+        },
+        {
+          "step_id": "F03-S02",
+          "actor": "app",
+          "action": "disables Approve button and sends approve request"
+        },
+        {
+          "step_id": "F03-S03",
+          "actor": "network",
+          "action": "request fails — connection error or timeout, no response received"
+        },
+        {
+          "step_id": "F03-S04",
+          "actor": "app",
+          "action": "shows an error toast to the admin",
+          "state_change": {
+            "object": "ui_feedback",
+            "value": "error_toast"
+          }
+        },
+        {
+          "step_id": "F03-S05",
+          "actor": "app",
+          "action": "keeps post in the pending list — no state change on the post",
+          "state_change": {
+            "object": "post",
+            "state": "pending — unchanged"
+          }
+        },
+        {
+          "step_id": "F03-S06",
+          "actor": "app",
+          "action": "returns Approve button to enabled state so admin can retry",
+          "state_change": {
+            "object": "approve_button",
+            "from": "disabled",
+            "to": "enabled"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock approve API network error → assert post still in list",
+          "assert Approve button re-enabled after error",
+          "assert error toast shown, success toast NOT shown",
+          "assert badge count unchanged"
+        ],
+        "scenario": [
+          "simulate offline → tap Approve → verify: post remains, button re-enabled, error toast shown"
+        ],
+        "e2e": [
+          "use Playwright route interception to simulate network failure on approve",
+          "assert post still visible, badge unchanged, Approve button clickable again"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC08-F04",
+      "name": "Post already reviewed — concurrent block",
+      "type": "alternative",
+      "source": "PM",
+      "ac_ids": ["AC-10"],
+      "br_ids": ["BR-04"],
+      "entry_from": "flow-UC08-F01",
+      "summary": "Another admin reviewed the post first — current admin sees informational toast, no action taken",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F04-S01",
+          "actor": "admin",
+          "action": "taps Approve or Decline on a post that was already reviewed by another admin"
+        },
+        {
+          "step_id": "F04-S02",
+          "actor": "api",
+          "action": "rejects the request — post already reviewed, returns conflict error",
+          "br_ids": ["BR-04"]
+        },
+        {
+          "step_id": "F04-S03",
+          "actor": "app",
+          "action": "shows toast: 'Post has been reviewed'",
+          "state_change": {
+            "object": "ui_feedback",
+            "value": "informational_toast",
+            "message": "Post has been reviewed"
+          }
+        },
+        {
+          "step_id": "F04-S04",
+          "actor": "app",
+          "action": "removes the post from the pending list (it is no longer pending)",
+          "state_change": {
+            "object": "pending_list",
+            "operation": "remove",
+            "target": "reviewed post"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock API returning 409 conflict → assert toast 'Post has been reviewed' shown",
+          "assert post removed from list on 409 response"
+        ],
+        "scenario": [
+          "admin A approves post → admin B taps Approve on same post → verify B sees informational toast"
+        ],
+        "e2e": [
+          "two browser sessions: session A approves, session B taps Decline → assert session B toast message"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC08-F05",
+      "name": "Concurrent conflicting actions — first action wins",
+      "type": "edge_case",
+      "source": "QA",
+      "ac_ids": ["AC-13"],
+      "br_ids": ["BR-04"],
+      "entry_from": "flow-UC08-F01",
+      "summary": "Admin A and B act on the same post simultaneously with different actions — first wins",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F05-S01",
+          "actor": "admin-A",
+          "action": "taps Approve on the pending post"
+        },
+        {
+          "step_id": "F05-S02",
+          "actor": "admin-B",
+          "action": "taps Decline on the same pending post simultaneously"
+        },
+        {
+          "step_id": "F05-S03",
+          "actor": "api",
+          "action": "receives admin-A's request first and processes approval",
+          "state_change": {
+            "object": "post",
+            "from": "pending",
+            "to": "approved"
+          }
+        },
+        {
+          "step_id": "F05-S04",
+          "actor": "api",
+          "action": "rejects admin-B's request — post already reviewed by admin-A",
+          "br_ids": ["BR-04"]
+        },
+        {
+          "step_id": "F05-S05",
+          "actor": "app",
+          "action": "shows success toast to admin-A",
+          "state_change": {
+            "object": "admin_A_feedback",
+            "value": "success_toast"
+          }
+        },
+        {
+          "step_id": "F05-S06",
+          "actor": "app",
+          "action": "shows error message to admin-B — post has been reviewed",
+          "state_change": {
+            "object": "admin_B_feedback",
+            "value": "error_message"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock concurrent requests with optimistic locking — assert only first write committed",
+          "assert idempotency: same post cannot transition from pending twice"
+        ],
+        "scenario": [
+          "simulate race condition: two approve requests for same post_id → assert only one succeeds"
+        ],
+        "e2e": [
+          "open two Playwright browser contexts, coordinate simultaneous Approve + Decline on same post",
+          "assert one context shows success toast, other shows error message",
+          "assert post state in DB is consistent with first-action result"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC08-F06",
+      "name": "No pending posts — empty state",
+      "type": "default_state",
+      "source": "PM+QA",
+      "ac_ids": ["AC-6", "AC-12"],
+      "br_ids": [],
+      "entry_from": null,
+      "summary": "Pending tab has zero posts — either initially or after last post reviewed",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F06-S01",
+          "actor": "admin",
+          "action": "opens the Pending tab (either fresh or after last post was just actioned)"
+        },
+        {
+          "step_id": "F06-S02",
+          "actor": "api",
+          "action": "returns empty list — zero pending posts for assigned communities"
+        },
+        {
+          "step_id": "F06-S03",
+          "actor": "app",
+          "action": "displays empty state after data response confirms zero results",
+          "state_change": {
+            "object": "list_view",
+            "value": "empty_state_shown"
+          }
+        },
+        {
+          "step_id": "F06-S04",
+          "actor": "app",
+          "action": "hides badge entirely on the Pending tab label — does NOT show 0",
+          "state_change": {
+            "object": "badge",
+            "value": "hidden"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock API returning empty array → assert empty state component rendered",
+          "assert badge component not rendered (not just showing 0)"
+        ],
+        "scenario": [
+          "open Pending tab with no pending posts → verify empty state visible, badge absent",
+          "approve last post → verify transition to empty state, badge disappears"
+        ],
+        "e2e": [
+          "clear all pending posts → navigate to Pending tab → assert empty state, no badge",
+          "approve last remaining post → assert empty state appears without page refresh"
+        ]
+      }
+    }
+
+  ]
+}
