@@ -1,0 +1,117 @@
+{
+  "key": "PDT-3676",
+  "epic": "PDT-3420",
+  "summary": "UC1: Console configuration — enable push on event creation",
+  "type": "Story",
+  "status": "Backlog",
+  "priority": "Medium",
+  "url": "https://socialplus.atlassian.net/browse/PDT-3676",
+  "user_story": "As a network admin, I want to configure whether a push notification is sent when someone creates a new event in a community, so that networks can opt in/out of event-creation pushes without changing the creation flow.",
+  "value_rationale": "Allows network-level control and reduces accidental pushes while still enabling pre-event RSVP growth for activation-heavy networks.",
+  "preconditions": [
+    "Admin has access to Admin Console settings",
+    "Push notifications are enabled for the network"
+  ],
+  "entry_points": [
+    "Admin Console → Settings → Push notifications → Event-related events"
+  ],
+  "push_message": {
+    "primary_line": "{{CommunityName}} has event {{EventName}}",
+    "secondary_line": "[EventType chip]  {{EventStartDate}} · {{EventStartTime}}",
+    "example": "\"Ulta Beauty Community has event Ulta Beauty World Masterclass 2026\" / [In-person]  10 Jul 2026 · 7:00 PM",
+    "notes": [
+      "{{EventType}} renders as a pill/chip label: In-person for in-person events, Virtual for virtual/livestream events",
+      "{{EventStartDate}} and {{EventStartTime}} refer to the scheduled start of the event (not send time)",
+      "The notification icon displays the community avatar"
+    ]
+  },
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01",
+      "group": "Console settings UI",
+      "scenario": "Admin sees event-related toggles",
+      "given": [
+        "A network admin navigates to Admin Console → Settings → Push notifications → Event-related events"
+      ],
+      "when": "The admin views the event-related events settings",
+      "then": [
+        "They see a toggle \"When someone creates a new event in the community\"",
+        "They see a toggle \"Notify whole network for events in public communities\"",
+        "\"Notify whole network for events in public communities\" is disabled unless \"When someone creates a new event in the community\" is ON"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-02",
+      "group": "Console settings UI",
+      "scenario": "Whole-network toggle depends on event-creation push toggle",
+      "given": [
+        "\"When someone creates a new event in the community\" is OFF"
+      ],
+      "when": "The admin attempts to turn ON \"Notify whole network for events in public communities\"",
+      "then": [
+        "The setting cannot be enabled",
+        "The UI prompts the admin to first enable \"When someone creates a new event in the community\""
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-03",
+      "group": "Push trigger behaviour",
+      "scenario": "Event-creation push disabled",
+      "given": [
+        "\"When someone creates a new event in the community\" is OFF"
+      ],
+      "when": "An event is created in any community",
+      "then": [
+        "No event-creation push notification is sent",
+        "The standard tray notification still fires to community members per existing behavior"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-04",
+      "group": "Push trigger behaviour",
+      "scenario": "Event-creation push to community members",
+      "given": [
+        "\"When someone creates a new event in the community\" is ON"
+      ],
+      "when": "An event is created in any community",
+      "then": [
+        "A push notification is sent to all active, non-banned members of that community",
+        "The push deep-links to the event RSVP page"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-05",
+      "group": "Audience & privacy enforcement",
+      "scenario": "Whole-network push allowed only for public communities",
+      "given": [
+        "\"When someone creates a new event in the community\" is ON",
+        "\"Notify whole network for events in public communities\" is ON"
+      ],
+      "when": "An event is created in a PUBLIC community",
+      "then": [
+        "A push notification is sent to all network users who have push enabled",
+        "Group privacy settings are enforced automatically"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-06",
+      "group": "Audience & privacy enforcement",
+      "scenario": "Whole-network push not sent for private communities",
+      "given": [
+        "\"When someone creates a new event in the community\" is ON",
+        "\"Notify whole network for events in public communities\" is ON"
+      ],
+      "when": "An event is created in a PRIVATE community",
+      "then": [
+        "The push notification is sent only to community members",
+        "No push notification is sent to the whole network"
+      ],
+      "clarifications_needed": []
+    }
+  ]
+}

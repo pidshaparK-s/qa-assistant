@@ -1,0 +1,90 @@
+{
+  "key": "PDT-3677",
+  "epic": "PDT-3420",
+  "summary": "UC2: Member receives push notification and navigates to RSVP",
+  "type": "Story",
+  "status": "Backlog",
+  "priority": "Medium",
+  "url": "https://socialplus.atlassian.net/browse/PDT-3677",
+  "user_story": "As a network or community member, I want to tap an event push notification and land directly on the RSVP page, so I can commit to attending in one action.",
+  "preconditions": [
+    "User has push notifications enabled on their device",
+    "Admin has triggered an event creation push for an audience that includes this user"
+  ],
+  "entry_points": [
+    "A. Push notification tapped on mobile device"
+  ],
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01",
+      "group": "Deep-link navigation",
+      "scenario": "Tap navigates to event RSVP page",
+      "given": [
+        "A user receives an event creation push notification"
+      ],
+      "when": "They tap the notification",
+      "then": [
+        "They are navigated to that event's RSVP page"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-02",
+      "group": "Deep-link navigation",
+      "scenario": "Event deleted before user taps push",
+      "given": [
+        "An event creation push was sent"
+      ],
+      "when": "The event is deleted (isDeleted = true) before the user taps AND the user taps the push notification",
+      "then": [
+        "They see \"This event is no longer available\"",
+        "They are not shown an error or blank screen"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-03",
+      "group": "Delivery & device settings",
+      "scenario": "Push suppressed by device-level notification settings",
+      "given": [
+        "A user has disabled push notifications at the device or OS level"
+      ],
+      "when": "An event creation push is triggered for their audience segment",
+      "then": [
+        "They do not receive the push",
+        "They still receive the in-app tray notification per existing behavior"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-04",
+      "group": "Delivery & deduplication",
+      "scenario": "Virtual event — no duplicate push from auto-generated Room",
+      "given": [
+        "An event is a virtual event (Room auto-generated on creation)"
+      ],
+      "when": "The admin sends the event creation push",
+      "then": [
+        "Only ONE push notification is delivered to each eligible user",
+        "The Room/livestream-creation push notification is suppressed"
+      ],
+      "reference": "Per existing rule: SDD RSVP to Events & Event Reminders, UC4",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-05",
+      "group": "Push content & presentation",
+      "scenario": "Push notification content and icon",
+      "given": [
+        "An event creation push is sent"
+      ],
+      "when": "The push is delivered and displayed on the user's device",
+      "then": [
+        "The push title reads \"{{CommunityName}} has event {{EventName}}\"",
+        "The push body shows an event type chip (\"In-person\" or \"Virtual\") followed by the event start date and start time",
+        "The notification icon displays the community avatar"
+      ],
+      "clarifications_needed": []
+    }
+  ]
+}

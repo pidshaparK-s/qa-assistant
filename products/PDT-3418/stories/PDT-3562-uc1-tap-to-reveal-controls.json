@@ -1,0 +1,128 @@
+{
+  "key": "PDT-3562",
+  "epic": "PDT-3418",
+  "summary": "UC1: Tap to Reveal Controls",
+  "type": "Story",
+  "status": "Backlog",
+  "priority": "Medium",
+  "url": "https://socialplus.atlassian.net/browse/PDT-3562",
+  "user_story": "As a community member watching a video or live stream, I want tapping the player surface to reveal controls rather than toggle pause, so that I don't accidentally interrupt playback during normal viewing.",
+  "preconditions": [
+    "User is viewing a video post or live stream post on any scoped surface"
+  ],
+  "entry_points": [
+    "A. Video or live stream is playing inline in any feed (global, user, community, event discussion)",
+    "B. Video or live stream is open in a media gallery or fullscreen view"
+  ],
+  "last_synced": "2026-07-06 (Jira updated 17:02 — Platforms section added to description)",
+  "platforms": {
+    "supported": ["UIKit iOS", "UIKit Android", "UIKit React Native", "UIKit Flutter", "WebUIKit"],
+    "not_supported": ["Desktop — no behaviour change; only a small UI design change (button size), per PM Ghita 2026-07-06"]
+  },
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01",
+      "group": "Tap behaviour",
+      "scenario": "Tap playing player → controls overlay appears, playback continues",
+      "given": [
+        "A video or live stream is playing"
+      ],
+      "when": "The user taps anywhere on the player surface",
+      "then": [
+        "The controls overlay appears",
+        "Playback continues uninterrupted — the video or stream does not pause"
+      ],
+      "clarifications_needed": [
+        {
+          "id": "OI-UC1-02",
+          "observation": "Jira comment thread (Pidshapar → Chayanit, 2026-07-03): on web, the recorded-live-stream viewer and the video viewer use the same video component, but a 'Live' live stream uses a different component",
+          "consequence": "Tap-to-reveal behaviour verified on 'video' does not automatically cover a 'Live' live stream; the two render paths differ and must be tested separately",
+          "question": "Confirm tap-to-reveal AC applies identically across (a) video, (b) recorded live stream, (c) 'Live' live stream, given 'Live' uses a different component",
+          "ask": "Engineering",
+          "status": "resolved",
+          "resolution": "Jira 2026-07-03: recorded live stream + video share one component (web) — treat 'video' AC coverage as including recorded live streams; 'Live' live stream differs and must be covered separately."
+        }
+      ]
+    },
+    {
+      "ac_id": "AC-02",
+      "group": "Tap behaviour",
+      "scenario": "Tap outside pause button while overlay visible → overlay dismisses, playback continues",
+      "given": [
+        "The controls overlay is visible"
+      ],
+      "when": "The user taps anywhere on the player surface outside the central pause/play button",
+      "then": [
+        "The overlay dismisses",
+        "Playback continues uninterrupted"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-03",
+      "group": "Tap behaviour",
+      "scenario": "No action after overlay appears → overlay auto-dismisses after timeout",
+      "given": [
+        "The controls overlay is visible"
+      ],
+      "when": "The user takes no further action",
+      "then": [
+        "The overlay auto-dismisses after a short timeout (1 second)",
+        "Playback continues"
+      ],
+      "clarifications_needed": [
+        {
+          "id": "OI-01",
+          "observation": "PRD says '~1 second' but comment says 'assume 3s'",
+          "consequence": "Inconsistent timeout causes misaligned test expectations across platforms",
+          "question": "What is the confirmed auto-dismiss timeout value?",
+          "ask": "Engineering",
+          "status": "resolved",
+          "resolution": "Jira updated 2026-06-30: description now explicitly states '1 second'. No longer ambiguous."
+        }
+      ]
+    },
+    {
+      "ac_id": "AC-04",
+      "group": "Pause/play button",
+      "scenario": "Tap pause button while playing → playback pauses, icon changes",
+      "given": [
+        "A video or live stream is playing",
+        "The controls overlay is visible"
+      ],
+      "when": "The user taps the central pause/play button",
+      "then": [
+        "Playback pauses",
+        "The button icon switches from pause to play"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-05",
+      "group": "Pause/play button",
+      "scenario": "Tap play button while paused → resumes from exact position, icon changes",
+      "given": [
+        "A video or live stream is paused"
+      ],
+      "when": "The user taps the central play button (controls visible, or re-summoned by a tap)",
+      "then": [
+        "Playback resumes from the exact position at which it was paused",
+        "The button icon switches from play to pause"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-06",
+      "group": "Platform and surface coverage",
+      "scenario": "Behavior is identical across all in-scope surfaces",
+      "given": [
+        "Any in-scope surface (global feed, user feed, community feed, event discussion feed, media gallery)"
+      ],
+      "when": "The user taps the player surface",
+      "then": [
+        "The behaviour described above is identical regardless of surface"
+      ],
+      "clarifications_needed": []
+    }
+  ]
+}

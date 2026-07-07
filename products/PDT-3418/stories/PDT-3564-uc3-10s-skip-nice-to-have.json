@@ -1,0 +1,113 @@
+{
+  "key": "PDT-3564",
+  "epic": "PDT-3418",
+  "summary": "UC3: Nice to Have — 10-Second Skip Back/Forward for Video Playback",
+  "type": "Story",
+  "status": "Backlog",
+  "priority": "Medium",
+  "label": "nice-to-have",
+  "note": "Can be descoped if it impacts delivery timeline",
+  "url": "https://socialplus.atlassian.net/browse/PDT-3564",
+  "user_story": "As a community member watching a video, I want to skip backward or forward 10 seconds so that I can quickly rewatch or jump ahead without scrubbing.",
+  "preconditions": [
+    "User is viewing a video post or recorded livestream (not a live stream)",
+    "The controls overlay is visible"
+  ],
+  "entry_points": [
+    "A. User taps the player surface to reveal the controls overlay",
+    "B. Controls overlay is already visible"
+  ],
+  "last_synced": "2026-07-06 (Jira updated 17:03 — precondition now includes recorded livestream; Platforms section added)",
+  "platforms": {
+    "supported": ["UIKit iOS", "UIKit Android", "UIKit React Native", "UIKit Flutter", "WebUIKit"],
+    "not_supported": ["Desktop — no behaviour change; only a small UI design change (button size)"]
+  },
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01",
+      "group": "Skip controls",
+      "scenario": "Tap skip back (−10s) → playback jumps back 10s, continues",
+      "given": [
+        "The controls overlay is visible"
+      ],
+      "when": "The user taps the skip back button (−10s)",
+      "then": [
+        "Playback jumps back 10 seconds from the current position",
+        "Playback continues without interruption"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-02",
+      "group": "Skip controls",
+      "scenario": "Tap skip forward (+10s) → playback jumps forward 10s, continues",
+      "given": [
+        "The controls overlay is visible"
+      ],
+      "when": "The user taps the skip forward button (+10s)",
+      "then": [
+        "Playback jumps forward 10 seconds from the current position",
+        "Playback continues without interruption"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-03",
+      "group": "Boundary behaviour",
+      "scenario": "Skip back at <10s from start → jumps to 0:00, no negative position",
+      "given": [
+        "The user taps skip back",
+        "The current position is less than 10 seconds into the video"
+      ],
+      "when": "The action is applied",
+      "then": [
+        "Playback jumps to 0:00 — it does not go to a negative position"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-04",
+      "group": "Boundary behaviour",
+      "scenario": "Skip forward at <10s from end → jumps to final frame, enters end state",
+      "given": [
+        "The user taps skip forward",
+        "The current position is within 10 seconds of the video end"
+      ],
+      "when": "The action is applied",
+      "then": [
+        "Playback jumps to the final frame and enters the end state",
+        "It does not loop or error"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-05",
+      "group": "Skip controls and pause state",
+      "scenario": "Skip while paused → position updates, video stays paused",
+      "given": [
+        "The video is paused",
+        "The controls overlay is visible"
+      ],
+      "when": "The user taps either skip button",
+      "then": [
+        "The position updates accordingly",
+        "The video remains paused — skip does not auto-resume playback"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-06",
+      "group": "Live streams",
+      "scenario": "Live stream + controls visible → skip buttons not shown",
+      "given": [
+        "A live stream is playing",
+        "The controls overlay is visible"
+      ],
+      "when": "The controls overlay is visible",
+      "then": [
+        "The skip back and skip forward buttons are not shown — seeking is not applicable on a live stream"
+      ],
+      "clarifications_needed": []
+    }
+  ]
+}

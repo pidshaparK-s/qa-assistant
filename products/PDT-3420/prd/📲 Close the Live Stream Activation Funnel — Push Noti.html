@@ -1,0 +1,834 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>📲 Close the Live Stream Activation Funnel — Push Notifications (Event Creation)</title><meta name="data-notion-page-icon" content="📲"/><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%B2%3C%2Ftext%3E%3C%2Fsvg%3E"/><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure,
+aside,
+details {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="38e5f8b2-37fc-811d-ba2f-dbdbcc251f0e" class="page sans" data-notion-page-icon="📲"><header><div class="page-header-icon undefined"><span class="icon" data-emoji="📲"></span></div><h1 class="page-title" dir="auto">📲 Close the Live Stream Activation Funnel — Push Notifications (Event Creation)</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Created time</th><td><time datetime="2026-06-29T14:27">June 29, 2026 2:27 PM</time></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Source</th><td></td></tr><tr class="property-row property-row-checkbox"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>Committed</th><td><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Library Support</th><td></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Platforms</th><td></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Module</th><td></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Year</th><td><span class="selected-value select-value-color-purple">2026</span></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Roadmap Quarter</th><td><span class="selected-value select-value-color-orange">Q3 Roadmap</span></td></tr><tr class="property-row property-row-status"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Design Status</th><td><span class="status-value select-value-color-default"><div class="status-dot status-dot-color-default"></div>Needs design</span></td></tr><tr class="property-row property-row-checkbox"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>Sales Roadmap</th><td><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr class="property-row property-row-checkbox"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>CS Roadmap</th><td><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr class="property-row property-row-status"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><td><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Prioritized</span></td></tr></tbody></table></header><div class="page-body"><h2 id="74f69596-e937-48c3-912a-b9c01266345d" style="display:inline-block" dir="auto">Epic</h2><p id="8fbc9c0a-3cd0-4373-859a-93e309dfe8d3" class="" dir="auto"><a href="https://app.notion.com/p/Close-the-live-stream-activation-funnel-before-during-and-after-the-event-36d5f8b237fc80d29733c7f88bc56485?pvs=21">Close the Live Stream Activation Funnel — before, during, and after the event</a></p><hr id="63064fc7-8945-4836-a443-495b9b4b9fdd" dir="auto"/><blockquote id="768e248d-4bab-4eeb-940c-d502f3f6e36e" class="" dir="auto">💡 <strong>Opportunity Brief</strong></blockquote><blockquote id="46152f21-219f-4f33-a279-0f5c88d0065f" class="" dir="auto"></blockquote><blockquote id="69811ae4-a886-451e-8a43-2c8be13147f7" class="" dir="auto">- <strong>What:</strong> Give admins the option to send a push notification when creating an event — targeting either the whole network or community members only — with a configurable template.</blockquote><blockquote id="e3fc3152-ffd8-4211-b773-cfb9e5951607" class="" dir="auto">- <strong>Who it&#x27;s for:</strong> Network admins and community moderators running live stream activations (initially Ulta Beauty).</blockquote><blockquote id="516eddae-91a5-4c06-b827-5ae89364e6e3" class="" dir="auto">- <strong>Why it matters:</strong> The current system fires a tray notification on event creation, but no push notification. Push reaches members who haven&#x27;t opened the app recently — critical for driving RSVPs before a time-sensitive live stream activation.</blockquote><blockquote id="b07412a1-9180-4ef1-8c03-b5a6128b1d67" class="" dir="auto">- <strong>Expected outcome:</strong> Higher pre-event RSVP rates; admins can build an audience from outside the app at the moment an event is created.</blockquote><hr id="1f61930d-df71-460a-a606-126fbc98b25b" dir="auto"/><h2 id="dfad3714-6daf-40c9-b216-4a14924643dc" style="display:inline-block" dir="auto">📋 Release Note</h2><p id="2bc0e7e0-79d4-4ff6-9b5f-b9c6b951ffa9" class="" dir="auto"><strong>Events: Admin-Triggered Push Notification on Event Creation</strong></p><p id="01289aea-b08f-4df9-9fea-d7c36ab09508" class="" dir="auto">When creating an event, admins can now optionally send a push notification to community members or the entire network. The push template (title and message) is configurable in the Admin Console. Group privacy settings are enforced automatically: private community events can only push to community members, not the whole network.</p><hr id="9ecc398c-8454-495f-b66d-4ad6953421e6" dir="auto"/><h2 id="bdaf16c6-7305-4b6b-aa8b-26813c32fab8" style="display:inline-block" dir="auto">💡 Idea</h2><p id="415fb0d9-9c96-4786-9c82-50b3e24114b3" class="" dir="auto">Add an optional &quot;Send push notification&quot; step to the event creation flow. The admin selects an audience (community members / whole network), optionally customises the template, and sends on creation. Privacy rules are applied automatically based on community type.</p><p id="bf158c8e-c294-4fca-bb15-94901b3a398f" class="" dir="auto"><strong>Push message pattern (aligned with Notification Tray ticket):</strong></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js" integrity="sha512-m3JYEI6gx5fh9jF10FjGoMzVKcV2N6nchcDcqPCdI1L3R2WQV7br2XVNR8iTLb2daOMRl3zldbcfT40xU2ntVw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="d6364bc7-61b2-45fe-bfaa-851686e66224" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">Primary line:   {{CommunityName}} has event {{EventName}}
+Secondary line: [EventType chip]  {{EventStartDate}} · {{EventStartTime}}</code></pre><p id="4fcdfb7b-7c61-45b4-a441-be962ac7d9cb" class="" dir="auto">Example: <code>&quot;Ulta Beauty Community has event Ulta Beauty World Masterclass 2026&quot;</code> / <code>[In-person]  10 Jul 2026 · 7:00 PM</code></p><p id="2cce1184-d24c-45c9-9ab9-b2d02becca59" class="" dir="auto"><code>{{EventType}}</code> renders as a pill/chip label: <strong>In-person</strong> for in-person events, <strong>Virtual</strong> for virtual/livestream events.</p><p id="0b905477-e0b2-4026-89b0-736742afb479" class="" dir="auto"><code>{{EventStartDate}}</code> and <code>{{EventStartTime}}</code> refer to the scheduled start of the event (not send time).</p><p id="22c6016a-415f-493e-ab77-b943b84ea8bf" class="" dir="auto">The notification icon displays the community avatar.</p><hr id="c30dbb20-8203-4c52-a930-53ff186ce107" dir="auto"/><h2 id="7677e68e-d50c-4eae-a105-bb32c78cb8b1" style="display:inline-block" dir="auto">💭 Problem Definition</h2><h3 id="b2a07ec7-a943-4572-a171-5721ef957f14" style="display:inline-block" dir="auto">What problem are we solving?</h3><p id="05d8a8eb-c24d-46f1-a5e1-0da015ba0f6a" class="" dir="auto">Members who haven&#x27;t recently opened the app miss new events entirely — the tray notification only surfaces inside the app. Admins running brand-partner live stream activations (e.g. Ulta&#x27;s masterclass series) need push reach to build RSVP counts before the stream begins.</p><h3 id="043100ff-fca4-4316-850b-a3d2247f3514" style="display:inline-block" dir="auto">In the absence of this feature, users are…</h3><p id="340318c0-160c-4d3d-b4ee-7af884aa67de" class="" dir="auto">Relying on in-app tray notifications, which require the member to open the app. Members who are dormant between events have no external prompt to return.</p><h3 id="2a1ae968-f233-45a5-84b9-d1d76dc1b6d4" style="display:inline-block" dir="auto">Desired outcome</h3><p id="d6d3ef5d-8ef6-46e4-bd43-d893795dfc01" class="" dir="auto">Admins can optionally push a targeted notification at the moment of event creation. RSVP counts start climbing before the stream date, giving brand partners a larger, warmer audience.</p><hr id="96af5b8a-4eb0-4f9c-a1cf-b6320b04c36d" dir="auto"/><h2 id="2d0cdd83-2ba1-4f9a-82ac-38f24d97202c" style="display:inline-block" dir="auto">Entity Scope</h2><table id="2fd1c84d-e33a-4870-9499-5da687e0db84" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="dd083791-bf41-4539-b078-15c14ad56854" dir="ltr"><th id="Hmv&lt;" class="simple-table-header-color simple-table-header">Entity</th><th id="F=b[" class="simple-table-header-color simple-table-header">What this feature does to it</th></tr></thead><tbody><tr id="8687a25c-b493-4e2a-af51-0888a657c090" dir="ltr"><td id="Hmv&lt;" class="">Event</td><td id="F=b[" class="">Trigger — push fires on event creation (opt-in)</td></tr><tr id="58047c4a-5573-4c8e-944f-c3d492f536c3" dir="ltr"><td id="Hmv&lt;" class="">Community</td><td id="F=b[" class="">Read — privacy type determines available audience options</td></tr><tr id="8ba13266-045a-4e5a-a517-e920ebdde669" dir="ltr"><td id="Hmv&lt;" class="">CommunityUser</td><td id="F=b[" class="">Read — &quot;community members&quot; audience resolves to active, non-banned members</td></tr><tr id="fd41e910-ea6a-4a62-acd4-5a244f2d0c09" dir="ltr"><td id="Hmv&lt;" class="">User</td><td id="F=b[" class="">Recipient of push notification</td></tr><tr id="4700bd3f-7c31-4931-8862-d4d2a2910533" dir="ltr"><td id="Hmv&lt;" class="">NotificationTrayItem</td><td id="F=b[" class="">No change — creation tray notification fires independently per existing spec</td></tr><tr id="0af9d122-575b-40d4-9e8d-9200a848ccfb" dir="ltr"><td id="Hmv&lt;" class="">Room</td><td id="F=b[" class="">⚠️ CONFIRM WITH ENG — virtual event auto-generates a Room; confirm push deduplication rule applies</td></tr></tbody></table><hr id="92cf66cb-fa31-4116-a64c-e3f528cd406a" dir="auto"/><h2 id="a5b31c93-e0b1-4eb4-bd55-8a5315ffaf66" style="display:inline-block" dir="auto">📝 User Stories</h2><hr id="207992a1-674f-4eaf-ab68-64d45bcf8510" dir="auto"/><h3 id="cc5d82c1-8e89-413b-b44c-9aa7f59ba241" style="display:inline-block" dir="auto">UC1: Console configuration — enable push on event creation</h3><p id="5810efa0-658d-4f55-9238-ce9368f518c4" class="" dir="auto"><strong>User Story:</strong> As a network admin, I want to configure whether a push notification is sent when someone creates a new event in a community, so that networks can opt in/out of event-creation pushes without changing the creation flow.</p><p id="2400b269-822c-4d9f-a9bd-3cc1495d0d60" class="" dir="auto"><strong>Value / Rationale:</strong> Allows network-level control and reduces accidental pushes while still enabling pre-event RSVP growth for activation-heavy networks.</p><p id="c3402a66-afb2-4f40-b065-fe62369a2e18" class="" dir="auto"><strong>Preconditions:</strong></p><ul id="3cad51cc-4b51-4311-bd0e-dc83ed54ee33" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admin has access to Admin Console settings</li></ul><ul id="33979a83-a030-4d05-89ad-ed3d283637f4" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Push notifications are enabled for the network</li></ul><p id="528d4857-7b1d-4109-b4b8-22eae2103ffb" class="" dir="auto"><strong>Entry Point:</strong> Admin Console → Settings → Push notifications → Event-related events</p><p id="8a8af103-5528-4a25-a45a-c5d4a04f8e68" class="" dir="auto"><strong>Push message (copy pattern):</strong></p><pre id="d267d343-ef55-4950-a7c1-27d1ee3d75f2" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">Primary line:   {{CommunityName}} has event {{EventName}}
+Secondary line: [EventType chip]  {{EventStartDate}} · {{EventStartTime}}</code></pre><p id="bc249d6d-d56f-41b2-9b03-a90001ce7739" class="" dir="auto">Example: <code>&quot;Ulta Beauty Community has event Ulta Beauty World Masterclass 2026&quot;</code> / <code>[In-person]  10 Jul 2026 · 7:00 PM</code></p><p id="3a286970-29e6-4527-9a6f-f370d2bc5ef0" class="" dir="auto"><code>{{EventType}}</code> renders as a pill/chip label: <strong>In-person</strong> for in-person events, <strong>Virtual</strong> for virtual/livestream events.</p><p id="a013bc0a-560e-4962-96a7-2313f95fe872" class="" dir="auto"><code>{{EventStartDate}}</code> and <code>{{EventStartTime}}</code> refer to the scheduled start of the event (not send time).</p><p id="23acb3e7-4ecd-4ad6-9565-a095664149d3" class="" dir="auto">The notification icon displays the community avatar.</p><p id="e3b50352-24f5-4487-b259-710560485fb7" class="" dir="auto"><strong>Acceptance Criteria:</strong></p><pre id="a286fc9d-3964-4517-9249-a500de94bb15" class="code code-wrap" data-notion-code-syntax="gherkin"><code class="language-gherkin" style="white-space:pre-wrap;word-break:break-all">Scenario: Admin sees event-related toggles
+  Given a network admin navigates to Admin Console → Settings → Push notifications → Event-related events
+  Then they see a toggle &quot;When someone creates a new event in the community&quot;
+  And they see a toggle &quot;Notify whole network for events in public communities&quot;
+  And &quot;Notify whole network for events in public communities&quot; is disabled unless &quot;When someone creates a new event in the community&quot; is ON
+
+Scenario: Whole-network toggle depends on event-creation push toggle
+  Given &quot;When someone creates a new event in the community&quot; is OFF
+  When the admin attempts to turn ON &quot;Notify whole network for events in public communities&quot;
+  Then the setting cannot be enabled
+  And the UI prompts the admin to first enable &quot;When someone creates a new event in the community&quot;
+
+Scenario: Event-creation push disabled
+  Given &quot;When someone creates a new event in the community&quot; is OFF
+  When an event is created in any community
+  Then no event-creation push notification is sent
+  And the standard tray notification still fires to community members per existing behavior
+
+Scenario: Event-creation push to community members
+  Given &quot;When someone creates a new event in the community&quot; is ON
+  When an event is created in any community
+  Then a push notification is sent to all active, non-banned members of that community
+  And the push deep-links to the event RSVP page
+
+Scenario: Whole-network push allowed only for public communities
+  Given &quot;When someone creates a new event in the community&quot; is ON
+  And &quot;Notify whole network for events in public communities&quot; is ON
+  When an event is created in a PUBLIC community
+  Then a push notification is sent to all network users who have push enabled
+  And group privacy settings are enforced automatically
+
+Scenario: Whole-network push not sent for private communities
+  Given &quot;When someone creates a new event in the community&quot; is ON
+  And &quot;Notify whole network for events in public communities&quot; is ON
+  When an event is created in a PRIVATE community
+  Then the push notification is sent only to community members
+  And no push notification is sent to the whole network</code></pre><hr id="1fcdcdae-bbfc-40a0-a1ed-71d56d96fe6f" dir="auto"/><h3 id="ab10ced2-70c0-403b-9ab8-2ff47e9cf2a0" style="display:inline-block" dir="auto">UC2: Member receives push notification and navigates to RSVP</h3><p id="8f753184-2e29-4b6b-86be-c0d44d6905ff" class="" dir="auto"><strong>User Story:</strong> As a network or community member, I want to tap an event push notification and land directly on the RSVP page, so I can commit to attending in one action.</p><p id="11f92180-8d19-4774-b0fa-64f7c8294732" class="" dir="auto"><strong>Preconditions:</strong></p><ul id="25502ccc-c4d6-4e91-b0cc-39a9246c65f3" class="bulleted-list" dir="auto"><li style="list-style-type:disc">User has push notifications enabled on their device</li></ul><ul id="ffe6a97f-d88c-4e35-8404-aca562c93b5c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admin has triggered an event creation push for an audience that includes this user</li></ul><p id="e6e80f71-65d7-4fd8-83d9-c069008daccd" class="" dir="auto"><strong>Entry Point A:</strong> Push notification tapped on mobile device</p><p id="48305318-5024-420a-b3b9-86aa94002087" class="" dir="auto"><strong>Acceptance Criteria:</strong></p><pre id="055aaefe-247b-46a7-8763-36e648408d3d" class="code code-wrap" data-notion-code-syntax="gherkin"><code class="language-gherkin" style="white-space:pre-wrap;word-break:break-all">Scenario: Tap navigates to event RSVP page
+  Given a user receives an event creation push notification
+  When they tap the notification
+  Then they are navigated to that event&#x27;s RSVP page
+
+Scenario: Event deleted before user taps push
+  Given an event creation push was sent
+  When the event is deleted (isDeleted = true) before the user taps
+  And the user taps the push notification
+  Then they see &quot;This event is no longer available&quot;
+  And they are not shown an error or blank screen
+
+Scenario: Push suppressed by device-level notification settings
+  Given a user has disabled push notifications at the device or OS level
+  When an event creation push is triggered for their audience segment
+  Then they do not receive the push
+  And they still receive the in-app tray notification per existing behavior
+
+Scenario: Virtual event — no duplicate push from auto-generated Room
+  Given an event is a virtual event (Room auto-generated on creation)
+  When the admin sends the event creation push
+  Then only ONE push notification is delivered to each eligible user
+  And the Room/livestream-creation push notification is suppressed
+  [Per existing rule: SDD RSVP to Events &amp; Event Reminders, UC4]
+
+Scenario: Push notification content and icon
+  Given an event creation push is sent
+  Then the push title reads &quot;{{CommunityName}} has event {{EventName}}&quot;
+  And the push body shows an event type chip (&quot;In-person&quot; or &quot;Virtual&quot;) followed by the event start date and start time
+  And the notification icon displays the community avatar</code></pre><hr id="191ccb72-ab72-432c-bb2d-ac961a74c98e" dir="auto"/><p id="1d4e91e4-895c-415a-81d9-39ca526d85dc" class="" dir="auto">##</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

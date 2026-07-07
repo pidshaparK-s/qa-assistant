@@ -1,0 +1,747 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Video &amp; live streaming — tapping anywhere pauses playback</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="36e5f8b2-37fc-8072-85f9-d049d0e4f370" class="page sans"><header><h1 class="page-title" dir="auto">Video &amp; live streaming — tapping anywhere pauses playback</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Created time</th><td><time>May 28, 2026 2:07 PM</time></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Source</th><td><span class="selected-value select-value-color-pink">Client</span><span class="selected-value select-value-color-orange">PM</span></td></tr><tr class="property-row property-row-relation"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/library_gray.svg" style="width:14px;height:14px;display:block"/></span>Customer who requested</th><td>, </td></tr><tr class="property-row property-row-checkbox"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>Committed</th><td><div class="checkbox checkbox-off"></div></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Library Support</th><td></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Platforms</th><td></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Module</th><td><span class="selected-value select-value-color-brown">Social</span><span class="selected-value select-value-color-green">Video</span></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Year</th><td><span class="selected-value select-value-color-purple">2026</span></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Roadmap Quarter</th><td><span class="selected-value select-value-color-orange">Q3 Roadmap</span></td></tr><tr class="property-row property-row-relation"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-northeast_gray.svg" style="width:14px;height:14px;display:block"/></span>Problem Space</th><td></td></tr><tr class="property-row property-row-status"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Design Status</th><td><span class="status-value select-value-color-default"><div class="status-dot status-dot-color-default"></div>Needs design</span></td></tr><tr class="property-row property-row-checkbox"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>Sales Roadmap</th><td><div class="checkbox checkbox-off"></div></td></tr><tr class="property-row property-row-checkbox"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>CS Roadmap</th><td><div class="checkbox checkbox-off"></div></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Revenue Bucket</th><td><span class="selected-value select-value-color-yellow">Keeping the Lights On</span></td></tr><tr class="property-row property-row-status"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><td><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Prioritized</span></td></tr><tr class="property-row property-row-person"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/friends_gray.svg" style="width:14px;height:14px;display:block"/></span>PM</th><td><span class="user"><span class="icon text-icon user-icon"><span class="user-icon-inner">K</span></span>Kel Keawalee</span><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocLIm2X64QdxMzgxVw0urzGJSBUjk-eyRXRHWtgPNuKYJ9K2Ng=s100" class="icon user-icon"/>Ghita El Marzouki</span></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h2 id="36e5f8b2-37fc-8099-97c3-fa4776a6d71f" class="">A1: 🤔 Debt ticket — Video &amp; live streaming: tapping anywhere pauses playback</h2></div><div style="display:contents" dir="auto"><h3 id="36e5f8b2-37fc-804e-b722-e176b1db3f17" class="">What&#x27;s broken or missing</h3></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-801b-af51-e82e39369da8" class="">Tapping anywhere on the video or live stream player surface triggers a pause, regardless of where on screen the user taps. This conflicts with the standard consumer video player convention established by YouTube, TikTok, Facebook — where pause is triggered by a dedicated tap target, and other screen areas either reveal controls or do nothing. The current behavior means users accidentally pause video and live streams constantly during normal viewing. For live streams specifically, an accidental pause is especially disruptive, so resuming drops the viewer mid-stream. </p></div><div style="display:contents" dir="auto"><hr id="36e5f8b2-37fc-8095-8dd5-c86fa31f4cbf"/></div><div style="display:contents" dir="auto"><h3 id="36e5f8b2-37fc-8021-8602-f60f171172b8" class="">Who experiences it and how often</h3></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80c8-8f00-fa1413b4b0cd" class="">Affects every customer using the video player bundled in our UIKit. Any customer who’s actively using live streaming or video feeds as engagement surfaces would be disproportionately exposed. </p></div><div style="display:contents" dir="auto"><hr id="36e5f8b2-37fc-8031-a4f5-c9a4222a9854"/></div><div style="display:contents" dir="auto"><h3 id="36e5f8b2-37fc-805f-abe1-dfc69afa5015" class="">Directional solution space</h3></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8078-8c50-da073e589611" class="bulleted-list"><li style="list-style-type:disc">Tapping the player surface should not trigger pause by default</li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8005-bbeb-ffa97ef5ee3a" class="bulleted-list"><li style="list-style-type:disc">Pause/play toggle should be bound to a dedicated tap target: either a central button zone (standard YouTube/Instagram convention) or a double-tap gesture — Design to recommend</li></ul></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80f2-b6ab-c050b2daa8f2" class=""><strong>Scope</strong></p></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8060-bba6-c3a0fb4f6cac" class="bulleted-list"><li style="list-style-type:disc">Applies to video &amp; live stream posts in global, user, community, and event feeds, as well as media galleries on UIKit (all platforms inclusive of React Native &amp; Flutter) </li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8011-b0b9-f3266f123fdb" class="bulleted-list"><li style="list-style-type:disc">Does not apply to Stories / Clips</li></ul></div><div style="display:contents" dir="auto"><hr id="36e5f8b2-37fc-80f9-b32f-c2195fbdba17"/></div><div style="display:contents" dir="auto"><h3 id="36e5f8b2-37fc-80bd-b66e-ce6e2e62194a" class="">Known constraints or dependencies</h3></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80ca-bbef-da481109eddc" class="">None known at the moment</p></div><div style="display:contents" dir="auto"><hr id="36e5f8b2-37fc-80e6-9956-c172afc746e5"/></div><div style="display:contents" dir="auto"><h2 id="36e5f8b2-37fc-80e9-9e39-cbcf1570781b" class="">Prioritization Signals</h2></div><div style="display:contents" dir="auto"><hr id="36e5f8b2-37fc-8042-a8e3-e06c74168888"/></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80e7-9af8-c02c832f0623" class=""><strong>Breadth <br/></strong><em><strong>What proportion of our total customer base is affected? </strong></em></p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80b1-93c8-cb10e1ff78d8" class="">☐ ✅ 50% + of accounts<br/>☐ 25-49% of accounts<br/>☐ 10-24% of accounts<br/>☐ Under 10% of accounts</p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80e8-87b4-deffbac54bbe" class=""><em><strong>How does this break down across tiers? </strong></em></p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-806b-a18a-e9b2e86b8d53" class="">☐ Affects T1 and/or T2 accounts disproportionately <br/>☐ ✅ Spread evenly across tiers</p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80d5-a465-cefc43ec07bc" class=""><em><strong>Within affected accounts, who experiences it? </strong></em></p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80d0-b339-d24190234e3c" class="">☐ ✅ All end users in normal usage <br/>☐ End users who use a specific feature <br/>☐ A specific user role only (e.g. admins, moderators, visitors, etc..)</p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80fa-8dcd-e8965422e41e" class=""><strong>Commercial Adjacency <br/></strong><em><strong>Is this gap creating friction for a growth account’s community strategy? </strong></em></p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-809f-ac84-e4f05dc6cb24" class="">☐ Yes — a named growth account is actively using or building on this surface as part of their strategy. (<em>Note: Include specific account names &amp; Tiers and how this is part of their growth strategy<br/></em>☐ ✅ Partial — a growth account uses this surface but it’s not central to their current strategy (XM, Ulta — they raised this feedback)<br/>☐ No — not relevant to any growth account’s current community strategy </p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-8059-8458-e59644be2aa4" class=""><em><strong>Has this gap come up in an adoption context? </strong></em></p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-8029-adba-ca8a433b59eb" class="">☐ Yes — this is a feature we’re trying to encourage adoption of <br/>☐ ✅ No</p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-8087-a6f9-c274d244111e" class=""><strong>Effort-to-impact ratio <br/></strong><em>Rough engineering signal — leave blank if unsure.</em></p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-806a-8ef2-dc95ff9c73d1" class="">☐ ✅ Quick win — likely under one sprint for one engineer<br/>☐ Medium lift — likely one to two sprints<br/>☐ Heavy lift — likely three or more sprints</p></div><div style="display:contents" dir="auto"><hr id="36e5f8b2-37fc-80e3-86ea-ec01f1e81029"/></div><div style="display:contents" dir="auto"><h2 id="36e5f8b2-37fc-80c2-9b34-ea376db94e5f" class="">A2: 📝 Product Specs</h2></div><div style="display:contents" dir="auto"><h3 id="36e5f8b2-37fc-8066-95b9-e96b7c72023f" class="">Release Note </h3></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-8094-ad7b-d8d9f7674127" class="">Tapping a video or live stream in your app no longer accidentally pauses it. Your users can now tap the player freely, controls appear on tap, and playback only pauses when they deliberately hit the pause button. This means fewer disrupted viewing sessions and a smoother experience for anyone watching live streams or video content in your community.</p></div><div style="display:contents" dir="auto"><h3 id="36e5f8b2-37fc-80ca-97f8-f4252901f24f" class="">Scope</h3></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-80ab-94c8-e7f41e532fec" class="bulleted-list"><li style="list-style-type:disc"><strong>Platforms supported: </strong><em><mark class="highlight-gray"><strong>  </strong></mark></em><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-807c-99b9-f6ab64ff96de" class="bulleted-list"><li style="list-style-type:circle">UIKit iOS</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8024-98cf-c473330d032d" class="bulleted-list"><li style="list-style-type:circle">UIKit Android </li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-800d-947b-c8ba289c6b38" class="bulleted-list"><li style="list-style-type:circle">UIKit React Native</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-809d-b5f7-cb9aea3f2cd6" class="bulleted-list"><li style="list-style-type:circle">UIKit Flutter</li></ul></div><div style="display:contents" dir="auto"><ul id="38f5f8b2-37fc-80a1-87a7-f066ef743b81" class="bulleted-list"><li style="list-style-type:circle">WebUIKIT</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80dd-94a7-e923a626415e" class="bulleted-list"><li style="list-style-type:disc"><strong>Platform not supported</strong> <div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-804a-afd7-f3e128fe9fb3" class="bulleted-list"><li style="list-style-type:circle">Desktop</li></ul></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="38f5f8b2-37fc-80c1-b3b7-d937b59e3fa5"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="38f5f8b2-37fc-8034-955f-e3a7933c2051" class="">There will be only a small change on the design side for desktop view</p></div></div></figure></div></li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8073-8724-ce16d099f5f7" class="bulleted-list"><li style="list-style-type:disc"><strong>Functionality in scope:</strong><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80b9-b3ff-fc6e652c61aa" class="bulleted-list"><li style="list-style-type:circle">Tap on player surface reveals controls overlay; pause/play bound to central button; applies to video posts and live streams across all in-scope feed surfaces and media gallery:<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8023-b2de-e59e2d5816f6" class="bulleted-list"><li style="list-style-type:square">Event discussion feed</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8023-a18d-cbc72947f78e" class="bulleted-list"><li style="list-style-type:square">Global Feed</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-801a-9cfb-ec97470dcb81" class="bulleted-list"><li style="list-style-type:square">Community</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80c9-af2c-d0cd2ad1cf96" class="bulleted-list"><li style="list-style-type:square">Gallery (Video)</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-8097-83c2-f125ffd0fbc5" class="bulleted-list"><li style="list-style-type:circle"><strong>Nice to have: </strong>Skip back 10 seconds and skip forward 10 seconds buttons in the controls overlay — useful for video posts but not critical to the core gesture fix. Can be descoped if it impacts delivery timeline.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8090-ba8a-c821dc3ffe76" class="bulleted-list"><li style="list-style-type:disc"><strong>Functionality that is out of scope: </strong><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8036-b451-ca30f086fe31" class="bulleted-list"><li style="list-style-type:circle">This behavior will not apply to clips and stories</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="36e5f8b2-37fc-8072-bb9f-e6fcee26f9c6" class="">User Stories</h3></div><div style="display:contents" dir="ltr"><figure class="block-color-brown_background callout" style="white-space:pre-wrap;display:flex" id="36e5f8b2-37fc-8034-8fda-c1acd2e1bb70"><div style="font-size:1.5em"><span class="icon">❗</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80f2-9d81-cfb4673edda9" class=""><em>The User Story, Value / Rationale, Preconditions, Entry Points, and Acceptance Criteria are for that particular user story. Make sure these are present for every user story. </em></p></div></div></figure></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-803e-9650-e05fa7d45b32" class=""><strong>UC1: </strong>As a community member watching a video or live stream, I want tapping the player surface to reveal controls rather than toggle pause, so that I don&#x27;t accidentally interrupt playback during normal viewing.</p></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-80f2-b3db-caae1c392a3a" class=""><strong>Preconditions</strong></p></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-802c-8b62-f4cbd60d5720" class="bulleted-list"><li style="list-style-type:disc">User is viewing a video post or live stream post on any scoped surface</li></ul></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-8050-9869-f0b8acf63ff7" class=""><strong>Entry points</strong></p></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8076-9a16-ff12b3bb44e7" class="bulleted-list"><li style="list-style-type:disc">A. Video or live stream is playing inline in any feed (global, user, community, event discussion)</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-803e-bc6c-eca5d406357f" class="bulleted-list"><li style="list-style-type:disc">B. Video or live stream is open in a media gallery or fullscreen view</li></ul></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-807a-845c-dd6b9c0194ec" class=""><strong>Acceptance criteria</strong></p></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-8017-9f95-dbf1be54d02c" class="">Tap behaviour</p></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80d0-b815-c5d584e5abf8" class="bulleted-list"><li style="list-style-type:disc">Given a video or live stream is playing, when the user taps anywhere on the player surface<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-809a-98d0-f9b6d220540d" class="bulleted-list"><li style="list-style-type:circle">Then the controls overlay appears</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80f2-a109-c43cb9259aae" class="bulleted-list"><li style="list-style-type:circle">And playback continues uninterrupted — the video or stream does not pause</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80e5-9635-ccb674f517a9" class="bulleted-list"><li style="list-style-type:disc">Given the controls overlay is visible, when the user taps anywhere on the player surface outside the central pause/play button<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-800a-bba5-e869238cda9f" class="bulleted-list"><li style="list-style-type:circle">Then the overlay dismisses</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-805f-84fa-fe20d7b36f9e" class="bulleted-list"><li style="list-style-type:circle">And playback continues uninterrupted</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80c9-91f5-fa8b1dd4cbeb" class="bulleted-list"><li style="list-style-type:disc">Given the controls overlay is visible, when the user takes no further action<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8006-ab6e-f6472f9e4705" class="bulleted-list"><li style="list-style-type:circle">Then the overlay auto-dismisses after a short timeout ( 1 second)</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-807f-8767-c0be70a36eac" class="bulleted-list"><li style="list-style-type:circle">And playback continues <em>(confirm auto-dismiss timeout with eng — assume 3s)</em></li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-8067-a81d-c210d9ed852a" class="">Pause/play button</p></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8012-87d7-fe7df85169c4" class="bulleted-list"><li style="list-style-type:disc">Given a video or live stream is playing and the controls overlay is visible, when the user taps the central pause/play button<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80a9-a511-cb4e2d65fffe" class="bulleted-list"><li style="list-style-type:circle">Then playback pauses</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80cd-8f30-ce085a8b04ee" class="bulleted-list"><li style="list-style-type:circle">And the button icon switches from pause to play</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80b0-8dad-f64dbc235917" class="bulleted-list"><li style="list-style-type:disc">Given a video or live stream is paused, when the user taps the central play button (controls visible, or re-summoned by a tap)<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8032-90fa-eab7ac21f917" class="bulleted-list"><li style="list-style-type:circle">Then playback resumes from the exact position at which it was paused</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-800f-80bb-f290b22dd15e" class="bulleted-list"><li style="list-style-type:circle">And the button icon switches from play to pause</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-8080-aaf1-d52a15907383" class="">Platform and surface coverage</p></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80a7-a114-f3486e3881fd" class="bulleted-list"><li style="list-style-type:disc">Given any in-scope surface (global feed, user feed, community feed, event discussion feed, media gallery), when the user taps the player surface<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-800b-99ab-dd7e132ddd64" class="bulleted-list"><li style="list-style-type:circle">Then the behaviour described above is identical regardless of surface</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-808c-9ef4-ece035e93cb7" class=""><strong>UC2:</strong> As a community member watching a live stream, I want to know when I&#x27;m paused and behind the live edge, so that I understand my viewing context and can choose to resume or catch up.</p></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-80a4-981b-eb4fb1778498" class=""><strong>Preconditions</strong></p></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80e9-a649-f9d1ad78f76d" class="bulleted-list"><li style="list-style-type:disc">User is watching a live stream with Room status: <code>live</code></li></ul></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-8015-b476-dbe839b315e2" class=""><strong>Entry points</strong></p></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8023-9b1d-f094cd6ca4c2" class="bulleted-list"><li style="list-style-type:disc">A. User deliberately pauses the live stream via the central pause button</li></ul></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-8050-a227-c771b1752d7d" class=""><strong>Acceptance criteria</strong></p></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-80a8-8a7b-d7475e4cd7e1" class="">Behind-live indicator</p></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80f5-8ebc-c175dfa2edea" class="bulleted-list"><li style="list-style-type:disc">Given the user pauses a live stream, when the pause is applied<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8010-a5e3-e34692f4b60c" class="bulleted-list"><li style="list-style-type:circle">Then a visual indicator is shown communicating the stream is paused and the viewer is behind the live edge</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-801f-83c3-fe4d311d4dec" class="bulleted-list"><li style="list-style-type:circle">And the indicator is visible without requiring an additional tap</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-80de-9d7a-e60eb9c49cda" class="bulleted-list"><li style="list-style-type:disc">Given the user resumes from a paused live stream, when playback restarts<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8002-8f59-d7a75b532074" class="bulleted-list"><li style="list-style-type:circle">Then playback resumes from the position at which it was paused — not from the live edge <em>(confirm: is a &quot;return to live&quot; CTA in scope for this ticket or a follow-on?)</em></li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-8034-b999-d2dd27f360bb" class="">Stream ends while viewer is paused</p></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8043-abd5-e130eca7d80e" class="bulleted-list"><li style="list-style-type:disc">Given the user has paused a live stream, when the Room transitions to <code>ended</code> or <code>recorded</code> during the pause<div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-805a-ad30-f30742b56375" class="bulleted-list"><li style="list-style-type:circle">Then the player moves to an appropriate ended or recorded state</li></ul></div><div style="display:contents" dir="auto"><ul id="3885f8b2-37fc-8090-92e1-eac1b922f023" class="bulleted-list"><li style="list-style-type:circle">And the viewer is not left on a frozen frame with no feedback</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="38b5f8b2-37fc-801a-aef6-fa2565700fec" class="">
+</p></div><div style="display:contents" dir="auto"><p id="38b5f8b2-37fc-802a-a75e-f1896a69cf04" class=""><strong>NICE TO HAVE<br/>UC3:</strong> As a community member watching a video, I want to skip backward or forward 10 seconds so that I can quickly rewatch or jump ahead without scrubbing. </p></div><div style="display:contents" dir="auto"><p id="38b5f8b2-37fc-80c8-9367-f3c026772050" class=""><strong>Preconditions</strong></p></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80fe-aa55-ebfdb1979815" class="bulleted-list"><li style="list-style-type:disc">User is viewing a video post (not a live stream)</li></ul></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80f8-ac05-e5f401e898b3" class="bulleted-list"><li style="list-style-type:disc">The controls overlay is visible</li></ul></div><div style="display:contents" dir="auto"><p id="38b5f8b2-37fc-8079-8664-e0cc4c2fb1aa" class=""><strong>Entry points</strong></p></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-8066-ad4c-cc2e12b067ee" class="bulleted-list"><li style="list-style-type:disc">A. User taps the player surface to reveal the controls overlay</li></ul></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-8038-9154-f58e549fd3f0" class="bulleted-list"><li style="list-style-type:disc">B. Controls overlay is already visible</li></ul></div><div style="display:contents" dir="auto"><p id="38b5f8b2-37fc-8074-a4d4-c0f94e3a42e0" class=""><strong>Acceptance criteria</strong></p></div><div style="display:contents" dir="auto"><p id="38b5f8b2-37fc-80a4-853b-e5b8b5e245dc" class="">Skip controls</p></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80e4-b84b-c1f4292b0c31" class="bulleted-list"><li style="list-style-type:disc">Given the controls overlay is visible, when the user taps the skip back button (−10s)<div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80c0-9436-fdcb8d85f40e" class="bulleted-list"><li style="list-style-type:circle">Then playback jumps back 10 seconds from the current position</li></ul></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-803c-a7a7-effa308141b4" class="bulleted-list"><li style="list-style-type:circle">And playback continues without interruption</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80ac-b483-ec2527dd6996" class="bulleted-list"><li style="list-style-type:disc">Given the controls overlay is visible, when the user taps the skip forward button (+10s)<div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80fe-be9d-fc9e2bf2cbea" class="bulleted-list"><li style="list-style-type:circle">Then playback jumps forward 10 seconds from the current position</li></ul></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-8033-9d83-fafee2e902c4" class="bulleted-list"><li style="list-style-type:circle">And playback continues without interruption</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="38b5f8b2-37fc-8016-a8e3-c6e049545e29" class="">Boundary behaviour</p></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80b5-93af-cb7f275d33ad" class="bulleted-list"><li style="list-style-type:disc">Given the user taps skip back and the current position is less than 10 seconds into the video, when the action is applied<div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-8079-ac62-e5b3699d4ac3" class="bulleted-list"><li style="list-style-type:circle">Then playback jumps to 0:00 — it does not go to a negative position</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80ef-81d1-c6416daf24dc" class="bulleted-list"><li style="list-style-type:disc">Given the user taps skip forward and the current position is within 10 seconds of the video end, when the action is applied<div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-8059-a689-fe02be89c267" class="bulleted-list"><li style="list-style-type:circle">Then playback jumps to the final frame and enters the end state — it does not loop or error</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="38b5f8b2-37fc-80f3-96ac-c2e4e6b29dd7" class="">Skip controls and pause state</p></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80c8-aeb4-d5fce22de024" class="bulleted-list"><li style="list-style-type:disc">Given the video is paused and the controls overlay is visible, when the user taps either skip button<div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-8044-abcf-d6caaaa2e7d7" class="bulleted-list"><li style="list-style-type:circle">Then the position updates accordingly</li></ul></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-80b2-9278-cd37966f8e0f" class="bulleted-list"><li style="list-style-type:circle">And the video remains paused — skip does not auto-resume playback</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="38b5f8b2-37fc-80fa-bb26-d45d3aea8ecb" class="">Live streams</p></div><div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-800b-9e71-f5c7319a0042" class="bulleted-list"><li style="list-style-type:disc">Given a live stream is playing, when the controls overlay is visible<div style="display:contents" dir="auto"><ul id="38b5f8b2-37fc-8017-a08b-d505bcfe0b92" class="bulleted-list"><li style="list-style-type:circle">Then the skip back and skip forward buttons are not shown — seeking is not applicable on a live stream</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-80e1-a425-fa2303910aff" class="">
+</p></div><div style="display:contents" dir="auto"><p id="3885f8b2-37fc-80c5-b5d1-eb5e0320f850" class="">
+</p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-801f-8b05-c2815fd9b9c7" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="36e5f8b2-37fc-8019-99d3-e54ded13ac43" class="">Decision Log </h3></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-8005-89e4-dd2c5c2c0477" class=""><em>Record any significant calls made during squad discussions — design tradeoffs, scope cuts, technical constraints that shaped the spec. A well-written decision should be readable by someone who wasn&#x27;t in the room: they should be able to understand what was decided, why, and what it means for the build without needing to ask anyone.</em></p></div><div style="display:contents" dir="ltr"><table id="36e5f8b2-37fc-8018-a414-c432020352eb" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-80a2-831a-fc6439440071"><th id="k^bf" class="simple-table-header-color simple-table-header" style="width:239.66666666666666px">Decision<br/><em><mark class="highlight-gray">What was decided — be specific, not vague.</mark></em></th><th id="sWqO" class="simple-table-header-color simple-table-header" style="width:239.66666666666666px">Rationale<br/><em><mark class="highlight-gray">Why this option over the alternative</mark></em></th><th id="Cyj\" class="simple-table-header-color simple-table-header" style="width:239.66666666666666px"><strong>Impact</strong><br/><em><mark class="highlight-gray">What this means for scope, design, or engineering</mark></em></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-8097-b528-ff607bf802e7"><td id="k^bf" class="" style="width:239.66666666666666px"></td><td id="sWqO" class="" style="width:239.66666666666666px"></td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr></div><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-80d9-bbcf-f5efe103f37c"><td id="k^bf" class="" style="width:239.66666666666666px"></td><td id="sWqO" class="" style="width:239.66666666666666px"></td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="36e5f8b2-37fc-80a7-8c0c-d45a96b9e342"/></div><div style="display:contents" dir="auto"><h2 id="36e5f8b2-37fc-8047-ad10-ead33ecc2a15" class="">A3: 🎯 GTM Summary</h2></div><div style="display:contents" dir="ltr"><figure class="block-color-brown_background callout" style="white-space:pre-wrap;display:flex" id="36e5f8b2-37fc-804f-a3da-f0c22e05d73d"><div style="font-size:1.5em"><span class="icon">❗</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80e5-ba5d-dbeac946defe" class=""><em>PMs should complete this section to give marketing the information they need to prepare before the launch of this feature. This section should be completed within 1 week after kick-off. </em></p></div><div style="display:contents" dir="auto"><p id="36e5f8b2-37fc-80ff-a070-cafbd6b8d295" class=""><em>Use this to select checkboxes:</em> ✅</p></div></div></figure></div><div style="display:contents" dir="ltr"><table id="36e5f8b2-37fc-80fb-9e35-e3c76055f465" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-80a4-b5a3-f870c191c1b9"><th id="hBLE" class="block-color-purple_background simple-table-header" style="width:265.6458435058594px"><strong>QUESTIONS</strong></th><th id="PuQ~" class="block-color-purple_background simple-table-header" style="width:457.6527862548828px"><strong>DETAILS</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-8098-8b2a-f4aae5c91e7c"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>What are we releasing? <br/></strong>Succinctly, what’s the new capability we’re introducing? </td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr></div><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-80d9-8477-c3f036a15ca6"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>New or improvement? <br/></strong><em>Do you consider this a new feature or an update to an existing feature?</em></td><td id="PuQ~" class="" style="width:457.6527862548828px">☐ New feature <br/>☐ Improvement on an existing capability<br/>  • Feature improved:</td></tr></div><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-809f-8b02-f200ea90e2aa"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>Is this update available to Core / Core Exceptional customers; is a paid add-on; is available upon request only? <br/></strong><em>Select all that apply</em></td><td id="PuQ~" class="" style="width:457.6527862548828px">☐ Core plan<br/>☐ Core Exceptional plan<br/>☐ Beta (Request Access required) <br/>☐ Paid add-on<br/><br/></td></tr></div><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-805d-9229-d63cbba2713c"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>Reference documentation<br/></strong><em>Please include links to any relevant Product Briefs</em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr></div><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-80a1-8f81-d78d93c0e43d"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>What tier would you place this feature as?<br/></strong><em>Tier 1 / 2 / 3 / 4. Reach out to Marketing to understand feature tiers </em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr></div><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-80af-ae58-c5af5fc7b944"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>Who will find the value from this release? <br/></strong><em>• Specific use case</em><br/><em>• Personas / industries </em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr></div><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-8008-b5c6-d78825b5adb0"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>Why does this release matter to the respective audience(s)?<br/></strong><em>What’s worth focusing on relative to the status quo? What current pain does it solve?</em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr></div><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-80d2-8ca0-c0d7293c0006"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>What are the game-changing differentiators of this release?</strong><br/><em>In what ways are we delivering something new to the market or a product that other companies haven’t been able to deliver? Be specific, if possible, on how this compares to offerings of our direct and in-direct competitors.</em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr></div><div style="display:contents" dir="ltr"><tr id="36e5f8b2-37fc-8099-a90a-eaa7986cc3ad"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>What are the key limitations of this release?</strong><br/><em>What aspects of this product could our customers, the press or industry analysts view as falling short compared to other products on the market? Be specific and candid.</em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="36e5f8b2-37fc-806e-bcc4-fb9362b78d5a"/></div><div style="display:contents" dir="auto"><h2 id="36e5f8b2-37fc-8035-8b36-c6205163daea" class="">A4: 🚀 Launch Checklist</h2></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-80b3-80f0-de5ed901e539" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Plan GTM with Marketing</span><div class="indented"></div></li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8031-82ce-caa4dfeca37a" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Go through pricing with Sales &amp; CS (where necessary)</span><div class="indented"></div></li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-80b0-a860-f4c5caf17173" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Plan feature demo with customer-facing stakeholders </span><div class="indented"></div></li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8006-adb6-e38ae3835fc6" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Draft product brief (where necessary)</span><div class="indented"></div></li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8026-a880-dbb6a2133000" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Test feature on staging and provide green light </span><div class="indented"></div></li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-80e0-8c13-dc9c174842a7" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Update <a href="https://app.notion.com/p/Enable-brands-to-incentivize-and-drive-targeted-user-behaviors-that-drive-their-business-1c02808adc2144f9a948c98b34b53a26?pvs=21">Master Feature Parity Sheet</a> </span><div class="indented"></div></li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8016-9715-d1f39b213415" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Draft public docs - Console, Dashboard, and Social Insights features only</span><div class="indented"></div></li></ul></div><div style="display:contents" dir="auto"><ul id="36e5f8b2-37fc-8015-bc38-c4820ea01080" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Announce release in Eko - All Company </span><div class="indented"></div></li></ul></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

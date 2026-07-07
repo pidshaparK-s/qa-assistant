@@ -1,0 +1,78 @@
+# Process Layer — BA+QA Pipeline
+
+เอกสารชุดนี้คือ **process definition** — สูตรที่บอกว่า "ทำอะไร ลำดับไหน ผ่าน gate อะไร".
+Process **เรียกใช้ (call)** skill ที่ `.claude/skills/` — skill เป็นแค่ **capability atomic** (technique + template)
+ที่ไม่รู้เรื่องลำดับหรือ gate.
+
+> 👉 **จะลงมือรัน?** เปิด **[`RUNBOOK.md`](RUNBOOK.md)** — มี flowchart + cheat sheet "ครั้งนี้พิมพ์/รันอะไร"
+> เอกสารนี้ (README) = architecture/นิยาม; RUNBOOK = operator guide
+
+> **หลักการแยกชั้น:** Process = orchestration + shared artifacts + gates · Skill = pure function (input artifact → output artifact)
+> เหตุที่ต้องแยก: skill ตัวเดียวถูกเรียกซ้ำในหลาย process (ดู reuse map ข้างล่าง) — ถ้ายุบ skill จะพัง reuse
+
+---
+
+## 3 Layers
+
+| Layer | Process doc | Skills ที่เรียก | Output |
+|---|---|---|---|
+| **L1 · BA Requirement Analysis** | `layer-1-ba-requirement-analysis.md` (full) | phase-1-1 … 1-4 | enriched AC + Clarification Register + readiness |
+| **L2 · QA Story Authoring** | `layer-2-qa-story-authoring.md` (draft) | phase-2-1 … 2-6 | Schema 1 (`01-complete-jira-story.json`) → Schema 2 (`02-user-flow.json`) |
+| **L3 · Test Design** | `layer-3-test-design.md` (draft) | phase-3-1, 3-2 | test conditions/cases + automation judgment |
+
+Entry points (trigger phrases) ยังอยู่ที่ `.claude/skills/run-analysis/` ซึ่งตอนนี้เป็น **thin dispatcher** ชี้มาที่ doc เหล่านี้.
+
+---
+
+## Skill-reuse map (ทำไม skill ต้อง atomic)
+
+artifact ที่ skill หนึ่งผลิต ถูก **process ส่งต่อ** ให้ skill/step อื่น — ไม่ทำซ้ำ
+
+| Artifact (ผลิตโดย) | ถูก reuse โดย | ที่ไหน |
+|---|---|---|
+| **Relationship Map** (1-1) | 1-2 (User Need ต่อ actor), 1-3 (silent actor), **2-6** (scope silent-actor gap) | L1 STEP1→STEP2, L2 STEP4 |
+| **State Machine** (1-1) | 1-3 (Then ครอบ state change), 1-4 (edge timing/boundary), **2-2** (verify Then), 3-2 (State BR→transition) | L1 STEP2, L2 STEP2, L3 STEP1 |
+| **Pain&Consequence "Why"** (1-1) | 1-2 (Business Goal), **2-3** (BR extraction engine), 2-4 (5 Whys) | L1 STEP1, L2 STEP3 |
+| **User Need / 3-Layer** (1-2) | **2-6** (scope), 2-4 (clarification) | L2 STEP4 |
+| **Enriched AC** (1-3/1-4) | 2-2 (complement), 2-3 (BR source), 2-5 (effort) | L2 |
+| **Clarification Register** (all) | routing → PM/Design/Eng; gate ก่อน handoff L1→L2 | ทุก layer |
+
+> ⚠️ **BR extraction ซ้ำ 2 ที่:** `2-3` (จาก AC, ใช้ "Why") = canonical เมื่อมี AC · `3-2` (multi-source, self-contained) = path เมื่อ AC ยังไม่ครบ. Process เป็นคนเลือกว่าใช้ตัวไหน
+
+---
+
+## Shared-artifact model
+
+Process เป็นเจ้าของ artifact store; skill read/write เข้ามัน
+
+| Artifact | ผลิตที่ | ที่เก็บ |
+|---|---|---|
+| **AC Manifest** | L1 STEP0 | `products/<epic>/stories/*.json` (ac_id) + snapshot `qa/<epic>/.ac-manifest.json` |
+| **Relationship Map / State Machine / 3-Layer trace** | L1 STEP1 | section ใน `qa/<epic>/<story>-analysis.md` |
+| **Enriched AC** | L1 STEP2 | `qa/<epic>/<story>-analysis.md` |
+| **Clarification Register** | L1 ทุก step (append) | `qa/<epic>/PDT-XXXX-clarifications-for-pm-design.md` (+ optional `1_clarifications.json`) |
+| **Schema 1 / Schema 2** | L2 | `output/PDT-XXXX-complete-jira-story.json` / `-user-flow.json` |
+
+---
+
+## Gate catalog (นิยามกลาง ใช้ซ้ำทุก layer)
+
+| Gate | เมื่อไหร่ | เงื่อนไขผ่าน | ถ้าไม่ผ่าน |
+|---|---|---|---|
+| **Readiness** | ก่อนเริ่ม layer/workflow | input ครบ (ระบุ checklist ต่อ layer) | หยุด แจ้งสิ่งที่ขาด |
+| **AC Manifest** | ต้นทุก workflow ที่มี AC | list ac_id + count จาก **structured JSON** (ไม่ eyeball) | ถ้าไม่มี AC → หยุด |
+| **Coverage + Content** | จบ STEP specify | ทุก ac_id ถูกวิเคราะห์ **และ** fingerprint(given+when+then) ตรง snapshot | ac_id ขาด → วิเคราะห์; fingerprint เปลี่ยน → STALE, re-analyze |
+| **Completion** | หลัง loop | ✓/✗ ทุก ac_id เทียบ Manifest = N/N | มี ✗ → วิเคราะห์ทันที re-check ก่อน write |
+| **Freshness / Dropout** | ตลอดทาง | Manifest ตรง Jira ล่าสุด (diff) · ไม่มี AC หลุดเงียบ | added/removed/changed → re-run step ที่กระทบ |
+
+**Coverage+Content คือหัวใจ:** นับจำนวนอย่างเดียวไม่พอ — UC2 (PDT-3563) มี 3 AC เท่าเดิมแต่ AC-01/02 ถูกเขียนใหม่ 2026-07-06;
+ถ้าเช็คแค่ "3/3" จะ false-pass analysis เก่า. Gate จึงผูก `ac_id` + **content fingerprint**. บังคับใช้ด้วย `checks/ac_coverage.py`.
+
+---
+
+## Rules (Dropout protection — ใช้ทุก layer)
+1. ห้าม AC หลุดโดยไม่แจ้ง (critical failure)
+2. ห้าม write output ก่อน Completion gate ผ่าน
+3. แสดง progress `[X/N]` ทุก AC/flow ใหม่
+4. Process เป็นคน "อ่าน skill ก่อน loop" ไม่ใช่ skill สั่งกันเอง
+5. เจอ AC หลุดหลัง gate → วิเคราะห์ทันที re-check

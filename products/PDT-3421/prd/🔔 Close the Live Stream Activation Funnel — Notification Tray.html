@@ -1,0 +1,796 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>🔔 Close the Live Stream Activation Funnel — Notification Tray</title><meta name="data-notion-page-icon" content="🔔"/><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%94%94%3C%2Ftext%3E%3C%2Fsvg%3E"/><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure,
+aside,
+details {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="38e5f8b2-37fc-8111-9ab0-d7507651eb46" class="page sans" data-notion-page-icon="🔔"><header><div class="page-header-icon undefined"><span class="icon" data-emoji="🔔"></span></div><h1 class="page-title" dir="auto">🔔 Close the Live Stream Activation Funnel — Notification Tray</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Created time</th><td><time datetime="2026-06-29T14:27">June 29, 2026 2:27 PM</time></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Source</th><td></td></tr><tr class="property-row property-row-checkbox"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>Committed</th><td><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Library Support</th><td></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Platforms</th><td></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>Module</th><td></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Year</th><td><span class="selected-value select-value-color-purple">2026</span></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Roadmap Quarter</th><td><span class="selected-value select-value-color-orange">Q3 Roadmap</span></td></tr><tr class="property-row property-row-status"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Design Status</th><td><span class="status-value select-value-color-default"><div class="status-dot status-dot-color-default"></div>Needs design</span></td></tr><tr class="property-row property-row-checkbox"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>Sales Roadmap</th><td><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr class="property-row property-row-checkbox"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>CS Roadmap</th><td><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr class="property-row property-row-status"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><td><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Prioritized</span></td></tr></tbody></table></header><div class="page-body"><h2 id="90da96a2-0008-4066-9c50-c85d7d150418" style="display:inline-block" dir="auto">Epic</h2><p id="e219e62c-6cdf-44dc-9562-8d4f4aa26c03" class="" dir="auto"><a href="https://app.notion.com/p/Close-the-live-stream-activation-funnel-before-during-and-after-the-event-36d5f8b237fc80d29733c7f88bc56485?pvs=21">Close the Live Stream Activation Funnel — before, during, and after the event</a></p><hr id="702d3e1e-a6ac-4403-9095-d31390968eea" dir="auto"/><blockquote id="d01929a7-84ef-4e10-a708-70c2135ad66d" class="" dir="auto">💡 <strong>Opportunity Brief</strong></blockquote><blockquote id="da99d794-e57f-436b-aad6-ca2357656163" class="" dir="auto"></blockquote><blockquote id="fc4c7594-f748-4591-8db0-420df7ee8cd8" class="" dir="auto">- <strong>What:</strong> Ensure the event creation notification tray item deep-links directly to the event RSVP page, so members can RSVP in a single tap.</blockquote><blockquote id="2ac36f55-4e49-4972-a7dd-aea4a364eb3e" class="" dir="auto">- <strong>Who it&#x27;s for:</strong> Community members on networks running live stream activations.</blockquote><blockquote id="bad3c5de-d24f-4804-9c99-883035d83782" class="" dir="auto">- <strong>Why it matters:</strong> The existing creation tray notification (&quot;You&#x27;ve been invited to an event&quot;) already deep-links to the <strong>event detail</strong> page, where the <strong>RSVP action is already visible</strong>. The remaining gap is improving the <em>information scent</em> and relevance of the tray item (richer details, correct context like livestream indicator) so members are more likely to tap and RSVP.</blockquote><blockquote id="a7d93b42-7295-4db4-9636-5f2f3c5e6cb3" class="" dir="auto">- <strong>Expected outcome:</strong> Higher tap-through and RSVP rates driven by richer event details in the tray item (while keeping the destination as the event detail page).</blockquote><hr id="fd4febda-c380-4960-b446-82db96d20f2f" dir="auto"/><h2 id="f2e48f95-4c63-4612-ae6e-415df16870d8" style="display:inline-block" dir="auto">📋 Release Note</h2><p id="279015e4-cf04-4dae-9545-65ee5609ae58" class="" dir="auto"><strong>Events: Notification Tray — Richer event details + one-tap to RSVP</strong></p><p id="83ee0a0a-61d3-4498-b43c-5ca9b3f61089" class="" dir="auto">Event creation notifications now show the event name, date, and start time so members know exactly what they&#x27;re being invited to before they tap. Tapping navigates directly to the event RSVP page.</p><hr id="5341a11c-08d0-4f51-af69-30786aa47de8" dir="auto"/><h2 id="f2bdfafb-5d25-4e22-8d50-6455573dd7a7" style="display:inline-block" dir="auto">💡 Idea</h2><p id="621c6987-f968-44e7-8cec-ce4cfe2de03f" class="" dir="auto">Update the <code>NotificationTrayItem</code> generated on event creation to:</p><ol type="1" id="6c43cb22-d73c-4b9f-b5f6-761229c1c058" class="numbered-list" start="1" dir="auto"><li><strong>Show richer content</strong> — replace the generic &quot;You&#x27;ve been invited to an event&quot; with the event name, date, start time, and community name</li></ol><ol type="1" id="731bb5ca-b2fb-406e-a20d-91d6f729d49c" class="numbered-list" start="2" dir="auto"><li><strong>Deep-link to RSVP</strong> — tapping navigates directly to the event RSVP page</li></ol><ol type="1" id="0e98dba4-36c6-4c07-997a-a9502982db5a" class="numbered-list" start="3" dir="auto"><li><strong>Add an event-type chip</strong> — show a pill chip indicating <strong>In-person</strong> or <strong>Virtual</strong> so members understand the event format at a glance</li></ol><ol type="1" id="d95613bf-59ae-4bca-aefc-f5b65e4fa25c" class="numbered-list" start="4" dir="auto"><li><strong>Do not group notifications</strong> — each event creation generates its own distinct tray item, even if multiple events come from the same community</li></ol><p id="e5bdd7c0-f0a2-4930-8c6c-dbfd1519cba6" class="" dir="auto">Also confirm and enforce:</p><ul id="42b13a69-79bc-4eb2-bb43-221a4cb2655c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Community membership scoping (members only, excluding banned)</li></ul><ul id="732f3b92-b551-4c4c-b37e-aeaad1de0deb" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Private community events not surfaced to non-members</li></ul><ul id="6c12e827-43be-468a-be90-22c1e3bd5682" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Graceful handling when the event is deleted before the notification is tapped</li></ul><p id="c7f8705d-b5fa-4bed-be48-90e0cff0a43c" class="" dir="auto"><strong>Recommended copy pattern</strong> (from competitor research + design):</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js" integrity="sha512-m3JYEI6gx5fh9jF10FjGoMzVKcV2N6nchcDcqPCdI1L3R2WQV7br2XVNR8iTLb2daOMRl3zldbcfT40xU2ntVw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="d2e61513-1653-40dd-8196-003c3e51066b" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">Primary line:   {{CommunityName}} has event {{EventName}}
+Secondary line: [EventType chip]  {{EventStartDate}} · {{EventStartTime}}</code></pre><p id="5b277164-3801-4072-9070-ddb5dc4c5d38" class="" dir="auto">Example: <code>&quot;Ulta Beauty Community has event Ulta Beauty World Masterclass 2026&quot;</code> / <code>[In-person]  10 Jul 2026 · 7:00 PM</code></p><p id="d465c7b1-52f5-40f0-a49a-c2f3bc3f94df" class="" dir="auto"><code>{{EventType}}</code> renders as a pill/chip label: <strong>In-person</strong> for in-person events, <strong>Virtual</strong> for virtual/livestream events.</p><p id="4c4f7f63-ea4b-4ff1-b173-b384c37506fe" class="" dir="auto"><code>{{EventStartDate}}</code> and <code>{{EventStartTime}}</code> refer to the scheduled start of the event (not current time).</p><hr id="93ea73b4-fc90-4dea-9c56-a1ad065cd1c0" dir="auto"/><h2 id="ef42734d-2b34-4173-b2ad-6ac007f0797f" style="display:inline-block" dir="auto">💭 Problem Definition</h2><h3 id="a18509e1-6418-439a-a4c3-d80198e6b0ba" style="display:inline-block" dir="auto">What problem are we solving?</h3><p id="4180ff3e-de1b-4833-a3d1-84058ef4c19a" class="" dir="auto">The event creation tray notification fires today and the tap-through lands on the event detail page, where the RSVP action is already visible. The remaining issue is that the tray item itself is too generic (limited details + unclear context), so members have lower confidence/intent to tap at the moment of interruption — reducing RSVP conversion.</p><h3 id="0bb36499-c274-4fb6-bd21-e815c622f10e" style="display:inline-block" dir="auto">In the absence of this fix, users are…</h3><p id="aea7b5ed-24e5-420f-983d-5de1732a3f1d" class="" dir="auto">Receiving the notification, tapping through to the event detail page, and either finding their way to the RSVP CTA (extra friction) or dropping off.</p><h3 id="3e10f2fc-0543-4898-8a8d-6d428be79e9c" style="display:inline-block" dir="auto">Desired outcome</h3><p id="142cf006-78ac-475e-aa03-f1de1d4b9f4f" class="" dir="auto">A tray item specific enough to drive confident taps and RSVPs: members see the community name, event name, date/time, and event type chip at a glance, and can RSVP immediately on the event detail page after tapping.</p><hr id="289c68fa-9201-4914-bf55-aea20b4a1b5f" dir="auto"/><h2 id="468243e4-df21-4989-8b4d-e4d456a8d399" style="display:inline-block" dir="auto">🔍 Competitor Research</h2><p id="8fdf3164-3440-4a7d-a1ed-2c1165bfcd6f" class="" dir="auto">Research across six platforms confirms that the current &quot;You&#x27;ve been invited to an event&quot; copy is below the baseline for this category. Every mature platform surfaces at minimum: <strong>event name, date, and start time</strong> in the creation notification. The table below maps the gap.</p><table id="b8888a84-b05c-4cea-92f0-133a73ca0a92" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="3f9f6447-7379-402a-b8cf-afb75868d0be" dir="ltr"><th id="FvE&gt;" class="simple-table-header-color simple-table-header">Detail</th><th id="w]|G" class="simple-table-header-color simple-table-header">Discord</th><th id="oGWz" class="simple-table-header-color simple-table-header">LinkedIn</th><th id="M`?=" class="simple-table-header-color simple-table-header">Meetup</th><th id="h&lt;XQ" class="simple-table-header-color simple-table-header">Facebook</th><th id="iZL`" class="simple-table-header-color simple-table-header">Mighty Networks</th><th id="Zutr" class="simple-table-header-color simple-table-header"><a href="http://Social.plus">Social.plus</a> today</th></tr></thead><tbody><tr id="00bf4572-78d3-4d17-8039-4022723be630" dir="ltr"><td id="FvE&gt;" class="">Event name</td><td id="w]|G" class="">✅</td><td id="oGWz" class="">✅</td><td id="M`?=" class="">✅</td><td id="h&lt;XQ" class="">✅</td><td id="iZL`" class="">✅</td><td id="Zutr" class="">❌</td></tr><tr id="cce18d3f-3e04-45d9-bcdf-395c653fdb6e" dir="ltr"><td id="FvE&gt;" class="">Date</td><td id="w]|G" class="">✅</td><td id="oGWz" class="">✅</td><td id="M`?=" class="">✅</td><td id="h&lt;XQ" class="">✅</td><td id="iZL`" class="">✅</td><td id="Zutr" class="">❌</td></tr><tr id="13b4814a-1264-4c4e-9121-42e9a363ac03" dir="ltr"><td id="FvE&gt;" class="">Start time</td><td id="w]|G" class="">✅</td><td id="oGWz" class="">✅</td><td id="M`?=" class="">✅</td><td id="h&lt;XQ" class="">✅</td><td id="iZL`" class="">✅</td><td id="Zutr" class="">❌</td></tr><tr id="e693c6b0-c9ab-46d8-8019-7b271bdb6d18" dir="ltr"><td id="FvE&gt;" class="">Host / organiser</td><td id="w]|G" class="">✅</td><td id="oGWz" class="">✅</td><td id="M`?=" class="">✅</td><td id="h&lt;XQ" class="">✅</td><td id="iZL`" class="">—</td><td id="Zutr" class="">❌</td></tr><tr id="a96369ae-1459-4ab3-accd-350d070fee8b" dir="ltr"><td id="FvE&gt;" class="">Community / group name</td><td id="w]|G" class="">—</td><td id="oGWz" class="">—</td><td id="M`?=" class="">✅</td><td id="h&lt;XQ" class="">✅</td><td id="iZL`" class="">✅</td><td id="Zutr" class="">❌</td></tr><tr id="ca2d3722-bfd8-41cf-9805-8b40201237e3" dir="ltr"><td id="FvE&gt;" class="">Event type (virtual / in-person)</td><td id="w]|G" class="">✅</td><td id="oGWz" class="">—</td><td id="M`?=" class="">—</td><td id="h&lt;XQ" class="">✅</td><td id="iZL`" class="">—</td><td id="Zutr" class="">❌</td></tr><tr id="b9529c91-b389-42a2-82cf-bfc3c34acd94" dir="ltr"><td id="FvE&gt;" class="">Social proof (who&#x27;s going)</td><td id="w]|G" class="">—</td><td id="oGWz" class="">✅</td><td id="M`?=" class="">—</td><td id="h&lt;XQ" class="">✅</td><td id="iZL`" class="">—</td><td id="Zutr" class="">❌</td></tr><tr id="e02dca88-7990-48e1-bf7d-7297288205ed" dir="ltr"><td id="FvE&gt;" class="">Thumbnail</td><td id="w]|G" class="">✅</td><td id="oGWz" class="">—</td><td id="M`?=" class="">✅</td><td id="h&lt;XQ" class="">✅</td><td id="iZL`" class="">—</td><td id="Zutr" class="">✅ (specified)</td></tr><tr id="69fb12c2-45d0-4fc9-99fb-755df996c977" dir="ltr"><td id="FvE&gt;" class="">Direct RSVP action in notification</td><td id="w]|G" class="">✅</td><td id="oGWz" class="">✅</td><td id="M`?=" class="">—</td><td id="h&lt;XQ" class="">—</td><td id="iZL`" class="">—</td><td id="Zutr" class="">❌</td></tr></tbody></table><h3 id="c54bdd29-8178-4035-aaec-bfcc9894c33f" style="display:inline-block" dir="auto">Key findings</h3><p id="2da4ac6c-b414-42d8-ba11-0e9b70750005" class="" dir="auto"><strong>Discord</strong> surfaces an event embed card on creation showing name, date/time, type, and location — with the RSVP button inline. It also uses a two-stage model: an awareness notification on creation, and a second notification when the event goes live (only to members who clicked &quot;Interested&quot;).</p><p id="574a8d44-394c-4b99-ab53-0e93a68d37aa" class="" dir="auto"><strong>LinkedIn</strong> is the most content-rich for reminder notifications: event name, date, time with timezone, and which connections are attending. Social proof (&quot;3 people you know are going&quot;) consistently outperforms date/time alone for RSVP conversion — but this is only viable for <strong>reminder</strong> notifications, not the creation one (RSVP count is always zero at creation).</p><p id="9f43a753-5bc6-4df1-9e16-3d3d5c7b6de5" class="" dir="auto"><strong>Meetup</strong> sends a creation notification with event name + group name immediately, then a full-detail reminder series at 7 days, 1 day, and a few hours before. Crucially, if the event time or location changes, the notification reflects the update — a useful pattern for live stream events where Room links may be finalised close to the date.</p><p id="72f96d45-d12f-46ac-8609-0d6483ae7e1e" class="" dir="auto"><strong>Facebook</strong> frames the creation notification as an actor-led sentence: <em>&quot;[Organiser] invited you to [Event Name] on [Date]&quot;</em> — naming the human behind the event, not just the fact of it.</p><h3 id="6839ae42-cdb2-40db-97a3-3a4f0a38f351" style="display:inline-block" dir="auto">UX principle (Smashing Magazine, Jul 2025)</h3><blockquote id="5ab0e32e-0a55-4cad-8c68-2f2513785875" class="" dir="auto"><em>&quot;If you&#x27;re going to interrupt a user, give them a way to act immediately. Use direct and actionable language — include the specific details that answer: what is happening, why it matters now, and what can I do.&quot;</em></blockquote><p id="aab51671-a7ca-43bc-9ad4-c6f43cd1c139" class="" dir="auto">Generic notifications get dismissed. Specific, time-anchored ones get tapped.</p><h3 id="56e5a024-7b83-4d5d-9b72-70c97304cd73" style="display:inline-block" dir="auto">What to hold for later</h3><p id="35dc15ae-2ea0-4df7-854e-9b14f4f84301" class="" dir="auto">Social proof (&quot;X people are going&quot;) is the highest-leverage differentiator — but requires RSVP count at notification-generation time. For the <strong>creation</strong> tray notification RSVP count will always be zero. Flag as a future enhancement for <strong>reminder</strong> notifications only.</p><hr id="d0aaeacd-494d-4b41-8fec-68972ff7ac66" dir="auto"/><h2 id="15c855eb-0d98-429b-913e-e4743084c9b0" style="display:inline-block" dir="auto">Entity Scope</h2><table id="bd48f68e-32a1-403c-b367-400b40d8f2cf" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="880e7727-bc77-47ad-b807-38315db1655a" dir="ltr"><th id="VzGP" class="simple-table-header-color simple-table-header">Entity</th><th id="fFGP" class="simple-table-header-color simple-table-header">What this feature does to it</th></tr></thead><tbody><tr id="3f708738-aca2-4196-b52d-2afbccd2408a" dir="ltr"><td id="VzGP" class="">NotificationTrayItem</td><td id="fFGP" class="">Update: deep-link destination set to event RSVP page</td></tr><tr id="be64a184-95a6-41a8-a218-2f8023c3b3ab" dir="ltr"><td id="VzGP" class="">Event</td><td id="fFGP" class="">Read — navigation target; handle isDeleted = true gracefully</td></tr><tr id="70a0b6e1-e447-41f6-b046-f91de67c4613" dir="ltr"><td id="VzGP" class="">RSVP</td><td id="fFGP" class="">Navigation landing surface</td></tr><tr id="3ca4044d-d0f9-495b-93cc-dbe231d1a367" dir="ltr"><td id="VzGP" class="">CommunityUser</td><td id="fFGP" class="">Read — membership eligibility (non-banned members only)</td></tr><tr id="21a54663-7205-4542-bd0f-6552fddbf459" dir="ltr"><td id="VzGP" class="">Community</td><td id="fFGP" class="">Read — privacy scoping (public vs private)</td></tr></tbody></table><hr id="b68b79bf-5eb6-4e72-b9e4-e3c807e00239" dir="auto"/><h2 id="510c829f-919e-4c0b-a2b5-5e78a7846044" style="display:inline-block" dir="auto">📝 User Stories</h2><hr id="8d856d1c-141d-4c00-ac5e-b30a945e4218" dir="auto"/><h3 id="ba888027-9b2b-4ef6-a108-bd568a395207" style="display:inline-block" dir="auto">UC1: Receive tray notification on event creation</h3><p id="d2a5d377-282c-4179-a0db-c60d9a90eda4" class="" dir="auto"><strong>User Story:</strong> As a community member, I want to receive a notification tray item when a new event is created in my community, so that I can find and RSVP to it in a single tap.</p><p id="c6a46648-36d5-4be4-9207-1fddea50cb3a" class="" dir="auto"><strong>Value / Rationale:</strong> Reduces the path from awareness → RSVP from multiple steps to one.</p><p id="45203604-e927-437d-8037-d04bfb912a3e" class="" dir="auto"><strong>Preconditions:</strong></p><ul id="bec5ccf3-f5a5-476a-94a5-797b6b328ef9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">An event has been created in a community on the network</li></ul><p id="19673bb8-5fda-4e90-b1f4-f3a30c5a0629" class="" dir="auto"><strong>Entry Point A:</strong> Event created in a community the user belongs to</p><p id="e6d3765d-c414-4e3e-bfed-d89d513d59d2" class="" dir="auto"><strong>Acceptance Criteria:</strong></p><pre id="2988c757-a822-4702-9b73-7f23200571f5" class="code code-wrap" data-notion-code-syntax="gherkin"><code class="language-gherkin" style="white-space:pre-wrap;word-break:break-all">Scenario: Tray item created for community members on event creation
+  Given a user is an active, non-banned member of a community
+  When a moderator creates an event in that community
+  Then the user receives a NotificationTrayItem
+  And the primary line reads &quot;{{CommunityName}} has event {{EventName}}&quot;
+  And the secondary line shows an event type chip followed by the event start date and start time
+  And the item displays the community avatar
+  And the item is marked as unseen
+
+Scenario: In-person event — event type chip
+  Given a moderator creates an IN-PERSON event
+  When the tray notification is generated
+  Then the secondary line shows an &quot;In-person&quot; chip followed by the event start date and start time
+
+Scenario: Virtual / livestream event — event type chip
+  Given a moderator creates a VIRTUAL event
+  When the tray notification is generated
+  Then the secondary line shows a &quot;Virtual&quot; chip followed by the event start date and start time
+
+Scenario: Public community event — notify entire network
+  Given an event is created in a PUBLIC community
+  When the tray notification fires
+  Then all active, non-banned users in the network receive the notification
+
+Scenario: Private community event — only notify community members
+  Given an event is created in a PRIVATE community
+  When the tray notification fires
+  Then only active, non-banned members of that community receive the notification
+</code></pre><hr id="6ad1cf65-f1e0-4eab-aa3f-0cba1c4e573c" dir="auto"/><p id="e0cbc976-0510-44cf-850e-57888438caf8" class="" dir="auto">##</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

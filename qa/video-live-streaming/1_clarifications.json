@@ -1,0 +1,78 @@
+{
+  "feature": "video-live-streaming",
+  "epic_key": "PDT-3418",
+  "generated_from": "phase-1.x analysis + Figma review (products/PDT-3418/design/)",
+  "instructions": "ตอบแต่ละคำถามด้านล่างใน field 'answer' — คำตอบที่บอก TBD หรือไม่แน่ใจ จะไม่ถือว่า resolved และ block pipeline ไว้ก่อน ถ้า defer ให้ PM/Design ระบุว่า defer ใคร",
+  "stories": [
+    {
+      "story_id": "uc1-tap-to-reveal-controls",
+      "jira_key": "PDT-3562",
+      "title": "UC1: Tap to Reveal Controls",
+      "clarifications": [
+        {
+          "id": "uc1-C1",
+          "source_type": "conflict",
+          "severity": "high",
+          "context": "PRD ระบุ auto-dismiss timeout '~1 second' แต่ comment ใน PRD บอก 'assume 3s' ซึ่งขัดแย้งกัน",
+          "question": "[CONFLICT] Auto-dismiss timeout สำหรับ controls overlay จริงๆ คือเท่าไหร่ — 1s หรือ 3s?",
+          "ask": "Engineering",
+          "answer": null,
+          "resolution": null
+        },
+        {
+          "id": "uc1-G1",
+          "source_type": "gap",
+          "severity": "medium",
+          "context": "Figma มีเพียง 'existing behavior' สำหรับ desktop (LS-desktop-01) ไม่มี 'new behavior' design — ไม่ชัดว่า desktop อยู่ใน scope ของ ticket นี้หรือไม่",
+          "question": "[GAP] Desktop behavior เปลี่ยนแปลงด้วยใน PDT-3418 หรือเป็น mobile-only?",
+          "ask": "PM",
+          "answer": null,
+          "resolution": null
+        },
+        {
+          "id": "uc1-A1",
+          "source_type": "ambiguity",
+          "severity": "low",
+          "context": "LS-mobile-02, LS-mobile-03, LS-mobile-05 มีหน้าตาเหมือนกันทุกประการใน exported PNG — ไม่ชัดว่า 'tab-media-control' กับ 'resume-to-live-edge' ต่างกันยังไง",
+          "question": "[AMBIGUITY] LS-mobile-02/03/05 มี state ต่างกันอย่างไร? มี annotation ใน Figma ที่ export ออกมาไม่เห็นไหม?",
+          "ask": "Design",
+          "answer": null,
+          "resolution": null
+        }
+      ]
+    },
+    {
+      "story_id": "uc2-live-stream-pause-state",
+      "jira_key": "PDT-3563",
+      "title": "UC2: Live Stream Pause State",
+      "clarifications": [
+        {
+          "id": "uc2-G1",
+          "source_type": "gap",
+          "severity": "high",
+          "context": "UC2 AC-01 ระบุว่าต้องมี 'visual indicator communicating the stream is paused and behind live edge' แต่ LS-mobile-04-paused.png แสดงแค่ play button (▶) โดยไม่มี badge หรือ banner ใดๆ — Figma ไม่ได้ design indicator นี้ไว้",
+          "question": "[GAP] Behind-live indicator หน้าตาเป็นอย่างไร? เป็น badge, banner, text overlay หรือ design อื่น? มี screen ใน Figma ที่แสดงสิ่งนี้ไหม?",
+          "ask": "PM / Design",
+          "answer": null,
+          "resolution": null
+        },
+        {
+          "id": "uc2-A1",
+          "source_type": "ambiguity",
+          "severity": "medium",
+          "context": "PRD comments, Jira AC-02 (PDT-3563), และ Figma ทั้งหมดไม่มี 'Return to Live' CTA ปรากฏ — ไม่ชัดว่า CTA นี้อยู่ใน scope ticket นี้หรือเป็น follow-on ticket",
+          "question": "[AMBIGUITY] 'Return to Live' CTA อยู่ใน scope ของ PDT-3418 หรือเป็น follow-on ticket แยก? ถ้า in-scope ต้องมี AC เพิ่มและ design ใหม่",
+          "ask": "PM",
+          "answer": null,
+          "resolution": null
+        }
+      ]
+    },
+    {
+      "story_id": "uc3-10s-skip",
+      "jira_key": "PDT-3564",
+      "title": "UC3: Nice to Have — 10-Second Skip",
+      "clarifications": []
+    }
+  ]
+}

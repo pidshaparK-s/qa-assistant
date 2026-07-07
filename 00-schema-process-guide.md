@@ -1,6 +1,8 @@
 # Schema Process Guide
 ## Complete Jira Story + User Flow JSON — เมื่อไหร่ใช้อะไร และต้องการ input อะไร
 
+> 📎 **เอกสารนี้ = schema reference** (Schema 1/2 fields + ID traceability). ส่วน **process/ orchestration** (steps · gates · ลำดับ layer) ดูที่ `process/README.md` และ `process/layer-{1,2,3}-*.md`
+
 ---
 
 ## ทำไมต้องมีสอง schema

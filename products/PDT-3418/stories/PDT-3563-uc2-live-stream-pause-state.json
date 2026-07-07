@@ -1,0 +1,141 @@
+{
+  "key": "PDT-3563",
+  "epic": "PDT-3418",
+  "summary": "UC2: Live Stream Pause State",
+  "type": "Story",
+  "status": "Backlog",
+  "priority": "Medium",
+  "url": "https://socialplus.atlassian.net/browse/PDT-3563",
+  "last_synced": "2026-07-06 (Jira updated 17:07 — AC rewritten by PM Ghita El Marzouki, comment 68271)",
+  "user_story": "As a community member watching a live stream, I want to know when I'm paused and behind the live edge, so that I understand my viewing context and can choose to resume or catch up.",
+  "user_story_note": "AC rewritten 2026-07-06: the 'behind the live edge' model was dropped from the ACs — resume now returns to the CURRENT LIVE MOMENT and chat is never paused. The user_story text above is the original from Jira and is now slightly stale vs the ACs (PM has not updated it).",
+  "preconditions": [
+    "User is watching a live stream with Room status: live"
+  ],
+  "entry_points": [
+    "A. User deliberately pauses the live stream via the central pause button"
+  ],
+  "platforms": {
+    "supported": ["UIKit iOS", "UIKit Android", "UIKit React Native", "UIKit Flutter", "WebUIKit"],
+    "not_supported": ["Desktop — no behaviour change; only a small UI design change (button size)"]
+  },
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01",
+      "group": "Pause indicator",
+      "scenario": "Pause live stream → pause indicator appears immediately; chat keeps running live",
+      "given": [
+        "The user pauses a live stream"
+      ],
+      "when": "The pause is applied",
+      "then": [
+        "A visual indicator is shown communicating the stream is paused",
+        "The indicator is visible without requiring an additional tap",
+        "The chat continues to receive and display new messages in real time — it is not paused"
+      ],
+      "clarifications_needed": [
+        {
+          "id": "OI-UC2-02",
+          "observation": "Earlier concern (Chayanit Q1, 2026-07-06): the 'LIVE' badge kept showing while paused/behind live, which could mislead viewers",
+          "consequence": "If the badge stays, viewers may not realise they are no longer at the current live moment",
+          "question": "While paused, should the 'LIVE' badge be hidden or changed?",
+          "ask": "PM / Design",
+          "status": "resolved",
+          "resolution": "Jira 2026-07-06 (Ghita, PM): updating the LIVE badge on pause is a SEPARATE enhancement, OUT OF SCOPE for this release. Keeping the current badge is acceptable for now."
+        },
+        {
+          "id": "OI-UC2-05",
+          "observation": "Earlier gap (Chayanit Q3, 2026-07-06): chat behaviour during pause was undefined; current behaviour differed by platform (Android desync on seek; iOS separate subscription)",
+          "consequence": "Chat state during pause could not be asserted consistently",
+          "question": "While a 'LIVE' stream is paused, should the chat stay current with the live moment?",
+          "ask": "PM",
+          "status": "resolved",
+          "resolution": "Jira 2026-07-06: AC-01/AC-02 now explicitly require chat to keep running live during pause and stay uninterrupted on resume. Prisa's platform table (comment 68264) confirms chat keeps running live on iOS/Android/web during pause. Resolved."
+        },
+        {
+          "id": "OI-UC2-06",
+          "observation": "Earlier conflict (Chayanit Q4, 2026-07-06): web-desktop 'tap anywhere to resume' conflicted with PDT-3562 (control-panel-only); mobile web could not pause live",
+          "consequence": "pause/resume interaction was inconsistent across platforms",
+          "question": "Keep web-desktop 'tap anywhere to resume' or adopt control-panel-only? Should mobile web gain pause?",
+          "ask": "PM / Design",
+          "status": "resolved",
+          "resolution": "Jira 2026-07-06 (Ghita): NO behaviour changes on Desktop (out of scope; only a small button-size design change). Desktop keeps current behaviour. Resolved."
+        },
+        {
+          "id": "OI-UC2-08",
+          "observation": "AC-01 now requires 'a visual indicator communicating the stream is paused' (the 'behind live edge' wording was removed). Figma LS-mobile-04-paused shows a central play (▶) button overlay and no separate badge/banner",
+          "consequence": "Unclear whether the pause indicator IS the central play-button overlay or a distinct element to be designed",
+          "question": "Confirm the pause indicator = the central play-button overlay (LS-mobile-04), or is a distinct indicator required?",
+          "ask": "Design",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "ac_id": "AC-02",
+      "group": "Pause indicator",
+      "scenario": "Resume from paused live stream → resumes from CURRENT LIVE MOMENT (not paused position); chat uninterrupted",
+      "given": [
+        "The user resumes from a paused live stream"
+      ],
+      "when": "The stream restarts",
+      "then": [
+        "The stream starts from the current live moment — not from the previous paused position",
+        "The pause indicator dismisses",
+        "The chat remains uninterrupted — no messages are missed or replayed"
+      ],
+      "clarifications_needed": [
+        {
+          "id": "OI-UC2-01",
+          "observation": "Earlier open item: is a 'return to live' CTA in scope (viewer stuck behind live edge)?",
+          "consequence": "If in scope, AC needed an extra CTA test + design",
+          "question": "Is a 'return to live' CTA in scope for PDT-3418, or a follow-on?",
+          "ask": "PM",
+          "status": "resolved",
+          "resolution": "Moot after AC-02 rewrite (Jira 2026-07-06): resume now returns to the current live moment, so there is no lingering 'behind live' state to return from. A return-to-live CTA is not needed for this release."
+        },
+        {
+          "id": "OI-UC2-03",
+          "observation": "Earlier (Prisa / iOS, 2026-07-06): rolling rewind buffer meant a long pause could not resume from the exact paused position",
+          "consequence": "The old AC-02 ('resume from paused position') did not hold once the pause exceeded the buffer",
+          "question": "What is the buffer duration and behaviour when exceeded?",
+          "ask": "Engineering / PM",
+          "status": "resolved",
+          "resolution": "Superseded by the AC-02 rewrite (Jira 2026-07-06): resume now returns to the current live moment (NOT the paused position), so the rewind-buffer-from-pause boundary no longer applies to this AC. See OI-UC2-07 for the resulting behaviour-change note."
+        },
+        {
+          "id": "OI-UC2-07",
+          "observation": "AC-02 (rewritten 2026-07-06) requires resume to return to the CURRENT LIVE MOMENT. But current behaviour on ALL platforms (Prisa's platform table, comment 68264) is resume-FROM-PAUSED-POSITION (iOS, Android, web-desktop all ✅)",
+          "consequence": "AC-02 is now a behaviour CHANGE from today's product, not a description of existing behaviour — dev must actively change resume on every supported platform, and QA must test the NEW behaviour (not the current one)",
+          "question": "Confirm resume-to-live-moment is the intended NEW behaviour on all supported platforms (replacing today's resume-from-pause)? Any platform exceptions or migration concerns?",
+          "ask": "Engineering / PM",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "ac_id": "AC-03",
+      "group": "Stream ends while viewer is paused",
+      "scenario": "Stream ends during pause → player moves to ended/recorded state, no frozen frame",
+      "given": [
+        "The user has paused a live stream"
+      ],
+      "when": "The Room transitions to ended or recorded during the pause",
+      "then": [
+        "The player moves to an appropriate ended or recorded state",
+        "The viewer is not left on a frozen frame with no feedback"
+      ],
+      "clarifications_needed": [
+        {
+          "id": "OI-UC2-04",
+          "observation": "Jira comments (Fidriyanto / Android and Prisa / iOS, 2026-07-06) confirm current behaviour: when the host ends the stream while the viewer is paused, the stream stops and the ended state is shown — the viewer is not left on a frozen frame",
+          "consequence": "AC-03 is validated against current platform behaviour on Android and iOS",
+          "question": "Confirm AC-03 matches current Android/iOS behaviour (stream ends → ended/recorded state shown during pause)",
+          "ask": "Engineering",
+          "status": "resolved",
+          "resolution": "Confirmed by current behaviour on Android and iOS (Jira 2026-07-06, incl. platform table 68264): host-ends-during-pause moves the player to the ended state, no frozen frame. AC-03 holds."
+        }
+      ]
+    }
+  ]
+}

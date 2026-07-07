@@ -24,26 +24,49 @@
 | **C** — User Flow JSON | `สร้าง flow JSON PDT-XXXX` | `output/PDT-XXXX-user-flow.json` |
 | **D** — Meeting Mode | `meeting mode` หรือ `โหมดประชุม` | ไม่มี file — conversational |
 
-ดู workflow steps ละเอียดได้ที่ `skills/run-analysis.md` (A/B/C) และ `skills/meeting-mode.md` (D)
+ดู workflow steps ละเอียดได้ที่ skill `run-analysis` (A/B/C) และ `meeting-mode` (D)
 
 ---
 
 ## Skills index
 
-| Skill file | Workflow | หน้าที่ |
+Skills เป็น Claude skills อยู่ที่ `.claude/skills/<name>/SKILL.md` — Claude Code โหลดให้อัตโนมัติ เรียกด้วย `/<name>` หรือปล่อยให้ match จาก description เอง
+
+| Skill | Workflow | หน้าที่ |
 |---|---|---|
-| `run-analysis.md` | A, B, C | orchestrator หลัก + gates |
-| `meeting-mode.md` | D | real-time PM interrogation |
-| `phase-1.1-requirement-interrogation.md` | A, D | Who/What/Why, Relationship Map, State Machine |
-| `phase-1.2-three-layer-analysis.md` | A, D | Business Goal / User Need / System Behavior |
-| `phase-1.3-happy-path-ac-enrichment.md` | A, B | Given gap, Then gap, enriched AC |
-| `phase-1.4-edge-and-error-ac.md` | A, B | 4 mental models, edge/error AC |
-| `phase-2.1-user-story-invest.md` | B | INVEST check, when to split |
-| `phase-2.2-acceptance-criteria.md` | B | 4 scenario types, AC structure |
-| `phase-2.3-business-rule-extraction.md` | B, C | 4 BR types, consolidate across UC |
-| `phase-2.4-elicitation-techniques.md` | D | 5 techniques, PM challenge patterns |
-| `phase-2.5-prioritization.md` | B | MoSCoW + QA effort scoring |
-| `phase-2.6-scope-and-gap-analysis.md` | B | scope, assumptions, open gaps |
+| `run-analysis` | A, B, C | orchestrator หลัก + gates |
+| `meeting-mode` | D | real-time PM interrogation |
+| `phase-1-1-requirement-interrogation` | A, D | Who/What/Why, Relationship Map, State Machine |
+| `phase-1-2-three-layer-analysis` | A, D | Business Goal / User Need / System Behavior |
+| `phase-1-3-happy-path-ac-enrichment` | A, B | Given gap, Then gap, enriched AC |
+| `phase-1-4-edge-and-error-ac` | A, B | 4 mental models, edge/error AC |
+| `phase-2-1-user-story-invest` | B | INVEST check, when to split |
+| `phase-2-2-acceptance-criteria` | B | 4 scenario types, AC structure |
+| `phase-2-3-business-rule-extraction` | B, C | 4 BR types, consolidate across UC |
+| `phase-2-4-elicitation-techniques` | D | 5 techniques, PM challenge patterns |
+| `phase-2-5-prioritization` | B | MoSCoW + QA effort scoring |
+| `phase-2-6-scope-and-gap-analysis` | B | scope, assumptions, open gaps |
+| `phase-3-1-automation-judgment` | — | 6 criteria: automate vs manual, suggested tools |
+| `phase-3-2-br-to-test-conditions` | — | multi-source (PRD+Jira+Figma) → BR → Test Conditions |
+| `qa-clarifications-review` | — | review answered clarifications → resolved/followup/ac-change/still-ambiguous |
+| `qa-story-diff` | — | Jira story เปลี่ยน → diff กับ stored JSON → แนะนำ re-run phases |
+
+---
+
+## Clarification Gate (ใหม่)
+
+หลังทำ phase 1.x analysis และรวบรวม open items แล้ว ให้สร้าง `qa/<feature>/1_clarifications.json`
+แล้ว run `qa-clarifications-review` **ก่อน** ไปทำ BR Extraction หรือ Test Conditions
+
+```
+Phase 1.x analysis (PRD + Jira + Figma)
+    ↓ open items → qa/<feature>/1_clarifications.json
+    ↓ ตอบคำถาม
+    ↓ qa-clarifications-review  ← gate: ต้องไม่มี still-ambiguous medium+
+    ↓ phase-3-2 BR Extraction / Test Conditions
+```
+
+Output: `qa/<feature>/1_clarifications.json` (+ resolution blocks), `qa/<feature>/FOLLOWUPS.md`
 
 ---
 
@@ -127,8 +150,6 @@ Match schema ใน `02-user-flow.json` ทุก field
 
 ## Bootstrap command
 
-เปิด Claude Code แล้วพิมพ์:
-
-```
-Read CLAUDE.md and all files in skills/, then you're ready to help analyze Jira stories
-```
+Skills โหลดอัตโนมัติจาก `.claude/skills/` — ไม่ต้อง read เองแล้ว
+เปิด Claude Code แล้วเรียก workflow ได้เลย เช่น `/run-analysis`, `/meeting-mode`
+หรือพิมพ์ trigger เช่น `วิเคราะห์ PDT-XXXX` แล้ว Claude จะ match skill ให้เอง

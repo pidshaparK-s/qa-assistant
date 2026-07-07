@@ -1,0 +1,99 @@
+{
+  "key": "PDT-3675",
+  "epic": "PDT-3421",
+  "summary": "UC1: Receive tray notification on event creation",
+  "type": "Story",
+  "status": "Backlog",
+  "priority": "Medium",
+  "url": "https://socialplus.atlassian.net/browse/PDT-3675",
+  "user_story": "As a community member, I want to receive a notification tray item when a new event is created in my community, so that I can find and RSVP to it in a single tap.",
+  "value_rationale": "Reduces the path from awareness → RSVP from multiple steps to one.",
+  "preconditions": [
+    "An event has been created in a community on the network"
+  ],
+  "entry_points": [
+    "A. Event created in a community the user belongs to"
+  ],
+  "push_message": {
+    "primary_line": "{{CommunityName}} has event {{EventName}}",
+    "secondary_line": "[EventType chip]  {{EventStartDate}} · {{EventStartTime}}",
+    "example": "\"Ulta Beauty Community has event Ulta Beauty World Masterclass 2026\" / [In-person]  10 Jul 2026 · 7:00 PM",
+    "notes": [
+      "{{EventType}} renders as a pill/chip label: In-person for in-person events, Virtual for virtual/livestream events",
+      "{{EventStartDate}} and {{EventStartTime}} refer to the scheduled start of the event (not current time)",
+      "Tapping deep-links to the event RSVP page (destination = event detail page where RSVP action is visible)",
+      "Each event creation generates its own distinct tray item — notifications are NOT grouped"
+    ]
+  },
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01",
+      "group": "Tray item creation & content",
+      "scenario": "Tray item created for community members on event creation",
+      "given": [
+        "A user is an active, non-banned member of a community"
+      ],
+      "when": "A moderator creates an event in that community",
+      "then": [
+        "The user receives a NotificationTrayItem",
+        "The primary line reads \"{{CommunityName}} has event {{EventName}}\"",
+        "The secondary line shows an event type chip followed by the event start date and start time",
+        "The item displays the community avatar",
+        "The item is marked as unseen"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-02",
+      "group": "Event type chip",
+      "scenario": "In-person event — event type chip",
+      "given": [
+        "A moderator creates an IN-PERSON event"
+      ],
+      "when": "The tray notification is generated",
+      "then": [
+        "The secondary line shows an \"In-person\" chip followed by the event start date and start time"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-03",
+      "group": "Event type chip",
+      "scenario": "Virtual / livestream event — event type chip",
+      "given": [
+        "A moderator creates a VIRTUAL event"
+      ],
+      "when": "The tray notification is generated",
+      "then": [
+        "The secondary line shows a \"Virtual\" chip followed by the event start date and start time"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-04",
+      "group": "Audience & privacy scoping",
+      "scenario": "Public community event — notify entire network",
+      "given": [
+        "An event is created in a PUBLIC community"
+      ],
+      "when": "The tray notification fires",
+      "then": [
+        "All active, non-banned users in the network receive the notification"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-05",
+      "group": "Audience & privacy scoping",
+      "scenario": "Private community event — only notify community members",
+      "given": [
+        "An event is created in a PRIVATE community"
+      ],
+      "when": "The tray notification fires",
+      "then": [
+        "Only active, non-banned members of that community receive the notification"
+      ],
+      "clarifications_needed": []
+    }
+  ]
+}

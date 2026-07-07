@@ -1,0 +1,66 @@
+
+อธิบาย Phase 3 Quality Gate ให้ละเอียดขึ้น
+
+สอนวิธีสร้าง Definition of Ready (DoR) สําหรับ feature ก่อน implement
+
+สอนวิธีสร้าง Test condition จาก Acceptance Criteria
+
+สอนวิธีเขียน Feature Readiness Report ก่อน signoff
+
+
+อธิบาย Phase 4 Mastery & Real workflow ให้ละเอียดขึ้น
+
+สอนวิธีดําเนินการ Backlog refinement ในฐานะ BA+QA
+
+สอนวิธีทํา Defect report ที่มีคุณภาพสูง
+
+สอนวิธีทํา Release sign-off document และ go/no-go decision
+
+
+
+{
+        "id": "AC-13",
+        "scenario": "Concurrent different actions — first wins",
+        "type": "edge_case",
+        "source": "QA",
+        "given": [
+          "admin A and admin B both view the same pending post",
+          "admin A taps Approve",
+          "admin B taps Decline simultaneously"
+        ],
+        "when": "admin A's request reaches server first",
+        "then": [
+          "admin A sees success toast",
+          "admin B sees error message",
+          "post is approved — admin A's action preserved"
+        ],
+        "business_rules": ["BR-04"],
+        "state_changes": [
+          { "object": "post", "from": "pending", "to": "approved" },
+          { "object": "admin_a_feedback", "value": "success_toast" },
+          { "object": "admin_b_feedback", "value": "error_message" }
+        ],
+        "test_hints": {
+          "unit": "mock concurrent requests → assert idempotency, first write wins",
+          "scenario": "two sessions, race condition simulation, verify single state outcome",
+          "e2e": "open two browser sessions, coordinate simultaneous actions, verify toast states"
+        }
+      }
+
+
+{
+  "id": "flow id",
+  "name": "flow name",
+  "entry_from": "flow ID ที่ใช้ launch flow นี้ (ถ้า flow นี้ถูกเรียกจาก flow อื่น)"
+  "summary": "",
+  "steps": [
+    { "actor": "ใครทำ action นี้", "action": "อธิบาย action (readable prose)" },
+    { "actor": "ใครทำ action นี้", "action": "อธิบาย action (readable prose)", "story": "story ID ที่ step นี้ trigger " },
+    EXAMPLE
+    { "actor": "app", "action": "displays the Content page with the NavBar avatar at top-right" },
+    { "actor": "admin", "action": "taps the avatar/profile icon in the NavBar", "story": "access-account-menu" },
+    { "actor": "app", "action": "opens the account menu popover showing admin name, email, role badge, and current application name" },
+    { "actor": "admin", "action": "chooses to tap 'Go to Applications' or 'Sign out'" },
+    { "actor": "app", "action": "navigates to the Applications page (Go to Applications) or clears session and redirects to login (Sign out)" }
+  ]
+}
