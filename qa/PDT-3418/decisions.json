@@ -1,0 +1,92 @@
+{
+  "_schema": "decision-ledger-v1",
+  "_purpose": "Every JUDGMENT call in Layer 2 (things a human or source-code — not a mechanical rule — decided): story splits, priority, scope in/out, how a PENDING item was resolved, spec-vs-code policy. Converts silent judgment into an owned, queryable record.",
+  "_why": "A mechanical run can assemble schema + traceability on its own (G1/G2 gate that). It must NOT silently pick a side on a judgment call. This ledger is the HALT-and-flag surface: an autonomous run stops on any open human decision instead of guessing.",
+
+  "ids": { "epic_id": "PDT-3418" },
+
+  "type_vocab": {
+    "split": "re-decompose a story into QA-internal units",
+    "priority": "MoSCoW / sprint ordering",
+    "scope": "in/out boundary decision",
+    "pending-resolution": "how a PENDING clarification was answered (PM round OR source code)",
+    "spec-correction": "spec deliberately differs from the Jira/PM wording",
+    "policy": "cross-cutting rule for how the spec itself is authored"
+  },
+  "status_vocab": {
+    "confirmed": "a human locked it (user/PM) — settled",
+    "resolved-by-code": "answered from source code with a file ref — settled (no PM round needed)",
+    "proposed": "QA proposed it; awaiting human confirmation — OPEN",
+    "pending-human": "explicitly needs a named owner to sign off — OPEN"
+  },
+  "_halt_rule": "AUTONOMOUS L2 must HALT if any decision of type {split, priority, scope, policy} has status {proposed, pending-human}, OR any {pending-resolution} lacks a source_ref. {confirmed} and {resolved-by-code with source_ref} are settled and do not block. Enforced by checks/decision_ledger.py --autonomous.",
+
+  "decisions": [
+    {
+      "id": "DEC-01", "type": "split", "unit": "PDT-3562/UC1", "date": "2026-07-09",
+      "decision": "Split Jira story PDT-3562 (UC1) into QA-INTERNAL units UC1a (video / recorded player component) and UC1b ('Live' player component). Jira stays ONE ticket — no new key.",
+      "rationale": "Separate player components on every platform (GAP-04); web-Live reveal-controls overlay is net-new. Resolves INVEST 'small'. AC-01/02/03/05 behaviour is identical across the two — the split is about a distinct component to build + test per platform, not different behaviour.",
+      "decided_by": "user", "status": "confirmed",
+      "source_ref": "qa/PDT-3418/PDT-3418-story-shape.md; GAP-04", "related": ["UC1a", "UC1b"]
+    },
+    {
+      "id": "DEC-02", "type": "spec-correction", "unit": "UC3", "date": "2026-07-09",
+      "decision": "Boundary skip-back that lands on 0:00 PRESERVES the prior play/pause state (playing → continues from 0:00; paused → stays paused). It is NOT a forced pause.",
+      "rationale": "Jira AC-03 reads 'the video is in a paused state' which is wrong — play/pause changes only via explicit user action (BR-10). A clamp is position-only.",
+      "decided_by": "user", "status": "confirmed",
+      "source_ref": "AMB-11; user 2026-07-09", "related": ["UC3-AC-03", "BR-05", "BR-10", "FU-5"],
+      "_note": "Jira wording not yet aligned → FU-5 (PM to update Jira). Our spec is the source of truth for testing."
+    },
+    {
+      "id": "DEC-03", "type": "spec-correction", "unit": "epic", "date": "2026-07-09",
+      "decision": "Seek / ±10s skip controls exist ONLY on video / recorded LS — never on an active Live stream. Consolidated into BR-01.",
+      "rationale": "PM ACs silently contradicted each other (pause overlay 'shows seek' vs 'Live has no seek'). One BR removes the contradiction at the source.",
+      "decided_by": "user", "status": "confirmed",
+      "source_ref": "CONF-08", "related": ["BR-01", "UC1a-AC-04", "UC1b-AC-04", "UC2-AC-01", "UC3-AC-06"]
+    },
+    {
+      "id": "DEC-04", "type": "pending-resolution", "unit": "UC1", "date": "2026-07-09",
+      "decision": "App backgrounded during an active overlay/timer → adopt the OS default (Option 1): iOS pauses on background and does not auto-resume; the wall-clock 1s timer has already elapsed, so a playing overlay is dismissed and a paused overlay persists. No stale mid-countdown overlay.",
+      "rationale": "Answered from source rather than a PM round — spec = build-as-is.",
+      "decided_by": "code", "status": "resolved-by-code",
+      "source_ref": "qa/PDT-3418/platform-behavior-notes.md; ac-authoring.md AC-11", "related": ["UC1a-AC-11", "UC1b-AC-10", "BR-10"]
+    },
+    {
+      "id": "DEC-05", "type": "pending-resolution", "unit": "UC2", "date": "2026-07-09",
+      "decision": "Network drops while paused → 'Reconnecting' auto-retry indicator (no manual button); stream stays paused through the drop→recover cycle (no auto-resume); on user resume → snap to live edge (seekToLiveEdge()+play()).",
+      "rationale": "Answered from iOS + web source instead of a PM round.",
+      "decided_by": "code", "status": "resolved-by-code",
+      "source_ref": "LiveStreamViewerView.swift:244-272, LiveStreamPlayerView.swift:27-50; platform-behavior-notes.md", "related": ["UC2-AC-08", "BR-10", "BR-15"]
+    },
+    {
+      "id": "DEC-06", "type": "priority", "unit": "epic", "date": "2026-07-09",
+      "decision": "MoSCoW: UC1a = Must, UC1b = Must, UC2 = Should, UC3 = Could (sprint order 1,1,2,3).",
+      "rationale": "QA-effort + dependency ordering; UC3 is the real descope lever ('nice-to-have' ≠ cheap, still scored High).",
+      "decided_by": "QA", "status": "pending-human",
+      "source_ref": "qa/PDT-3418/PDT-3418-prioritization.md", "related": ["scope-boundary sign-off"],
+      "_open": "PM must confirm MoSCoW before sprint commit — this is part of the team sign-off package."
+    },
+    {
+      "id": "DEC-07", "type": "scope", "unit": "UC2", "date": "2026-07-09",
+      "decision": "The LIVE badge / viewer-count live-update stays as-is — updating it is OUT of scope for this feature (a separate enhancement).",
+      "rationale": "PM ACs scope the pause/resume behaviour only; badge/count is orthogonal.",
+      "decided_by": "QA", "status": "proposed",
+      "source_ref": "qa/PDT-3418/PDT-3418-scope-boundary.md; UC2-AC-01/AC-04", "related": ["UC2-AC-01", "UC2-AC-04"],
+      "_open": "Part of the scope-boundary doc awaiting PM + Dev lead + QA sign-off."
+    },
+    {
+      "id": "DEC-08", "type": "scope", "unit": "UC2", "date": "2026-07-09",
+      "decision": "web-mobile is excluded from Live pause/resume scope (pause of an active Live stream is not offered on mobile web).",
+      "rationale": "Standing platform boundary (BR-02), not a new decision — documented in the platform table, not awaiting sign-off.",
+      "decided_by": "PM", "status": "confirmed",
+      "source_ref": "platform table 68264; scope-boundary.md", "related": ["UC2-AC-05", "BR-02"]
+    },
+    {
+      "id": "DEC-09", "type": "policy", "unit": "epic", "date": "2026-07-09",
+      "decision": "The spec is authored to the TARGET behaviour. Where current code differs — web overlay 3s→1s (BR-03), web rapid-tap debounce→accumulate (BR-08), web-Live reveal overlay net-new — those are DEV DELTAS / build tasks, not spec gaps. The spec does NOT bend to match incomplete code.",
+      "rationale": "User confirmed code-incomplete does not block the process; surfacing deltas is a WIN of authoring spec before code.",
+      "decided_by": "user", "status": "confirmed",
+      "source_ref": "user 2026-07-09; business-rules.md code-delta section", "related": ["BR-03", "BR-08", "FU-1"]
+    }
+  ]
+}

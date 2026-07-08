@@ -141,6 +141,8 @@ Match schema ใน `02-user-flow.json` ทุก field
 ## หมายเหตุสำคัญ
 
 - **PM's AC คือ source of truth** — ห้ามเขียนทับ ให้ต่อยอดเป็น QA-enriched version แยก
+- **Write boundary (R1)** — Layer 2 เขียนเฉพาะ `qa/` + `output/` เท่านั้น · `products/<epic>/stories/*.json` เป็น **READ-ONLY input** (เขียนได้เฉพาะตอน L1 STEP 0 Jira-sync แล้ว re-bless ด้วย `checks/ac_coverage.py --update`) — บังคับกฎ source-of-truth ข้างบน การเผลอเขียนทับ PM AC จะโผล่เป็น **STALE** ใน `ac_coverage.py`
+- **Judgment → ledger (R2)** — ทุก judgment call ใน L2 (split / priority / scope / วิธีตอบ PENDING) ต้อง log ลง `qa/<epic>/decisions.json` · autonomous run หยุด (HALT) ถ้ามี open human decision — `checks/decision_ledger.py --autonomous`
 - **Clarification questions** ต้องมี 3 ส่วนเสมอ: observation → consequence → question
 - **Edge case** ทุกข้อต้องระบุ state หลัง action ไม่ใช่แค่ UI ที่เห็น
 - **Error case** ทุกข้อต้องตอบ: trigger + user เห็นอะไร + **state หลัง error** (ส่วนที่ขาดมากที่สุด)
