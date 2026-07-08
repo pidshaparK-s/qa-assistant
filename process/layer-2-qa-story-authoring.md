@@ -1,6 +1,7 @@
-# Layer 2 — QA Story Authoring (Process) · 🚧 DRAFT
+# Layer 2 — QA Story Authoring (Process)
 
-> **DRAFT เพื่อเทียบภาพรวม** — ยังไม่ strip orchestration ออกจาก phase-2-* skills (จะทำรอบถัดไปเมื่อ process นี้ final)
+> **สถานะ:** gate suite ทำงานจริงแล้ว — **G1** `schema1_integrity` · **G2** `schema_trace` · **R2** `decision_ledger` (committed, ผ่านจริงกับ PDT-3418 — 40 ACs / 32 BRs) + **R1** write-boundary rule
+> **เหลือก่อน final / autonomous-ready:** **S1** strip orchestration ออกจาก `phase-2-*` skills · **G4** wire readiness (บังคับ gate เขียวก่อนเริ่มอัตโนมัติ)
 
 **เป้าหมาย:** เปลี่ยน requirement ที่เข้าใจ+enrich แล้ว (จาก L1) เป็น story artifact ที่ final สำหรับ sprint
 **Input:** output ของ Layer 1 (enriched AC + Clarification Register clean)
@@ -51,7 +52,7 @@
   - `python3 checks/decision_ledger.py qa/<epic> [--autonomous]` — [R2] judgment ทุกตัว log + settled · autonomous: open human decision = HALT
   - exit 1 = หยุด แก้ก่อน ห้าม commit. G1/G2 codify script ที่จับ error จริงตอนรัน PDT-3418 (dangling BR, orphan BR, phantom ref); R2 กัน silent judgment ตอน autonomous
 
-⛒ **Gates:** Readiness (STEP0) · AC Manifest (list ac_id + type + source PM/QA, `Total N (PM:X, QA:Y)`) · Completion (ทุก ac_id มี type/source/br_ids/given/then) · **Schema-1 Integrity [G1]** · **Schema-1↔2 Traceability [G2]** · Dropout
+⛒ **Gates:** Readiness (STEP0) · AC Manifest (list ac_id + type + source PM/QA, `Total N (PM:X, QA:Y)`) · Completion (ทุก ac_id มี type/source/br_ids/given/then) · **Schema-1 Integrity [G1]** · **Schema-1↔2 Traceability [G2]** · **Decision Ledger [R2]** · Dropout
 
 **artifacts consumed จาก L1:** Enriched AC · State Machine · Relationship Map · User Need · Clarification Register
 **Exit → Layer 3** เมื่อ Schema 1 สมบูรณ์ (ทุก ac_id/br_id assigned, ไม่มี PENDING)
