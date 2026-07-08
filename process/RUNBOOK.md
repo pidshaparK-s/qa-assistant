@@ -7,26 +7,48 @@
 
 ---
 
-## 🗺️ Layer 1 — BA Requirement Analysis (flowchart)
+## 🗺️ Layer 1 — BA Requirement Analysis (flow)
 
-```mermaid
-flowchart TD
-    T["พิมพ์: วิเคราะห์ PDT-XXXX"] --> S0["STEP 0 · Ingest &amp; Manifest<br/>ดึง Jira + อ่าน PRD/Figma<br/>sync stories/*.json + build AC Manifest"]
-    S0 --> G0{"Readiness<br/>PRD/Figma/AC ครบ?"}
-    G0 -- ไม่ครบ --> STOP["หยุด แจ้งสิ่งที่ขาด"]
-    G0 -- ครบ --> F{"Freshness<br/>AC เปลี่ยนจากเดิม?"}
-    F -- changed/added --> RE["re-analyze เฉพาะที่เปลี่ยน"] --> S1
-    F -- unchanged --> S1["STEP 1 · Understand<br/>skill 1-1 (Relationship Map · State Machine · Why)<br/>+ 1-2 (3-Layer) → gap เข้า Register"]
-    S1 --> S2["STEP 2 · Specify (loop ต่อ ac_id)<br/>skill 1-3 (happy) → 1-4 (edge/error)<br/>→ Enriched AC + clarifications"]
-    S2 --> G2{"Coverage+Content gate<br/>ac_coverage.py"}
-    G2 -- STALE/ขาด --> S2
-    G2 -- pass --> S3["STEP 3 · Consolidate &amp; Route<br/>Register: group by category + ask→PM/Design/Eng<br/>+ readiness verdict"]
-    S3 --> G3{"Completion<br/>N/N ครบ?"}
-    G3 -- มี ✗ --> S2
-    G3 -- ✓ --> H{"Register เหลือ<br/>still-ambiguous medium+?"}
-    H -- ยังเหลือ --> ASK["ส่งคำถามให้ PM/Design/Eng ทาง Jira<br/>→ เติม answer ใน clarifications.json"]
-    ASK --> REV["qa-clarifications-review<br/>(จำแนก resolved/followup/ac-change/still-ambiguous)"] --> G2
-    H -- เคลียร์ --> L2["✅ → Layer 2 (Story Authoring)"]
+```
+▶ พิมพ์  "วิเคราะห์ PDT-XXXX"
+    │
+    ▼
+▶ STEP 0 · Ingest & Manifest
+    ดึง Jira + อ่าน PRD/Figma · sync products/<epic>/stories/*.json · build AC Manifest
+    │
+    ├─◇ Readiness — PRD / Figma / AC ครบ?      ── ไม่ครบ ──►  ⛔ หยุด แจ้งสิ่งที่ขาด
+    │
+    ├─◇ Freshness — AC เปลี่ยนจากเดิม?          ── changed/added ──►  re-analyze เฉพาะที่เปลี่ยน
+    │                                           (unchanged → ไปต่อ)
+    ▼
+▶ STEP 1 · Understand        (skill 1-1 + 1-2)
+    Relationship Map · State Machine · Why · 3-Layer   →   gap questions เข้า Clarification Register
+    │
+    ▼
+▶ STEP 2 · Specify — loop ต่อ ac_id        (skill 1-3 → 1-4)
+    enrich happy path → edge/error (4 mental models)   →   Enriched AC + clarifications
+    │
+    ▼
+◇ GATE — Coverage + Content        รัน:  python3 checks/ac_coverage.py qa/PDT-XXXX
+    │         └─ STALE / ac_id ขาด ──►  กลับ STEP 2
+    ▼ (pass)
+▶ STEP 3 · Consolidate & Route
+    Register: group by Conflict/Unclear/Ambiguous + tag ask→PM/Design/Eng + readiness verdict
+    │
+    ▼
+◇ GATE — Completion  N/N ครบ?      ── มี ✗ ──►  กลับ STEP 2
+    │
+    ▼ (✓)
+◇ Register เหลือ still-ambiguous ระดับ medium+ ?
+    │
+    ├─ ยังเหลือ ──►  ส่งคำถามให้ PM/Design/Eng ทาง Jira (อ้าง id)
+    │                  └─►  เติม answer ใน  qa/<epic>/clarifications.json
+    │                        └─►  qa-clarifications-review  (resolved / followup / ac-change / still-ambiguous)
+    │                              └─►  กลับไป GATE Coverage+Content
+    │
+    └─ เคลียร์ ──►  ✅  ไป Layer 2 (Story Authoring)
+
+  สัญลักษณ์:  ▶ step   ◇ gate/decision   ──►  ไปต่อ/ย้อนกลับ   ⛔ หยุด
 ```
 
 ---

@@ -2,11 +2,22 @@
   "feature": "video-live-streaming",
   "epic_key": "PDT-3418",
   "generated": "2026-07-07",
+  "reviewed": "2026-07-08",
+  "reviewed_by": "qa-clarifications-review — after syncing stories to Jira state of 2026-07-08 (UC1 14:27, UC2 14:31, UC3 07-07 16:44)",
   "generated_from": "qa/PDT-3418/PDT-3418-clarifications-for-pm-design.md — 17 open items (after 2026-07-06 Jira update: UC2 rewritten, 7 items resolved)",
-  "instructions": "PM/Design/Eng ตอบใน Jira โดยอ้าง id (เช่น 'CONF-07: ...'). เอาคำตอบมาเติม field 'answer' ต่อข้อ. field 'resolution'/'status' เว้นไว้ให้ qa-clarifications-review จำแนก (resolved / followup / ac-change / still-ambiguous). answer ที่บอก TBD/ไม่แน่ใจ ไม่ถือว่า resolved.",
+  "instructions": "PM/Design/Eng ตอบใน Jira โดยอ้าง id. คำตอบเติมใน field 'answer'. field 'resolution' + top-level 'status' เขียนโดย qa-clarifications-review (resolved / followup / ac-change / still-ambiguous). 'answer' ถูก preserve verbatim ห้ามเขียนทับ.",
   "status_values": ["open", "resolved", "followup", "ac-change", "still-ambiguous"],
-  "gate": "ก่อนเข้า Layer 2 (QA Story Authoring): ต้องไม่เหลือ status='still-ambiguous' ที่ severity medium+",
-  "open_count": 17,
+  "gate": "ก่อนเข้า Layer 2 (QA Story Authoring): ต้องไม่เหลือ status='still-ambiguous' หรือ 'open' ที่ severity medium+",
+  "review_summary": {
+    "reviewed": 19,
+    "resolved": 12,
+    "ac_change": 5,
+    "followup": 2,
+    "still_ambiguous": 0,
+    "newly_surfaced_open": 0,
+    "blocking_for_layer_2": [],
+    "note": "All 19 items resolved or non-blocking followups; no still-ambiguous, no open medium+. CONF-08 (seek-on-live) and AMB-11 (skip-back-to-0:00 preserves state) resolved 2026-07-08 by QA-lead decision. TWO gates still stand before Layer 2: (1) re-run Layer 1 STEP 2 — every *-analysis.md is STALE after the AC sync; (2) FU-5 — our story JSONs intentionally DIVERGE from Jira (seek removed from live overlay; AC-03 preserve-state), so PM must update the Jira AC text or the next sync re-introduces the conflicts."
+  },
   "stories": [
     {
       "story_id": "uc1-tap-to-reveal-controls",
@@ -24,8 +35,14 @@
           "consequence": "Docs out of sync — anyone reading the PRD assumes 3s; test expectations diverge.",
           "question": "Confirm 1 second is final, and update the PRD to remove the 'assume 3s' comment?",
           "answer": "Confirm 1 second is final",
-          "resolution": null,
-          "status": "open"
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "1 second confirmed final by PM and matches Jira AC-03. Only residue is a stale PRD comment — a low doc-hygiene cleanup, not a behaviour question.",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": "FU-1"
+          }
         },
         {
           "id": "GAP-02",
@@ -38,8 +55,14 @@
           "consequence": "If the overlay disappears immediately, the user must tap again to reach play (extra step); two devs may implement it differently.",
           "question": "When playback is paused, does the controls overlay stay visible? Does the 1s auto-dismiss timer keep running or stop while paused?",
           "answer": "The controls overlay stay visible 1s auto-dismiss",
-          "resolution": null,
-          "status": "open"
+          "status": "ac-change",
+          "resolution": {
+            "status": "ac-change",
+            "rationale": "The terse answer alone was ambiguous, but Jira ground truth resolves it: PM expanded AC-04 (2026-07-08) + comment 68362. Confirmed behaviour — WHILE PLAYING: the pause icon auto-dismisses after 1s (AC-03). WHILE PAUSED: the play icon and seek indicators REMAIN visible (no auto-dismiss) and dismiss only when the user taps outside the button; the video stays paused. Synced into AC-04 then[].",
+            "verified_refs": [],
+            "ac_change_ref": "products/PDT-3418/stories/PDT-3562-uc1-tap-to-reveal-controls.json (AC-04)",
+            "followup_ref": null
+          }
         },
         {
           "id": "GAP-03",
@@ -51,9 +74,15 @@
           "observation": "AC-03 auto-dismisses after 'no further action for 1s'; it doesn't say whether interacting with a control (volume, scrubber) resets the timer.",
           "consequence": "If the timer doesn't reset, the overlay may vanish while the user is still using the controls.",
           "question": "Should the 1s auto-dismiss timer reset when the user interacts with an element in the overlay?",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "Web developer: '1s auto-dismiss timer counting is including the control volume + scrubber so when user make changes on that all control will not disappear yet.', mobile developer: '1s auto-dismiss timer should reset on every user interaction with the media control'",
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "All platforms agree: interacting with a control holds/restarts the countdown so controls do not disappear mid-interaction (web 68297, iOS 68302 'agree', Android 68318 'reset on every interaction'). Effective, testable rule: the 1s idle countdown restarts after each control interaction. Recommend PM fold this into AC-03 text (not yet written into the Jira AC).",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": null
+          }
         },
         {
           "id": "GAP-04",
@@ -65,9 +94,15 @@
           "observation": "On web, video + recorded live stream use the same component, but 'Live' live stream uses a different component. The AC bundles 'a video or live stream' in every criterion.",
           "consequence": "Tap-to-reveal verified on video/recorded LS does not automatically cover 'Live' LS (different render path) — the core fix may not take effect on Live.",
           "question": "Confirm tap-to-reveal must work identically across video / recorded LS / 'Live' LS? If so, Live must be implemented + tested separately.",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "On web video player for  video / recorded LS  and  ‘Live' LS are using different player component it’s good to test separate (1) video / recorded LS (2) Live LS. os also separate component on livestream and video player. So that would be good to test both. Its also a different component on Android, so need to test both",
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "Confirmed on all three platforms: 'Live' LS uses a separate component from video/recorded LS on web (68297), iOS (68302) and Android (68318). Tap-to-reveal must be implemented and tested as two paths — (1) video + recorded LS, (2) 'Live' LS — per platform. Ambiguity closed; a test-coverage expansion, not an open question.",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": null
+          }
         },
         {
           "id": "AMB-03",
@@ -80,8 +115,14 @@
           "consequence": "If double-tap must still be supported, many more test cases + disambiguation from the single-tap-to-reveal gesture.",
           "question": "Has the double-tap gesture been descoped (central button being the only method)?",
           "answer": "double-tap gesture been descoped",
-          "resolution": null,
-          "status": "open"
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "Double-tap gesture descoped — pause is via the central button only. Directly answers the question; no double-tap test cases needed.",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": null
+          }
         },
         {
           "id": "AMB-06",
@@ -94,8 +135,34 @@
           "consequence": "A tap near the button edge resolves as button/surface non-deterministically → pause vs dismiss becomes ambiguous.",
           "question": "What is the central pause button's hit-target size / spec?",
           "answer": "I think it same size, refer from figma",
-          "resolution": null,
-          "status": "open"
+          "status": "followup",
+          "resolution": {
+            "status": "followup",
+            "rationale": "'I think it same size, refer from figma' is not a concrete hit-target spec (no dimension/dp value, and 'refer from figma' defers rather than answers). Low severity so it does not block, but the exact tap-target size is still needed from Design to test the pause-vs-dismiss edge reliably.",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": "FU-2"
+          }
+        },
+        {
+          "id": "CONF-08",
+          "source_type": "conflict",
+          "severity": "medium",
+          "ask": "PM / Design",
+          "ac": "AC-04 (UC1) + AC-01 (UC2)",
+          "source": "NEWLY SURFACED on 2026-07-08 sync — UC1 AC-04 / UC2 AC-01 vs UC3 AC-06",
+          "observation": "PM expanded UC1 AC-04 and UC2 AC-01 so the dismissable pause overlay explicitly includes 'back and forward seeking' controls — but UC1 AC-04 and UC2 AC-01 both apply to a LIVE stream, and UC3 AC-06 says seek/skip buttons are NOT shown on a live stream. UC3 (10s skip) is also a nice-to-have that may be descoped.",
+          "consequence": "It is contradictory whether a LIVE pause overlay shows back/forward seek controls; QA cannot assert the live pause overlay contents. If UC3 is descoped, the seek controls may not exist at all.",
+          "question": "On a LIVE stream pause overlay (UC1 AC-04 / UC2 AC-01), should back/forward seeking controls be shown? If UC3 (10s skip) is descoped, are they present at all? (Likely the seek wording was copied from the video overlay.)",
+          "answer": "Back & forward seeking controls are in VIDEO and RECORDED live stream. The LIVE pause overlay has NO seek buttons. (Decision from QA lead, 2026-07-08.)",
+          "status": "ac-change",
+          "resolution": {
+            "status": "ac-change",
+            "rationale": "Seek (back/forward 10s) controls exist on VIDEO and RECORDED live stream only; a 'Live' stream pause overlay has NO seek controls — consistent with UC3 AC-06. The contradictory 'back and forward seeking' wording in UC1 AC-04 and UC2 AC-01 (both cover live) was a copy from the video overlay. Corrected in both story JSONs. The Jira AC text still carries the old wording → PM must update Jira (FU-5) or the next sync re-introduces the conflict.",
+            "verified_refs": [],
+            "ac_change_ref": "products/PDT-3418/stories/PDT-3562-uc1-tap-to-reveal-controls.json (AC-04); products/PDT-3418/stories/PDT-3563-uc2-live-stream-pause-state.json (AC-01)",
+            "followup_ref": "FU-5"
+          }
         }
       ]
     },
@@ -114,9 +181,15 @@
           "observation": "The new AC-02 requires resume to go to the current live moment. But current behavior on all platforms (iOS, Android, web-desktop) is resume-from-paused-position.",
           "consequence": "AC-02 is a behavior CHANGE from today's product, not a spec of what exists — dev must implement it anew on every platform, and QA must test the new behavior (not the current one).",
           "question": "Confirm resume-to-live-moment is the intended new behavior on all supported platforms (replacing today's resume-from-pause)? Any platform exceptions or migration concerns?",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "PM: 'On resume, the stream starts from the current live moment, not the previous paused position'. iOS developer: 'Confirmed — iOS can jump to the live moment on resume. It lands very close to live but slightly behind (a few seconds of recent footage), due to normal live-stream buffering. Expected behavior, same on all platforms.', Android developer: 'Same with iOS. Due to normal live-stream buffering, it can land very close to live but this is expected.', ",
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "Confirmed as the intended NEW behaviour on all platforms (PM 68319; iOS 68306; Android 68316). IMPORTANT test tolerance: resume lands very close to live but a few seconds behind due to normal live buffering — that is expected, not a defect (do not assert exact-live). This is a behaviour change vs the current product, so it must be implemented and tested anew on every platform.",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": null
+          }
         },
         {
           "id": "GAP-05",
@@ -128,9 +201,15 @@
           "observation": "No AC covers tapping pause at the exact instant the host ends the stream (race condition).",
           "consequence": "The player may land in an inconsistent state (paused+indicator mixed with the ended state) → broken/stuck UI.",
           "question": "If pause and stream-end happen simultaneously, which state should win — ended/recorded, or paused?",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "PM: 'Ended state  always takes priority over paused state even when both occur simultaneously', Developers: 'On iOS, ended/recorded wins.'",
+          "status": "ac-change",
+          "resolution": {
+            "status": "ac-change",
+            "rationale": "Ended/recorded ALWAYS wins over paused, even simultaneously (PM 68319; iOS 68306; Android 68316). PM encoded this directly into Jira AC-03 ('the ended or recorded state always takes priority over the paused state'); synced into AC-03 then[1].",
+            "verified_refs": [],
+            "ac_change_ref": "products/PDT-3418/stories/PDT-3563-uc2-live-stream-pause-state.json (AC-03)",
+            "followup_ref": null
+          }
         },
         {
           "id": "GAP-06",
@@ -142,9 +221,15 @@
           "observation": "AC-03 moves the player to an ended/recorded state, but doesn't cover the case where the stream ended but the recording is still processing.",
           "consequence": "The viewer may see a frozen frame or an error while waiting for the recording.",
           "question": "If the stream ends while paused but the recording isn't ready yet, should an intermediate 'processing' state be shown?",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "Developer: 'no frozen frame, When the stream ends while the viewer is paused, the player shows the Livestream ended'",
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "No separate 'processing' state and no frozen frame — the player shows 'Livestream ended' (iOS 68306; Android 68316 confirms same as the non-paused case). The recording-not-ready worry is moot: it lands on the ended state regardless.",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": null
+          }
         },
         {
           "id": "AMB-07",
@@ -156,9 +241,19 @@
           "observation": "The 3 screens (control-appears, tab-media-control, resume-to-live-edge) look identical in the PNG export.",
           "consequence": "Annotations/interactions may have been lost in export → QA misreads the flow.",
           "question": "How do LS-mobile-02/03/05 differ in state? Please share the Figma link or annotated frames.",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "control-appears is shown when user tap anywhere 1 time but the LS still play. tab-media-control is show when hand that human touch on the screen - it's no meaning. resume-to-live-edge is show when the user touch play button and it change state from pause to play.",
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "Verified against the PNGs: LS-mobile-02/03/05 all show the PLAYING state (central ❚❚ pause button, LIVE badge) and are visually identical; only LS-mobile-04 (paused) differs, showing the central ▶ play button. The answer is correct — the three frames differ by user action/semantics (tap-once / touch / resume-to-play), not by pixels. QA note: these three cannot be told apart by screenshot; distinguish by the triggering action, not the image.",
+            "verified_refs": [
+              "products/PDT-3418/design/LS-mobile-02-control-appears.png",
+              "products/PDT-3418/design/LS-mobile-03-tab-media-control.png",
+              "products/PDT-3418/design/LS-mobile-05-resume-to-live-edge.png"
+            ],
+            "ac_change_ref": null,
+            "followup_ref": null
+          }
         },
         {
           "id": "AMB-09",
@@ -170,9 +265,17 @@
           "observation": "The new AC-01 requires 'a visual indicator communicating the stream is paused' (dropped 'behind live edge'). Figma LS-mobile-04 shows a central play (▶) button and no separate badge.",
           "consequence": "Unclear whether the pause indicator IS the central play-button overlay or a distinct element to design (lower risk than before, since ▶ conveys 'paused').",
           "question": "Confirm the pause indicator = the central play-button overlay (LS-mobile-04), or is a distinct element required?",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "Confirmed the pause indicator = the central play-button overlay",
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "Confirmed the pause indicator = the central play-button (▶) overlay; no distinct badge/banner. Verified against LS-mobile-04-paused.png (central ▶, no separate indicator). Design also shared the Figma frame in comment 68364.",
+            "verified_refs": [
+              "products/PDT-3418/design/LS-mobile-04-paused.png"
+            ],
+            "ac_change_ref": null,
+            "followup_ref": null
+          }
         },
         {
           "id": "AMB-10",
@@ -184,9 +287,15 @@
           "observation": "The new ACs dropped the 'behind live edge' concept (just pause + resume-to-live), but the Jira user_story still reads 'know when I'm paused and behind the live edge'.",
           "consequence": "Docs inconsistent — anyone reading the user_story will misread the intent vs the ACs.",
           "question": "Update UC2's user_story to match the new ACs (pause + resume-to-live, drop 'behind live edge')?",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "User story updated, removed 'behind live edge' wording to better reflect the actual behaviour",
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "PM updated the Jira user_story (68319) — now 'pause and resume the stream ... always rejoin at what is happening live', no 'behind live edge'. Verified against the live Jira description and synced into our UC2 JSON user_story (the stale user_story_note is cleared).",
+            "verified_refs": [],
+            "ac_change_ref": "products/PDT-3418/stories/PDT-3563-uc2-live-stream-pause-state.json (user_story)",
+            "followup_ref": null
+          }
         }
       ]
     },
@@ -205,9 +314,15 @@
           "observation": "AC-01/02 skip ±10s per tap but don't specify behavior when the user taps rapidly (e.g. skip-back 3 times quickly).",
           "consequence": "The final position is unpredictable (−30s or −10s?) → non-deterministic test results.",
           "question": "Should rapid repeated skip taps accumulate (3 taps = −30s) or be debounced to a single −10s?",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "PM: 'We will keep the existing behaviour where rapid taps accumulate and each tap adds ±10s to the seek position, but the icon will always show +10 or -10 regardless of how many times you tap', Developers: 'Rapid taps accumulate — each tap adds another ±10s to the seek.'",
+          "status": "ac-change",
+          "resolution": {
+            "status": "ac-change",
+            "rationale": "ACCUMULATE decided: each tap adds ±10s; the icon always shows +10/-10 (accumulated-total UI is a future enhancement). PM added a new 'Rapid repeated taps (MVP)' group to Jira; synced as AC-07 (accumulate) + AC-08 (boundary mid-burst). WATCH: web's current behaviour was debounce-to-single (Chayanit 68304) — web must CHANGE to accumulate to meet the AC (dev + QA note).",
+            "verified_refs": [],
+            "ac_change_ref": "products/PDT-3418/stories/PDT-3564-uc3-10s-skip-nice-to-have.json (AC-07, AC-08)",
+            "followup_ref": null
+          }
         },
         {
           "id": "GAP-08",
@@ -219,9 +334,15 @@
           "observation": "No behavior is specified for tapping skip while the video is buffering.",
           "consequence": "May stick on loading or land at the wrong position.",
           "question": "Should skip while buffering queue until the buffer is ready, or seek-and-rebuffer at the target position?",
-          "answer": null,
-          "resolution": null,
-          "status": "open"
+          "answer": "mobile developer: 'Seek-and-rebuffer at the target position', Web developer: 'On web it’s showing ‘Reconnecting’ text UI when loading stream data and allow user to scroll to renew a position of video.'",
+          "status": "followup",
+          "resolution": {
+            "status": "followup",
+            "rationale": "Mobile is clear: seek-and-rebuffer at the target position. Web's answer describes a 'Reconnecting' loading UI + manual scrub, but does not crisply state what the +10/-10 skip button does mid-buffer on web. Low severity (nice-to-have) so non-blocking, but web skip-during-buffer behaviour needs one crisp confirmation for test design.",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": "FU-3"
+          }
         },
         {
           "id": "AMB-04",
@@ -234,8 +355,14 @@
           "consequence": "Affects sprint planning + QA effort — without a decision, the team may invest design/dev/test effort on something that gets cut.",
           "question": "Is UC3 (10s skip) in this release, or descoped to a follow-on?",
           "answer": "scope of release",
-          "resolution": null,
-          "status": "open"
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "UC3 is IN SCOPE for this release ('scope of release'). It keeps the nice-to-have flag (could still be descoped if the timeline slips), but QA should plan to cover it now. Reflected in the UC3 JSON 'note'.",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": null
+          }
         },
         {
           "id": "AMB-05",
@@ -248,8 +375,14 @@
           "consequence": "No direct conflict (native control != in-app button), but without a scope statement, someone may think seeking on live is fully blocked.",
           "question": "Confirm AC-06 covers only the in-app overlay buttons? Is native OS media-control scrubbing on live (Android) an acceptable/intended behavior?",
           "answer": "AC-06 covers only the in-app overlay buttons. The native OS media-control scrubbing on live (Android) is NOT acceptable, it's bug.",
-          "resolution": null,
-          "status": "open"
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "AC-06 scope is answered: it governs ONLY the in-app overlay buttons. Android native OS media-control scrubbing on a live stream is NOT acceptable — declared a bug. The AC scope is unambiguous now; the bug is a separate defect to file (FU-4), not an AC gap.",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": "FU-4"
+          }
         },
         {
           "id": "AMB-08",
@@ -262,8 +395,34 @@
           "consequence": "Off-by-one — if the position is exactly 10s from the start, should skip-back go to 0:00 or stay at 10s?",
           "question": "When the position is exactly 10 seconds from the start/end, should skip clamp (0:00 / final frame) or skip normally?",
           "answer": "if the position is exactly 10s from the start, should skip-back go to 0:00. if the position is exactly 10s from the end, should skip to final frame",
-          "resolution": null,
-          "status": "open"
+          "status": "resolved",
+          "resolution": {
+            "status": "resolved",
+            "rationale": "Exact-10 resolved: at exactly 10s from start → skip-back to 0:00; at exactly 10s from end → skip-forward to final frame. (These coincide with a normal ±10s skip, so boundary and normal paths agree at the exact-10 value — no off-by-one.)",
+            "verified_refs": [],
+            "ac_change_ref": null,
+            "followup_ref": null
+          }
+        },
+        {
+          "id": "AMB-11",
+          "source_type": "ambiguity",
+          "severity": "low",
+          "ask": "PM",
+          "ac": "AC-03",
+          "source": "NEWLY SURFACED on 2026-07-08 sync — AC-03 vs AC-01",
+          "observation": "AC-03 (updated 2026-07-07) now says a boundary skip-back to 0:00 leaves the video in a PAUSED state, whereas a normal skip-back (AC-01) continues playback uninterrupted.",
+          "consequence": "Asymmetry: hitting the start boundary pauses, but a normal skip does not — may be an intended 'reached the start' behaviour or a copy of the end-of-video pause.",
+          "question": "Is pausing at 0:00 after a boundary skip-back intended, or should playback continue like AC-01? (AC-04 pausing at the final frame is expected; AC-03 pausing at 0:00 is the surprising one.)",
+          "answer": "Preserve the prior state on a skip-back that hits 0:00: if state=paused → stay paused; if state=playing → keep playing (continue from 0:00). Do not force a pause at the start boundary. (Decision from QA lead, 2026-07-08.)",
+          "status": "ac-change",
+          "resolution": {
+            "status": "ac-change",
+            "rationale": "Skip-back clamping to 0:00 must PRESERVE the prior playback state (playing→continue from 0:00; paused→stay paused), not force a pause — this makes AC-03 consistent with AC-01 (playing skip continues) and AC-05 (paused skip stays paused). Fixed UC3 AC-03 then[1]. The END boundary (AC-04) keeps 'end state (paused at final frame)' because reaching the final frame naturally ends playback (no content ahead) — so the asymmetry is now intentional and explained. Jira AC-03 still says 'paused state' → PM to align Jira (FU-5).",
+            "verified_refs": [],
+            "ac_change_ref": "products/PDT-3418/stories/PDT-3564-uc3-10s-skip-nice-to-have.json (AC-03; AC-04 reworded for clarity)",
+            "followup_ref": "FU-5"
+          }
         }
       ]
     }

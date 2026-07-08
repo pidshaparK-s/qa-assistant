@@ -6,7 +6,7 @@
   "status": "Backlog",
   "priority": "Medium",
   "label": "nice-to-have",
-  "note": "Can be descoped if it impacts delivery timeline",
+  "note": "Nice-to-have. PM confirmed IN SCOPE for this release (ledger AMB-04, 2026-07). Retains the nice-to-have flag — could still be descoped if it impacts the delivery timeline.",
   "url": "https://socialplus.atlassian.net/browse/PDT-3564",
   "user_story": "As a community member watching a video, I want to skip backward or forward 10 seconds so that I can quickly rewatch or jump ahead without scrubbing.",
   "preconditions": [
@@ -17,7 +17,7 @@
     "A. User taps the player surface to reveal the controls overlay",
     "B. Controls overlay is already visible"
   ],
-  "last_synced": "2026-07-06 (Jira updated 17:03 — precondition now includes recorded livestream; Platforms section added)",
+  "last_synced": "2026-07-08 (Jira updated 2026-07-07 16:44 — NEW group 'Rapid repeated taps (MVP)': AC-07 accumulate + AC-08 boundary-mid-burst; AC-03/AC-04 now end in a paused state; scope confirmed in-release)",
   "platforms": {
     "supported": ["UIKit iOS", "UIKit Android", "UIKit React Native", "UIKit Flutter", "WebUIKit"],
     "not_supported": ["Desktop — no behaviour change; only a small UI design change (button size)"]
@@ -35,7 +35,26 @@
         "Playback jumps back 10 seconds from the current position",
         "Playback continues without interruption"
       ],
-      "clarifications_needed": []
+      "clarifications_needed": [
+        {
+          "id": "OI-UC3-07",
+          "observation": "AC-01/02 skip ±10s per tap but did not specify behaviour when the user taps rapidly (e.g. skip-back 3× quickly)",
+          "consequence": "The final position was unpredictable (−30s or −10s?) → non-deterministic test results",
+          "question": "Should rapid repeated skip taps accumulate (3 taps = ±30s) or be debounced to a single ±10s?",
+          "ask": "PM / Engineering",
+          "status": "resolved",
+          "resolution": "ACCUMULATE — each tap adds ±10s (PM 68330; iOS Prisa 68329). Icon always shows +10/-10 (accumulated total UI is a future enhancement). Now encoded as AC-07/AC-08. NOTE: web current behaviour was debounce-to-single (Chayanit 68304); web must CHANGE to accumulate to meet the AC. See ledger GAP-07."
+        },
+        {
+          "id": "OI-UC3-08",
+          "observation": "No behaviour was specified for tapping skip while the video is buffering",
+          "consequence": "May stick on loading or land at the wrong position",
+          "question": "Should skip while buffering queue until the buffer is ready, or seek-and-rebuffer at the target position?",
+          "ask": "Engineering",
+          "status": "followup",
+          "resolution": "Mobile: seek-and-rebuffer at the target position (Prisa 68329) — clear. Web: shows a 'Reconnecting' UI while loading and lets the user scrub to renew position (Chayanit 68304) — does not crisply state what the +10/-10 button does mid-buffer. Low severity, non-blocking. Web skip-during-buffer behaviour to confirm — FOLLOWUPS FU-3. See ledger GAP-08."
+        }
+      ]
     },
     {
       "ac_id": "AC-02",
@@ -52,30 +71,77 @@
       "clarifications_needed": []
     },
     {
+      "ac_id": "AC-07",
+      "group": "Rapid repeated taps (MVP)",
+      "scenario": "Rapid repeated skip taps → each tap adds ±10s (accumulate); icon still shows ±10",
+      "given": [
+        "The controls overlay is visible"
+      ],
+      "when": "The user taps a skip button multiple times quickly",
+      "then": [
+        "Each tap adds 10 seconds to the total (e.g. video at 1:00, tapping skip forward 3 times quickly → moves to 1:30)",
+        "The skip icon does not update to reflect the accumulated total — it always shows +10 or -10"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-08",
+      "group": "Rapid repeated taps (MVP)",
+      "scenario": "Rapid skip taps near start/end → each tap still obeys the boundary rules mid-burst",
+      "given": [
+        "The user taps a skip button multiple times quickly near the start or end of the video"
+      ],
+      "when": "A tap would move playback past 0:00 or past the final frame",
+      "then": [
+        "That tap follows the boundary rules (AC-03 / AC-04) — it does not go to a negative position or loop, even mid-burst"
+      ],
+      "clarifications_needed": []
+    },
+    {
       "ac_id": "AC-03",
       "group": "Boundary behaviour",
-      "scenario": "Skip back at <10s from start → jumps to 0:00, no negative position",
+      "scenario": "Skip back at <10s from start → jumps to 0:00, ends in paused state",
       "given": [
         "The user taps skip back",
         "The current position is less than 10 seconds into the video"
       ],
       "when": "The action is applied",
       "then": [
-        "Playback jumps to 0:00 — it does not go to a negative position"
+        "Playback jumps to 0:00 — it does not go to a negative position",
+        "The prior playback state is preserved — if the video was playing it continues from 0:00; if it was paused it stays paused (a boundary skip-back does NOT force a pause)"
       ],
-      "clarifications_needed": []
+      "clarifications_needed": [
+        {
+          "id": "OI-UC3-11",
+          "observation": "AC-03 (as updated 2026-07-07) said skip-back to the 0:00 boundary leaves the video PAUSED, whereas normal skip-back (AC-01) continues playback",
+          "consequence": "Asymmetry: hitting the start boundary paused, but a normal skip did not",
+          "question": "Is pausing at 0:00 after a boundary skip-back intended, or should playback continue like AC-01?",
+          "ask": "PM",
+          "status": "resolved",
+          "resolution": "Decision 2026-07-08: PRESERVE prior state at the 0:00 boundary — playing→continue from 0:00, paused→stay paused (no forced pause). Consistent with AC-01 (playing skip continues) and AC-05 (paused skip stays paused). AC-03 then[1] corrected. AC-04 (final-frame) keeps the end/paused state because reaching the end naturally stops playback — the asymmetry is now intentional. Jira AC-03 still says 'paused state' → PM to align Jira (FU-5). See ledger AMB-11."
+        },
+        {
+          "id": "OI-UC3-09",
+          "observation": "AC-03 covers 'less than 10 seconds' and AC-04 'within 10 seconds' — the exact-10-seconds value was not stated",
+          "consequence": "Off-by-one: at exactly 10s from start/end, should skip clamp or skip normally?",
+          "question": "When the position is exactly 10 seconds from the start/end, clamp (0:00 / final frame) or skip normally?",
+          "ask": "Engineering",
+          "status": "resolved",
+          "resolution": "At exactly 10s from start → skip-back goes to 0:00; at exactly 10s from end → skip-forward goes to the final frame (ledger AMB-08). (Both coincide with a normal ±10s skip, so the boundary and normal paths agree at the exact-10 value.)"
+        }
+      ]
     },
     {
       "ac_id": "AC-04",
       "group": "Boundary behaviour",
-      "scenario": "Skip forward at <10s from end → jumps to final frame, enters end state",
+      "scenario": "Skip forward at <10s from end → jumps to final frame, ends in paused state",
       "given": [
         "The user taps skip forward",
         "The current position is within 10 seconds of the video end"
       ],
       "when": "The action is applied",
       "then": [
-        "Playback jumps to the final frame and enters the end state",
+        "Playback jumps to the final frame and enters the end state (paused at the final frame — there is no content past the end to continue into)",
         "It does not loop or error"
       ],
       "clarifications_needed": []
@@ -107,7 +173,17 @@
       "then": [
         "The skip back and skip forward buttons are not shown — seeking is not applicable on a live stream"
       ],
-      "clarifications_needed": []
+      "clarifications_needed": [
+        {
+          "id": "OI-UC3-05",
+          "observation": "AC-06 hides in-app skip buttons on live. But Android can fast-forward/rewind a live stream via the OS-native media control (iOS/web cannot) — platform table 68264",
+          "consequence": "Without a scope statement, someone may think seeking on live is fully blocked, or may treat the native-control seek as acceptable",
+          "question": "Does AC-06 cover only the in-app overlay buttons? Is native OS media-control scrubbing on live (Android) acceptable?",
+          "ask": "PM",
+          "status": "resolved",
+          "resolution": "AC-06 covers ONLY the in-app overlay buttons. Native OS media-control scrubbing on a live stream (Android) is NOT acceptable — it is a bug to be filed separately (ledger AMB-05, FOLLOWUPS FU-4)."
+        }
+      ]
     }
   ]
 }

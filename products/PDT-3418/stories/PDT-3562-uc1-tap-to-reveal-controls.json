@@ -14,7 +14,7 @@
     "A. Video or live stream is playing inline in any feed (global, user, community, event discussion)",
     "B. Video or live stream is open in a media gallery or fullscreen view"
   ],
-  "last_synced": "2026-07-06 (Jira updated 17:02 — Platforms section added to description)",
+  "last_synced": "2026-07-08 (Jira updated 14:27 — AC-04 pause overlay expanded: play icon persists + back/forward seek indicators remain + tap-outside dismisses overlay (video stays paused); AC-02/AC-03 given now scoped 'while playing'; AC-05 narrowed to video, livestream resume → UC2; PM comment 68362: playing = 1s auto-dismiss, paused = play icon persists until tap-outside)",
   "platforms": {
     "supported": ["UIKit iOS", "UIKit Android", "UIKit React Native", "UIKit Flutter", "WebUIKit"],
     "not_supported": ["Desktop — no behaviour change; only a small UI design change (button size), per PM Ghita 2026-07-06"]
@@ -32,15 +32,28 @@
         "The controls overlay appears",
         "Playback continues uninterrupted — the video or stream does not pause"
       ],
+      "platform_variance": {
+        "note": "FIRST-TAP behaviour differs by form factor — test-case expected MUST be split per platform. This AC-01 (tap = reveal controls, playback continues) describes the MOBILE behaviour only.",
+        "mobile": {
+          "applies_to": ["UIKit iOS", "UIKit Android", "web on mobile"],
+          "expected": "Tap anywhere on the player reveals the controls overlay; playback CONTINUES — the first tap does NOT pause. Pausing is a 2nd action (tap the central pause button). = AC-01 as written."
+        },
+        "desktop": {
+          "applies_to": ["Web UIKit (desktop)"],
+          "expected": "1-Step Pause — the first tap toggles pause/play directly (tap = pause). Tap-to-reveal is NOT applied on desktop (consistent with platforms.not_supported: 'Desktop — no behaviour change'). AC-01 'controls appear + playback continues' does NOT hold here.",
+          "source": "PM/QA note 2026-07-08 + platform table (comment 68264: web-desktop pause ✅, web-mobile ❌)"
+        },
+        "test_design": "Do NOT write one cross-platform expected for tap-interaction ACs. Cascades to how the paused state is entered (UC1 AC-04, UC2 pause entry). See qa/PDT-3418/platform-behavior-notes.md."
+      },
       "clarifications_needed": [
         {
           "id": "OI-UC1-02",
-          "observation": "Jira comment thread (Pidshapar → Chayanit, 2026-07-03): on web, the recorded-live-stream viewer and the video viewer use the same video component, but a 'Live' live stream uses a different component",
-          "consequence": "Tap-to-reveal behaviour verified on 'video' does not automatically cover a 'Live' live stream; the two render paths differ and must be tested separately",
-          "question": "Confirm tap-to-reveal AC applies identically across (a) video, (b) recorded live stream, (c) 'Live' live stream, given 'Live' uses a different component",
+          "observation": "Web, iOS and Android all use a DIFFERENT player component for a 'Live' live stream than for a video / recorded live stream (Jira comments Chayanit 68297, Prisa 68302, Fidriyanto 68318, 2026-07-07)",
+          "consequence": "Tap-to-reveal verified on video/recorded LS does NOT automatically cover 'Live' LS — separate render path on every platform; must be implemented and tested separately",
+          "question": "Confirm tap-to-reveal must work identically across video / recorded LS / 'Live' LS?",
           "ask": "Engineering",
           "status": "resolved",
-          "resolution": "Jira 2026-07-03: recorded live stream + video share one component (web) — treat 'video' AC coverage as including recorded live streams; 'Live' live stream differs and must be covered separately."
+          "resolution": "Confirmed all platforms (Jira 2026-07-07): 'Live' LS uses a separate component from video/recorded LS on web, iOS and Android. Test as two paths — (1) video + recorded LS, (2) 'Live' LS — on each platform. See ledger GAP-04."
         }
       ]
     },
@@ -49,21 +62,33 @@
       "group": "Tap behaviour",
       "scenario": "Tap outside pause button while overlay visible → overlay dismisses, playback continues",
       "given": [
-        "The controls overlay is visible"
+        "The controls overlay is visible",
+        "The video or live stream is playing"
       ],
       "when": "The user taps anywhere on the player surface outside the central pause/play button",
       "then": [
         "The overlay dismisses",
         "Playback continues uninterrupted"
       ],
-      "clarifications_needed": []
+      "clarifications_needed": [
+        {
+          "id": "OI-UC1-03",
+          "observation": "AC-02 splits 'tap outside the central button' (dismiss) from tapping the button (pause) but does not define the button's hit-target size",
+          "consequence": "A tap near the button edge resolves as button vs surface non-deterministically → pause vs dismiss becomes ambiguous",
+          "question": "What is the central pause/play button's hit-target size / spec?",
+          "ask": "Design",
+          "status": "followup",
+          "resolution": "PM answer 'same size, refer from figma' is not a concrete spec — exact hit-target dimensions still needed from Design/Figma. Low severity, non-blocking. See ledger AMB-06 / FOLLOWUPS FU-2."
+        }
+      ]
     },
     {
       "ac_id": "AC-03",
       "group": "Tap behaviour",
-      "scenario": "No action after overlay appears → overlay auto-dismisses after timeout",
+      "scenario": "No action after overlay appears (while playing) → overlay auto-dismisses after 1s",
       "given": [
-        "The controls overlay is visible"
+        "The controls overlay is visible",
+        "The video or live stream is playing"
       ],
       "when": "The user takes no further action",
       "then": [
@@ -73,48 +98,89 @@
       "clarifications_needed": [
         {
           "id": "OI-01",
-          "observation": "PRD says '~1 second' but comment says 'assume 3s'",
-          "consequence": "Inconsistent timeout causes misaligned test expectations across platforms",
-          "question": "What is the confirmed auto-dismiss timeout value?",
+          "observation": "PRD still carries a leftover '(confirm... assume 3s)' comment while the Jira AC states 1 second",
+          "consequence": "Docs out of sync — a PRD reader assumes 3s; test expectations diverge",
+          "question": "Confirm 1 second is final and clean up the PRD comment?",
+          "ask": "Engineering / PM",
+          "status": "resolved",
+          "resolution": "1 second is final (Jira AC-03 + PM confirm). Removing the PRD 'assume 3s' comment is a low doc-hygiene follow-up (FU-1). See ledger CONF-06."
+        },
+        {
+          "id": "OI-UC1-04",
+          "observation": "AC-03 auto-dismisses after 'no further action for 1s'; whether interacting with a control (volume, scrubber) resets that timer was unspecified",
+          "consequence": "If the timer does not reset, the overlay may vanish while the user is still using the controls",
+          "question": "Does the 1s auto-dismiss timer reset when the user interacts with an overlay control?",
           "ask": "Engineering",
           "status": "resolved",
-          "resolution": "Jira updated 2026-06-30: description now explicitly states '1 second'. No longer ambiguous."
+          "resolution": "Yes — all platforms agree the countdown holds/restarts on interaction (Jira 2026-07-07: web Chayanit 68297 'counting includes volume + scrubber, controls will not disappear while changing'; iOS Prisa 68302 'agree'; Android Fidriyanto 68318 'reset on every interaction'). Effective rule: the 1s idle countdown restarts after each control interaction. Recommend PM fold this into AC-03. See ledger GAP-03."
         }
       ]
     },
     {
       "ac_id": "AC-04",
       "group": "Pause/play button",
-      "scenario": "Tap pause button while playing → playback pauses, icon changes",
+      "scenario": "Tap pause while playing → pauses; play icon + seek indicators persist; tap-outside dismisses overlay but stays paused",
       "given": [
         "A video or live stream is playing",
         "The controls overlay is visible"
       ],
-      "when": "The user taps the central pause/play button",
+      "when": "The user taps the pause button",
       "then": [
         "Playback pauses",
-        "The button icon switches from pause to play"
+        "The button icon switches from pause to play and remains visible",
+        "On a video or recorded live stream: the back and forward seeking (10s skip) controls remain visible. On a 'Live' live stream: NO seek controls are shown",
+        "Tapping anywhere outside the play button dismisses the overlay controls — the media remains paused"
       ],
-      "clarifications_needed": []
+      "clarifications_needed": [
+        {
+          "id": "OI-UC1-05",
+          "observation": "AC-04 was scoped 'video or live stream' and required 'back and forward seeking' indicators to remain visible on pause — but UC3 AC-06 says seek/skip buttons are NOT shown on a live stream (internal contradiction)",
+          "consequence": "A LIVE pause overlay would ambiguously show seek controls it should not have",
+          "question": "On a LIVE stream pause overlay, should back/forward seeking controls be shown?",
+          "ask": "PM / Design",
+          "status": "resolved",
+          "resolution": "Decision 2026-07-08: back/forward seeking (10s skip) controls appear on VIDEO and RECORDED live stream ONLY; a 'Live' stream pause overlay has NO seek controls (consistent with UC3 AC-06). The 'back and forward seeking' wording was a copy from the video overlay. AC-04 then[2] corrected. NOTE: the Jira AC-04 text still carries the old wording → PM to align Jira (FU-5) or the next sync re-introduces it. See ledger CONF-08."
+        },
+        {
+          "id": "OI-UC1-06",
+          "observation": "PRD A1 offered pause via 'a central button zone OR a double-tap gesture'; every AC uses only the central button",
+          "consequence": "If double-tap were still supported: many more test cases + disambiguation from the single-tap-to-reveal gesture",
+          "question": "Has the double-tap gesture been descoped (central button only)?",
+          "ask": "PM",
+          "status": "resolved",
+          "resolution": "Double-tap gesture descoped — pause is via the central button only (PM, 2026-07). See ledger AMB-03."
+        }
+      ]
     },
     {
       "ac_id": "AC-05",
-      "group": "Pause/play button",
-      "scenario": "Tap play button while paused → resumes from exact position, icon changes",
+      "group": "Pause behaviour (video)",
+      "scenario": "Tap play while a video is paused → resumes from exact position, icon changes",
       "given": [
-        "A video or live stream is paused"
+        "A video is paused",
+        "The play button is displayed"
       ],
-      "when": "The user taps the central play button (controls visible, or re-summoned by a tap)",
+      "when": "The user taps the play button",
       "then": [
         "Playback resumes from the exact position at which it was paused",
         "The button icon switches from play to pause"
       ],
-      "clarifications_needed": []
+      "clarifications_needed": [
+        {
+          "id": "OI-UC1-07",
+          "observation": "AC-05 (as of 2026-07-08) is scoped to VIDEO only; live-stream pause/resume is owned by UC2 (PDT-3563), where resume returns to the CURRENT LIVE MOMENT, not the paused position",
+          "consequence": "Resume-from-exact-position applies to video/recorded only — do not apply it to a live stream",
+          "question": "n/a — scope note",
+          "ask": "n/a",
+          "status": "resolved",
+          "resolution": "Split confirmed: video resume = exact paused position (UC1 AC-05); live resume = current live moment (UC2 AC-02, ledger CONF-07)."
+        }
+      ]
     },
     {
       "ac_id": "AC-06",
       "group": "Platform and surface coverage",
-      "scenario": "Behavior is identical across all in-scope surfaces",
+      "scenario": "Behaviour is identical across all in-scope surfaces",
       "given": [
         "Any in-scope surface (global feed, user feed, community feed, event discussion feed, media gallery)"
       ],
