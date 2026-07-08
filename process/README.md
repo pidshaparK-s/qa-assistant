@@ -87,9 +87,20 @@ Process เป็นเจ้าของ artifact store; skill read/write เ�
 | **Coverage + Content** | จบ STEP specify | ทุก ac_id ถูกวิเคราะห์ **และ** fingerprint(given+when+then) ตรง snapshot | ac_id ขาด → วิเคราะห์; fingerprint เปลี่ยน → STALE, re-analyze |
 | **Completion** | หลัง loop | ✓/✗ ทุก ac_id เทียบ Manifest = N/N | มี ✗ → วิเคราะห์ทันที re-check ก่อน write |
 | **Freshness / Dropout** | ตลอดทาง | Manifest ตรง Jira ล่าสุด (diff) · ไม่มี AC หลุดเงียบ | added/removed/changed → re-run step ที่กระทบ |
+| **Schema-1 Integrity** (L2) | จบ STEP6 emit Schema 1 | br_ids→def ครบ (no DANGLING_BR) · ทุก BR ถูก AC อ้าง (no DEAD_BR) · ไม่มี dup ac_id/br_id | exit 1 → หยุด แก้ก่อน commit |
+| **Schema-1↔2 Traceability** (L2) | หลัง build Schema 2 | ทุก ac_id ถูก flow ครอบ · ไม่มี ac/br ผี (PHANTOM) · step actor ประกาศใน `actors{}` ครบ | exit 1 → หยุด แก้ก่อน commit |
 
 **Coverage+Content คือหัวใจ:** นับจำนวนอย่างเดียวไม่พอ — UC2 (PDT-3563) มี 3 AC เท่าเดิมแต่ AC-01/02 ถูกเขียนใหม่ 2026-07-06;
-ถ้าเช็คแค่ "3/3" จะ false-pass analysis เก่า. Gate จึงผูก `ac_id` + **content fingerprint**. บังคับใช้ด้วย `checks/ac_coverage.py`.
+ถ้าเช็คแค่ "3/3" จะ false-pass analysis เก่า. Gate จึงผูก `ac_id` + **content fingerprint**.
+
+**Gate ที่บังคับด้วย script จริง (exit 0/1) — ไม่ใช่ prose:**
+| Script | Layer | จับอะไร |
+|---|---|---|
+| `checks/ac_coverage.py qa/<epic>` | L1 | analysis .md ครอบทุก ac_id + STALE (fingerprint เปลี่ยน) |
+| `checks/schema1_integrity.py qa/<epic>` | L2 | Schema 1 referential: dangling/dead br_id, dup id |
+| `checks/schema_trace.py qa/<epic>` | L2 | Schema 1↔2: ac coverage, phantom ac/br, undeclared actor |
+
+> ทั้ง 3 เป็น stdlib-only, deterministic, no network — run มือก่อน handoff/commit. schema1_integrity + schema_trace codify script ที่จับ error จริงตอนรัน PDT-3418 (ก่อนหน้านี้เป็น ad-hoc ที่ไม่ได้ commit)
 
 ---
 

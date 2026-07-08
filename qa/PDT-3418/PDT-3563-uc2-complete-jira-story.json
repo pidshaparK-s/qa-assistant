@@ -52,7 +52,7 @@
     { "br_id": "BR-01", "type": "permission", "statement": "Seek/skip (±10s) controls exist only on video/recorded — never on active Live.", "also_used_in": ["UC1a", "UC1b", "UC3"] },
     { "br_id": "BR-02", "type": "permission", "statement": "Pause/resume of an active Live stream is not available on mobile web (offered on iOS, Android, web-desktop only).", "also_used_in": [] },
     { "br_id": "BR-07", "type": "computation", "statement": "The pause indicator IS the central play (▶) button overlay itself — not a separate badge or banner.", "also_used_in": [] },
-    { "br_id": "BR-09", "type": "computation", "statement": "First-tap interaction model is platform-dependent (mobile reveal / desktop 1-step).", "also_used_in": ["UC1a", "UC1b", "UC3"] },
+    { "br_id": "BR-09", "type": "computation", "statement": "First-tap interaction model is platform-dependent (mobile reveal / desktop 1-step).", "also_used_in": ["UC1a", "UC1b"] },
     { "br_id": "BR-10", "type": "state", "statement": "Play/pause changes only via explicit user pause/play (BR-09) or a terminal room state (BR-12) — no implicit op (incl. a network stall) toggles it.", "also_used_in": ["UC1a", "UC1b", "UC3"] },
     { "br_id": "BR-11", "type": "state", "statement": "Paused overlay persists and dismisses only on a tap outside the play button; the stream stays paused.", "also_used_in": ["UC1a", "UC1b"] },
     { "br_id": "BR-12", "type": "state", "statement": "A terminal room state (ended/recorded) always takes priority over the paused state; resolves to ended regardless of recording-processing readiness (no 'processing' state).", "also_used_in": [] },

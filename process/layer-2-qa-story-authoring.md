@@ -41,8 +41,12 @@
 ## STEP 6 · Emit Schema 1 → Schema 2
 - ประกอบ **Schema 1** ตาม `01-complete-jira-story.json` (ทุก field: story_id/uc_id/br_id/ac_id)
 - ถ้า AC ไม่มี PENDING → build **Schema 2** user-flow (`02-user-flow.json`) ตาม flow
+- **⛒ machine gates (บังคับ — ต้อง exit 0 ทั้งคู่ ก่อน commit / exit ไป L3):**
+  - `python3 checks/schema1_integrity.py qa/<epic>` — [G1] br_ids ทุกตัวมี def (no **DANGLING_BR**) · ไม่มี BR ตายซาก (no **DEAD_BR**) · ไม่มี ac_id/br_id ซ้ำ
+  - `python3 checks/schema_trace.py qa/<epic>` — [G2] ทุก ac_id ถูก flow ครอบ (**AC_COVERAGE**) · ไม่มี ac/br ผี (**PHANTOM**) · step actor ประกาศครบ (Schema 1↔2)
+  - exit 1 = หยุด แก้ก่อน ห้าม commit. สองตัวนี้ codify script ที่จับ error จริงตอนรัน PDT-3418 (dangling BR, orphan BR, phantom ref)
 
-⛒ **Gates:** Readiness (STEP0) · AC Manifest (list ac_id + type + source PM/QA, `Total N (PM:X, QA:Y)`) · Completion (ทุก ac_id มี type/source/br_ids/given/then) · Dropout
+⛒ **Gates:** Readiness (STEP0) · AC Manifest (list ac_id + type + source PM/QA, `Total N (PM:X, QA:Y)`) · Completion (ทุก ac_id มี type/source/br_ids/given/then) · **Schema-1 Integrity [G1]** · **Schema-1↔2 Traceability [G2]** · Dropout
 
 **artifacts consumed จาก L1:** Enriched AC · State Machine · Relationship Map · User Need · Clarification Register
 **Exit → Layer 3** เมื่อ Schema 1 สมบูรณ์ (ทุก ac_id/br_id assigned, ไม่มี PENDING)
