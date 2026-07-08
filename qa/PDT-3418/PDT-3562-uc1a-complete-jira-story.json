@@ -1,0 +1,153 @@
+{
+  "_schema": "complete-jira-story-v1",
+  "_purpose": "Human-readable spec for PM/dev/QA + machine-readable for downstream (Schema 2, test design)",
+  "_status": "Layer 2 STEP 6 output — 2026-07-09. NOT signed off (team sign-off pending, see scope-boundary).",
+  "_note": "UC1a/UC1b are QA-INTERNAL splits of the single Jira ticket PDT-3562, by player component (video/recorded vs 'Live'). Jira remains ONE ticket. Split rationale: qa/PDT-3418/PDT-3418-story-shape.md. AC numbering is per-unit.",
+
+  "ids": {
+    "epic_id": "PDT-3418",
+    "story_id": "PDT-3562",
+    "uc_id": "UC1a"
+  },
+
+  "title": "Tap to Reveal Controls — Video / Recorded Live Stream",
+
+  "user_story": {
+    "role": "community member watching a video or recorded live stream",
+    "action": "have tapping the player surface reveal the controls instead of toggling pause",
+    "value": "not accidentally interrupt playback during normal viewing",
+    "invest_check": {
+      "independent": true,
+      "negotiable": true,
+      "valuable": true,
+      "estimable": true,
+      "small": true,
+      "testable": true,
+      "_note": "Small resolved by the UC1a/UC1b component split (STEP1)."
+    }
+  },
+
+  "prioritization": {
+    "moscow": "Must",
+    "qa_effort_score": 20,
+    "qa_effort_band": "High",
+    "sprint_order": 1,
+    "_source": "PDT-3418-prioritization.md"
+  },
+
+  "preconditions": [
+    "User is viewing a video post or recorded live stream on any in-scope surface"
+  ],
+  "entry_points": [
+    "A. Video / recorded LS playing inline in any feed (global, user, community, event discussion)",
+    "B. Video / recorded LS open in a media gallery or fullscreen view"
+  ],
+  "platforms": {
+    "supported": ["UIKit iOS", "UIKit Android", "UIKit React Native", "UIKit Flutter", "WebUIKit"],
+    "not_supported": ["Desktop — UI-only (button size), no behaviour change; first tap = 1-Step Pause (BR-09)"]
+  },
+
+  "business_rules": [
+    { "br_id": "BR-01", "type": "permission", "statement": "Seek/skip (±10s) controls exist only on a video or recorded live stream — never on an active Live stream.", "also_used_in": ["UC1b", "UC2", "UC3"] },
+    { "br_id": "BR-03", "type": "constraint", "statement": "The controls overlay auto-dismisses after 1 second of no interaction while playing; the countdown restarts on every control interaction.", "also_used_in": ["UC1b"], "_delta": "web currently 3s — must change to 1s" },
+    { "br_id": "BR-06", "type": "constraint", "statement": "The controls behaviour is identical across all in-scope surfaces (surface-invariant; NOT platform-invariant).", "also_used_in": ["UC1b"] },
+    { "br_id": "BR-09", "type": "computation", "statement": "First-tap interaction model is platform-dependent: mobile reveals controls without toggling playback; desktop (Web UIKit) is a direct 1-step pause/play.", "also_used_in": ["UC1b", "UC2", "UC3"] },
+    { "br_id": "BR-10", "type": "state", "statement": "Play/pause state changes only via an explicit user pause/play action (BR-09) or a terminal room state (BR-12) — no implicit operation toggles it.", "also_used_in": ["UC1b", "UC2", "UC3"] },
+    { "br_id": "BR-11", "type": "state", "statement": "While playing the overlay auto-dismisses (BR-03); while paused it persists and dismisses only on a tap outside the play button, and the media stays paused.", "also_used_in": ["UC1b", "UC2"] },
+    { "br_id": "BR-13", "type": "state", "statement": "Resume target by media type: video/recorded resumes from the exact paused position; Live resumes at the current live edge.", "also_used_in": ["UC2"] },
+    { "br_id": "BR-15", "type": "state", "statement": "The viewer is never left on a frozen frame with no feedback — any interruption surfaces an explicit state.", "also_used_in": ["UC1b", "UC2"] }
+  ],
+
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01", "scenario": "Tap playing player → controls appear, playback continues (mobile)", "type": "happy_path", "source": "PM", "br_ids": ["BR-09", "BR-10"],
+      "given": ["a video or recorded live stream is playing on a mobile surface (iOS / Android / web-on-mobile)", "the controls overlay is currently hidden"],
+      "when": "the user taps anywhere on the player surface",
+      "then": ["the controls overlay appears", "playback continues uninterrupted — the media does not pause", "the central button shows the pause icon (reflecting the playing state)"],
+      "_platform_variance": "Desktop (Web UIKit) = 1-Step Pause: the first tap pauses directly; this AC (reveal, no pause) is the MOBILE behaviour (BR-09). Test expected split by form factor — see platform-behavior-notes.md PV-1.",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-02", "scenario": "Tap outside button (playing) → overlay dismisses, playback continues", "type": "happy_path", "source": "PM", "br_ids": ["BR-10", "BR-11"],
+      "given": ["the controls overlay is visible", "the media is playing"],
+      "when": "the user taps the player surface outside the central pause/play button's tap target",
+      "then": ["the overlay dismisses", "playback continues uninterrupted"],
+      "clarifications_needed": [
+        { "q_id": "FU-2", "question": "What is the central pause/play button's hit-target size/spec? ('same size, refer from figma' is not a concrete spec) — needed for a deterministic pause-vs-dismiss boundary test.", "status": "PENDING", "answer": null, "owner": "Design" }
+      ]
+    },
+    {
+      "ac_id": "AC-03", "scenario": "No action 1s (playing) → overlay auto-dismisses", "type": "happy_path", "source": "PM", "br_ids": ["BR-03", "BR-11"],
+      "given": ["the controls overlay is visible", "the media is playing"],
+      "when": "the user takes no further action for 1 second",
+      "then": ["the overlay auto-dismisses", "playback continues"],
+      "_delta": "web currently 3s (VideoPlayerControls.tsx:60-70) — must change to 1s per BR-03.",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-04", "scenario": "Tap pause (video/recorded) → pauses; play icon + seek controls persist; tap-outside dismisses, stays paused", "type": "happy_path", "source": "PM", "br_ids": ["BR-01", "BR-11"],
+      "given": ["a video or recorded live stream is playing", "the controls overlay is visible"],
+      "when": "the user taps the central pause button",
+      "then": ["playback pauses at the current position", "the button icon switches pause→play and remains visible", "the back/forward seeking (±10s skip) controls remain visible (video/recorded component)", "tapping anywhere outside the play button dismisses the overlay — the media stays paused"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-05", "scenario": "Tap play while video paused → resume from exact position", "type": "happy_path", "source": "PM", "br_ids": ["BR-13"],
+      "given": ["a video is paused", "the play button is displayed"],
+      "when": "the user taps the central play button",
+      "then": ["playback resumes from the exact position at which it was paused", "the button icon switches play→pause"],
+      "clarifications_needed": [
+        { "q_id": "ASSUME-recorded-resume", "question": "Recorded LS shares the video component — confirm recorded LS also resumes from the exact paused position (PM's AC text says 'a video' specifically).", "status": "PENDING", "answer": null, "owner": "Engineering" }
+      ]
+    },
+    {
+      "ac_id": "AC-06", "scenario": "Behaviour identical across all in-scope surfaces", "type": "happy_path", "source": "PM", "br_ids": ["BR-06"],
+      "given": ["any in-scope surface (global / user / community / event-discussion feed, media gallery, fullscreen)"],
+      "when": "the user performs any of AC-01…AC-05",
+      "then": ["the behaviour is identical regardless of surface"],
+      "_note": "surface-invariant ≠ platform-invariant — mobile vs desktop still differ (BR-09).",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-07", "scenario": "Default — baseline before any tap", "type": "default_state", "source": "QA", "br_ids": [],
+      "given": ["a video or recorded live stream is actively playing on any in-scope surface"],
+      "when": "the post first renders and no tap has occurred yet",
+      "then": ["no controls overlay is shown — only the media surface is visible"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-08", "scenario": "Idle timer resets on control interaction", "type": "alternative", "source": "QA", "br_ids": ["BR-03"],
+      "given": ["the controls overlay is visible", "the media is playing", "the user interacts with an overlay control (volume/scrubber) before the 1s timeout elapses"],
+      "when": "the interaction occurs",
+      "then": ["the 1s idle countdown restarts — the overlay does not disappear while the user is interacting", "after the last interaction the overlay auto-dismisses 1s later; playback continues throughout"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-09", "scenario": "Pause tap coincides with auto-dismiss timer firing", "type": "alternative", "source": "QA", "br_ids": ["BR-10", "BR-11"],
+      "given": ["the controls overlay is visible", "the media is playing", "the 1s idle timer is about to fire"],
+      "when": "the user taps the central pause button at that instant",
+      "then": ["playback pauses", "the play icon is shown and persists — it is not caught by the expiring timer", "the overlay dismisses only on a subsequent tap-outside"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-10", "scenario": "Tap during buffering / stall", "type": "error_state", "source": "QA", "br_ids": ["BR-15"],
+      "given": ["the media is buffering (not yet playing)"],
+      "when": "the user taps the player surface",
+      "then": ["the overlay appears", "the central button reflects the real state (loading/paused) — not a false 'playing' icon", "no crash or frozen overlay; the icon updates once playback starts"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-11", "scenario": "App backgrounded during an active overlay/timer (OS default)", "type": "error_state", "source": "QA", "br_ids": ["BR-10"],
+      "given": ["the controls overlay is visible (playing or paused)", "the app is backgrounded"],
+      "when": "the user returns the app to the foreground",
+      "then": ["the player/overlay reach a well-defined state via the OS default (Option 1, code-grounded)", "iOS: the OS paused the media on background and does not auto-resume; the wall-clock 1s timer already elapsed so a playing overlay is dismissed and a paused overlay persists", "no stale mid-countdown overlay"],
+      "_decision": "Option 1 (adopt OS default) — see ac-authoring.md AC-11 + platform-behavior-notes.md Code-verified notes.",
+      "clarifications_needed": []
+    }
+  ],
+
+  "open_questions": [
+    "FU-2: central pause/play button hit-target size (Owner: Design) — needed for deterministic pause-vs-dismiss test",
+    "ASSUME-recorded-resume: recorded LS resumes from exact position, same as video (Owner: Engineering)"
+  ]
+}

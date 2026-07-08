@@ -24,6 +24,29 @@ Entry points (trigger phrases) ยังอยู่ที่ `.claude/skills/ru
 
 ---
 
+## Concepts — Enrich vs Author · AC vs BR  (คำอธิบายเวลาทีมถาม)
+
+**Enrich (L1 · phase-1-3) ≠ Author (L2 · phase-2-2)** — คนละจุดประสงค์ ไม่ใช่ทำซ้ำ:
+- **Enrich** = เติม AC ของ PM ให้ test ได้ + หา gap/edge → output เป็น *analysis doc* (จุดประสงค์: **เข้าใจ**ของที่ได้มา)
+- **Author** = ประกอบ AC ชุดสุดท้ายให้ครบ **4 scenario type** (default / happy / alternative / error) + จัดรูปเป็น story สุดท้าย → output เข้า *Schema 1* (จุดประสงค์: **ผลิต**สัญญาที่ทีม commit)
+- สั้น ๆ: **L1 = "เข้าใจของยุ่ง ๆ ที่ได้มา" · L2 = "ประกอบเป็นของสะอาดที่ commit ได้"** (ข้อมูลซ้อนกันได้ แต่คนละรูป/คนละเป้า)
+
+**AC ≠ BR** — คนละบทบาท เอาไปใช้ต่างกัน:
+
+| | **AC** (Acceptance Criteria) | **BR** (Business Rule) |
+|---|---|---|
+| คือ | **สถานการณ์**ที่ test ได้ — "ถ้า X → Y" | **กฎที่จริงเสมอ**ข้ามทุกสถานการณ์ |
+| ผูกกับ | 1 scenario | ทั้งระบบ (หลาย AC อ้าง BR เดียว) |
+| **QA** ใช้ | → แปลงเป็น **test case** · วัด coverage | → **ขอบเขต regression**: BR เปลี่ยน = รู้ทันทีว่าต้อง re-test story ไหน |
+| **Dev** ใช้ | checklist "เคสนี้เสร็จยัง" | **implement ครั้งเดียว** ทุก AC ที่อ้างถูกหมด |
+
+**ตัวอย่างจริง (CONF-08):** AC 2 ข้อเคยขัดกันเงียบ ๆ ("pause แล้ว seek โชว์" vs "Live ไม่มี seek") จนดึงออกมาเป็น **BR เดียว** (BR-01: seek เฉพาะ video/recorded) → source of truth เดียว ขัดกันซ้ำไม่ได้อีก
+
+**Analogy บอกทีมได้เลย:** BR = **ฟังก์ชันกลางเขียนครั้งเดียว** · AC = **จุดที่เรียกใช้** — ไม่มี BR เท่ากับ copy logic ไปวางทุกที่แล้วเพี้ยนกันเอง
+ใน Schema 1 ทุก AC มี `ac_id` + `br_ids[]` → traceability: test fail → AC → BR → รู้ว่ากระทบ story อื่นไหน
+
+---
+
 ## Skill-reuse map (ทำไม skill ต้อง atomic)
 
 artifact ที่ skill หนึ่งผลิต ถูก **process ส่งต่อ** ให้ skill/step อื่น — ไม่ทำซ้ำ

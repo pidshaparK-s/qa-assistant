@@ -60,3 +60,28 @@ change (button size)"` and the platform table (comment 68264: web-desktop can pa
 - **Resume-to-live tolerance:** lands a few seconds behind live due to buffering — expected, don't assert exact-live (ledger **CONF-07**).
 - **Rapid-tap on web** currently debounces; must change to **accumulate** to meet UC3 AC-07 (ledger **GAP-07**).
 - **Android native-control seek on Live** = bug (ledger **AMB-05**, FOLLOWUPS **FU-4**).
+
+---
+
+## 📟 Code-verified implementation notes (Amity UIKit repos, 2026-07-08)
+
+Verified directly against source — `Amity-Social-Cloud-UIKit-Web` + `AmityUIKitIOS` (live player module). These describe what is **built today**; where the spec (AC) differs, that's a dev delta to close, not a QA assumption.
+
+### Network drop → reconnect, while paused  (answers UC2 E-04 / AC-08)
+Both platforms show a real **"Reconnecting"** indicator (auto-retry, no manual button); a **paused** live stream **stays paused** through drop→recover (no auto-resume); on user-resume it snaps to the **live edge** (matches UC2 AC-02). The viewer is never left on a no-feedback frozen frame.
+
+| | Reconnecting UI | Trigger | Shows while PAUSED? |
+|---|---|---|---|
+| **iOS** | Full-screen scrim + spinner + "Reconnecting" text (`LiveStreamViewerView.swift:244-272`) + "waiting for network" toast (`:421-427`); resume → `seekToLiveEdge()`+`play()` (`LiveStreamPlayerView.swift:27-50`) | **Device** network via `NWPathMonitor` (`NetworkMonitor.swift:11-28`) | **YES** — tied to device connectivity, independent of play state |
+| **Web** | `LivestreamOverlay.Reconnecting` spinner+text (`LivestreamOverlay.tsx:57-66`), gated `isLoading && isPoorConnection && isLive` (`LivestreamPlayer.tsx:128`); HLS.js auto-retry `startLoad()`/`recoverMediaError()` (`useLiveStreamPlayer.ts:47-77`) | native `waiting` stall event OR SDK `room.status==='waitingReconnect'` | **Generally NO** — `waiting` needs active playback; only appears if the SDK flips room status |
+
+> `room.status = waitingReconnect` = the **broadcaster/host** lost connection (SDK-side) — distinct from the viewer's own device-network overlay above.
+
+### App backgrounding  (answers UC1 E-08 / AC-11)
+**Neither repo explicitly handles app/tab backgrounding — delegated to OS / AVFoundation / browser.**
+- **iOS:** no `scenePhase`/`willResignActive`/`didEnterBackground`/`AVAudioSession` handling on the viewer path; `isPlaying` stays true; iOS itself pauses `AVPlayer` on background (no background-audio mode), no auto-resume. The 1s auto-dismiss timer is **wall-clock** (`Debouncer.swift:17-21`, `PlayerControlsVisibility.swift:16`) → a playing overlay is already dismissed on return, a paused overlay persists → **no stale mid-countdown overlay risk**.
+- **Web:** no `visibilitychange`/`blur` handler on any player — background pause delegated to the browser's native `<video>`/HLS.js.
+
+### ⚠️ Two implementation deltas (spec says X, code does Y — dev work, not spec gaps)
+1. **Web auto-dismiss = 3000ms**, `VideoPlayerControls.tsx:60-70` — but AC-03 / CONF-06 spec is **1 second**. The PRD's old "assume 3s" mirrored real web code, not a typo. **Web must change 3s → 1s** (iOS already 1s). Same shape as the GAP-07 web debounce→accumulate change.
+2. **Web LIVE path has no reveal-controls overlay at all** — the auto-dismiss `VideoPlayerControls` overlay is wired only into the **recorded** `VideoPlayer` (`VideoPlayer.tsx:344`); the LIVE path is a bare `<video>`+Plyr with only pause/play (`LivestreamPlayer.tsx:115-123`). UC1b's tap-to-reveal + 1s auto-dismiss looks like **net-new dev on web-live**.

@@ -1,0 +1,132 @@
+{
+  "_schema": "complete-jira-story-v1",
+  "_purpose": "Human-readable spec for PM/dev/QA + machine-readable for downstream (Schema 2, test design)",
+  "_status": "Layer 2 STEP 6 output — 2026-07-09. NOT signed off (team sign-off pending).",
+  "_note": "Highest QA effort in the epic: resume-to-live is a BEHAVIOUR CHANGE re-implemented per platform, plus the hardest test env (live broadcast + network-drop + host-ends race + chat/video re-sync). Reconnect + backgrounding behaviour resolved from source code (see platform-behavior-notes.md).",
+
+  "ids": {
+    "epic_id": "PDT-3418",
+    "story_id": "PDT-3563",
+    "uc_id": "UC2"
+  },
+
+  "title": "Live Stream Pause State",
+
+  "user_story": {
+    "role": "community member watching a live stream",
+    "action": "pause and resume the stream",
+    "value": "step away and always rejoin at what is happening live",
+    "invest_check": {
+      "independent": false,
+      "negotiable": true,
+      "valuable": true,
+      "estimable": true,
+      "small": true,
+      "testable": true,
+      "_note": "Independent = false: depends on UC1's pause button/overlay mechanism — SEQUENCE after UC1 (not merge)."
+    }
+  },
+
+  "prioritization": {
+    "moscow": "Should",
+    "qa_effort_score": 20,
+    "qa_effort_band": "High",
+    "sprint_order": 2,
+    "_note": "Hardest unit to test. If PM promotes to Must, it enlarges the critical path. Workaround if deferred: today's resume-from-pause is degraded-but-functional.",
+    "_source": "PDT-3418-prioritization.md"
+  },
+
+  "preconditions": [
+    "User is watching a live stream with Room status: live"
+  ],
+  "entry_points": [
+    "A. User deliberately pauses the live stream via the central pause button (per UC1)"
+  ],
+  "platforms": {
+    "supported": ["UIKit iOS", "UIKit Android", "UIKit React Native", "UIKit Flutter", "WebUIKit"],
+    "not_supported": ["Desktop — UI-only, no behaviour change"],
+    "_boundary": "mobile web CANNOT pause a Live stream (BR-02) — excluded from pause/resume scope (AC-05)."
+  },
+
+  "business_rules": [
+    { "br_id": "BR-01", "type": "permission", "statement": "Seek/skip (±10s) controls exist only on video/recorded — never on active Live.", "also_used_in": ["UC1a", "UC1b", "UC3"] },
+    { "br_id": "BR-02", "type": "permission", "statement": "Pause/resume of an active Live stream is not available on mobile web (offered on iOS, Android, web-desktop only).", "also_used_in": [] },
+    { "br_id": "BR-07", "type": "computation", "statement": "The pause indicator IS the central play (▶) button overlay itself — not a separate badge or banner.", "also_used_in": [] },
+    { "br_id": "BR-09", "type": "computation", "statement": "First-tap interaction model is platform-dependent (mobile reveal / desktop 1-step).", "also_used_in": ["UC1a", "UC1b", "UC3"] },
+    { "br_id": "BR-10", "type": "state", "statement": "Play/pause changes only via explicit user pause/play (BR-09) or a terminal room state (BR-12) — no implicit op (incl. a network stall) toggles it.", "also_used_in": ["UC1a", "UC1b", "UC3"] },
+    { "br_id": "BR-11", "type": "state", "statement": "Paused overlay persists and dismisses only on a tap outside the play button; the stream stays paused.", "also_used_in": ["UC1a", "UC1b"] },
+    { "br_id": "BR-12", "type": "state", "statement": "A terminal room state (ended/recorded) always takes priority over the paused state; resolves to ended regardless of recording-processing readiness (no 'processing' state).", "also_used_in": [] },
+    { "br_id": "BR-13", "type": "state", "statement": "Resume target by media type: video/recorded → exact paused position; Live → current live edge within normal buffering tolerance (a few seconds behind live is expected).", "also_used_in": ["UC1a"] },
+    { "br_id": "BR-14", "type": "state", "statement": "Live chat is independent of playback state — keeps running during pause, never replayed/skipped on resume.", "also_used_in": [] },
+    { "br_id": "BR-15", "type": "state", "statement": "The viewer is never left on a frozen frame with no feedback — interruptions surface an explicit state (Reconnecting w/ auto-retry, or ended).", "also_used_in": ["UC1a", "UC1b"] }
+  ],
+
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01", "scenario": "Pause live → pause indicator (▶) + chat stays live + tap-outside dismisses (no seek)", "type": "happy_path", "source": "PM", "br_ids": ["BR-07", "BR-11", "BR-14", "BR-01", "BR-09"],
+      "given": ["the user is watching a live stream at the live edge (Room status = live)", "(mobile) the controls overlay is revealed per UC1  /  (desktop) direct-tap pause is available"],
+      "when": "the user pauses via the central pause button",
+      "then": ["the central play (▶) button overlay is shown as the pause indicator (LS-mobile-04; no separate badge)", "the chat continues to receive and display new messages in real time — it is not paused", "the LIVE badge / viewer-count stays as-is (updating it is out of scope — a separate enhancement)", "tapping anywhere outside the play button dismisses the overlay control (pause/play button only — a Live stream has no seek controls) — the stream remains paused"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-02", "scenario": "Resume → current live moment (not paused position); chat uninterrupted", "type": "happy_path", "source": "PM", "br_ids": ["BR-13", "BR-14"],
+      "given": ["the user has paused a live stream (chat kept running live during the pause)"],
+      "when": "the user resumes (the stream restarts) via the play button",
+      "then": ["playback starts from the current live moment — not from the previous paused position", "the pause indicator (▶ overlay) dismisses", "the chat remains uninterrupted — no messages are missed or replayed"],
+      "_test_tolerance": "resume lands within normal live buffering tolerance — a few seconds behind live is EXPECTED (CONF-07). Assert '≈ live within tolerance', NOT exact-live. This is a behaviour CHANGE vs today's resume-from-pause → test the NEW behaviour on every platform.",
+      "clarifications_needed": [
+        { "q_id": "ASSUME-buffer-tolerance", "question": "Is the 'a few seconds behind live' buffering tolerance acceptable to product as the resume target? (Tighter is not achievable — live-streaming physics.)", "status": "PENDING", "answer": null, "owner": "PM", "_severity": "low — CONF-07 already accepted 'expected'" }
+      ]
+    },
+    {
+      "ac_id": "AC-03", "scenario": "Stream ends while paused → ended/recorded wins, no frozen frame", "type": "alternative", "source": "PM", "br_ids": ["BR-12", "BR-15"],
+      "given": ["the user has paused a live stream"],
+      "when": "the Room transitions to ended or recorded during the pause",
+      "then": ["the player moves to an appropriate ended or recorded state", "the ended/recorded state always takes priority over the paused state (even if both occur simultaneously)", "the viewer is not left on a frozen frame with no feedback", "if the recording is not yet ready, the player shows 'Livestream ended' — there is no intermediate 'processing' state"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-04", "scenario": "Default — playing at live edge, before any pause", "type": "default_state", "source": "QA", "br_ids": [],
+      "given": ["a live stream (Room status = live) is playing at the live edge"],
+      "when": "the viewer has not yet paused",
+      "then": ["no pause indicator is shown", "the chat is live", "the LIVE badge / viewer count displays as-is (unaffected by this feature)"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-05", "scenario": "Default — mobile web has no pause control on Live", "type": "default_state", "source": "QA", "br_ids": ["BR-02"],
+      "given": ["a viewer is on mobile web watching a 'Live' stream"],
+      "when": "the player renders",
+      "then": ["no pause control is offered — pause/resume of a Live stream is not available on web-mobile"],
+      "_note": "Standing platform boundary (platform table 68264), not a bug. Exclude web-mobile from UC2 pause/resume test scope.",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-06", "scenario": "Long pause → resume lands further behind live, still within tolerance", "type": "alternative", "source": "QA", "br_ids": ["BR-13"],
+      "given": ["the user paused a live stream for an extended period (minutes)"],
+      "when": "the user resumes",
+      "then": ["playback snaps to the current live moment (per AC-02) — the size of the jump does not change the guarantee", "a brief buffering/loading state is acceptable while the jump completes"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-07", "scenario": "Chat/video re-sync on resume — no replayed/skipped messages", "type": "alternative", "source": "QA", "br_ids": ["BR-14"],
+      "given": ["the user paused for a while (chat kept running live throughout)"],
+      "when": "the user resumes (video snaps to the current live moment)",
+      "then": ["chat and video are aligned at the live moment — no chat messages are replayed or skipped", "the transition is smooth; brief buffering is acceptable"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-08", "scenario": "Network drops while paused → Reconnecting, stays paused, resume→live", "type": "error_state", "source": "QA", "br_ids": ["BR-10", "BR-15"],
+      "given": ["the user has paused a live stream"],
+      "when": "the network connection drops and later recovers",
+      "then": ["a 'Reconnecting' indicator is shown (auto-retry, no manual button) — the viewer is not left on a no-feedback frozen frame", "the stream stays paused through the drop→recover cycle — no auto-resume", "on user resume, playback snaps to the current live moment / live edge (per AC-02)"],
+      "_resolved_by_code": "iOS: reconnecting overlay tied to device network — shows even while paused; resume → seekToLiveEdge()+play() (LiveStreamViewerView.swift:244-272, LiveStreamPlayerView.swift:27-50). Web: 'Reconnecting' overlay on playback stall + HLS.js auto-retry — generally NOT shown while paused. See platform-behavior-notes.md.",
+      "clarifications_needed": []
+    }
+  ],
+
+  "open_questions": [
+    "ASSUME-buffer-tolerance: buffering tolerance for resume-to-live acceptable to product (Owner: PM, low)",
+    "_resolved_from_code: reconnect UX (AC-08) and app-backgrounding both answered from source — no PM round needed"
+  ]
+}

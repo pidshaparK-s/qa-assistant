@@ -1,0 +1,154 @@
+{
+  "_schema": "complete-jira-story-v1",
+  "_purpose": "Human-readable spec for PM/dev/QA + machine-readable for downstream (Schema 2, test design)",
+  "_status": "Layer 2 STEP 6 output — 2026-07-09. NOT signed off (team sign-off pending).",
+  "_note": "Nice-to-have, confirmed IN-RELEASE (AMB-04) but the primary DESCOPE LEVER — scored QA-effort 18 (High) despite the 'nice-to-have' label. Depends on UC1a's controls overlay (sequence after UC1). AC numbering per-unit; 11 ACs.",
+
+  "ids": {
+    "epic_id": "PDT-3418",
+    "story_id": "PDT-3564",
+    "uc_id": "UC3"
+  },
+
+  "title": "10-Second Skip Back/Forward for Video Playback (Nice-to-Have)",
+
+  "user_story": {
+    "role": "community member watching a video",
+    "action": "skip backward or forward 10 seconds",
+    "value": "quickly rewatch or jump ahead without scrubbing",
+    "invest_check": {
+      "independent": false,
+      "negotiable": true,
+      "valuable": true,
+      "estimable": true,
+      "small": true,
+      "testable": true,
+      "_note": "Independent = false: precondition is UC1a's controls overlay — sequence after UC1. Highly negotiable (nice-to-have)."
+    }
+  },
+
+  "prioritization": {
+    "moscow": "Could",
+    "qa_effort_score": 18,
+    "qa_effort_band": "High",
+    "sprint_order": 3,
+    "_note": "The real descope lever — cutting UC3 removes genuine QA effort (12→11 ACs, timing-sensitive rapid-tap, boundary matrix, web debounce→accumulate). 'nice-to-have' ≠ cheap.",
+    "_source": "PDT-3418-prioritization.md"
+  },
+
+  "preconditions": [
+    "User is viewing a video post or recorded livestream (NOT a live stream)",
+    "The controls overlay is visible (revealed per UC1a)"
+  ],
+  "entry_points": [
+    "A. User taps the player surface to reveal the controls overlay (UC1a)",
+    "B. Controls overlay is already visible"
+  ],
+  "platforms": {
+    "supported": ["UIKit iOS", "UIKit Android", "UIKit React Native", "UIKit Flutter", "WebUIKit"],
+    "not_supported": ["Desktop — UI-only (button size)"],
+    "_delta": "web rapid-tap currently debounces — must change to accumulate (BR-08)."
+  },
+
+  "business_rules": [
+    { "br_id": "BR-01", "type": "permission", "statement": "Seek/skip (±10s) controls exist only on video/recorded — never on active Live.", "also_used_in": ["UC1a", "UC1b", "UC2"] },
+    { "br_id": "BR-04", "type": "constraint", "statement": "Each skip action moves playback by exactly 10 seconds.", "also_used_in": [] },
+    { "br_id": "BR-05", "type": "constraint", "statement": "Skip clamps at content boundaries — never below 0:00 or past the final frame, and never loops, even mid-burst during rapid taps.", "also_used_in": [] },
+    { "br_id": "BR-08", "type": "computation", "statement": "Rapid skip taps accumulate (each tap adds ±10s), but the skip icon always shows the per-tap value (+10 / −10), never the accumulated total.", "also_used_in": [] },
+    { "br_id": "BR-10", "type": "state", "statement": "Play/pause state changes only via explicit user pause/play — skipping is position-only and does not toggle play/pause.", "also_used_in": ["UC1a", "UC1b", "UC2"] },
+    { "br_id": "BR-12", "type": "state", "statement": "Reaching the final frame enters the end state (paused) — a terminal condition of content playback.", "also_used_in": ["UC2"] },
+    { "br_id": "BR-15", "type": "state", "statement": "The viewer is never left on a frozen frame with no feedback — interruptions surface an explicit state.", "also_used_in": ["UC1a", "UC1b", "UC2"] }
+  ],
+
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01", "scenario": "Tap skip back (−10s) → jumps back 10s, continues", "type": "happy_path", "source": "PM", "br_ids": ["BR-04", "BR-10"],
+      "given": ["a video or recorded LS is playing", "the controls overlay is visible", "the current position is at least 10 seconds from the start"],
+      "when": "the user taps the skip-back (−10s) button",
+      "then": ["playback jumps back exactly 10 seconds from the current position", "playback continues without interruption"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-02", "scenario": "Tap skip forward (+10s) → jumps forward 10s, continues", "type": "happy_path", "source": "PM", "br_ids": ["BR-04", "BR-10"],
+      "given": ["a video or recorded LS is playing", "the controls overlay is visible", "the current position is at least 10 seconds from the end"],
+      "when": "the user taps the skip-forward (+10s) button",
+      "then": ["playback jumps forward exactly 10 seconds from the current position", "playback continues without interruption"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-03", "scenario": "Skip back <10s from start → 0:00, prior state preserved", "type": "alternative", "source": "PM", "br_ids": ["BR-05", "BR-10"],
+      "given": ["a video / recorded LS", "the current position is less than 10 seconds into the video"],
+      "when": "the user taps skip back",
+      "then": ["playback jumps to 0:00 — it does not go to a negative position", "the prior playback state is preserved — if playing it continues from 0:00; if paused it stays paused (a boundary skip-back does NOT force a pause)"],
+      "_delta": "Jira AC-03 still says 'the video is in a paused state' — our spec corrects to preserve-state (AMB-11); PM to align Jira (FU-5).",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-04", "scenario": "Skip forward <10s from end → final frame, end state (paused)", "type": "alternative", "source": "PM", "br_ids": ["BR-05", "BR-12"],
+      "given": ["a video / recorded LS", "the current position is within 10 seconds of the end"],
+      "when": "the user taps skip forward",
+      "then": ["playback jumps to the final frame and enters the end state (paused at the final frame — there is no content past the end to continue into)", "it does not loop or error"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-05", "scenario": "Skip while paused → position updates, stays paused", "type": "alternative", "source": "PM", "br_ids": ["BR-10"],
+      "given": ["the video is paused", "the controls overlay is visible"],
+      "when": "the user taps either skip button",
+      "then": ["the position updates accordingly", "the video remains paused — skip does not auto-resume playback"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-06", "scenario": "Live stream → skip buttons not shown (in-app)", "type": "default_state", "source": "PM", "br_ids": ["BR-01"],
+      "given": ["a 'Live' stream is playing", "the controls overlay is visible"],
+      "when": "the overlay is rendered",
+      "then": ["the skip back / skip forward buttons are not shown — seeking is not applicable on a Live stream (in-app)"],
+      "_note": "Scope = in-app buttons only. Android OS-native media-control scrub on Live = separate bug (FU-4), not this AC.",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-07", "scenario": "Rapid repeated skip taps → accumulate ±10s; icon shows ±10", "type": "happy_path", "source": "PM", "br_ids": ["BR-04", "BR-08"],
+      "given": ["a video / recorded LS is playing", "the controls overlay is visible"],
+      "when": "the user taps a skip button multiple times quickly (e.g. skip-forward ×3 at 1:00)",
+      "then": ["each tap adds 10 seconds to the total (→ 1:30) — taps accumulate", "the skip icon does not show the accumulated total — it always shows +10 or -10"],
+      "_delta": "web currently debounces to a single ±10s — must change to accumulate (BR-08).",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-08", "scenario": "Rapid skip taps near start/end → obey boundary rules mid-burst", "type": "alternative", "source": "PM", "br_ids": ["BR-05"],
+      "given": ["the user taps a skip button multiple times quickly near the start or end of the video"],
+      "when": "a tap would move playback past 0:00 or past the final frame",
+      "then": ["that tap follows the boundary rules (AC-03 / AC-04) — it does not go to a negative position or loop, even mid-burst"],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-09", "scenario": "Default — no skip buttons before the overlay is revealed", "type": "default_state", "source": "QA", "br_ids": [],
+      "given": ["a video / recorded LS is loaded and the controls overlay has not yet been revealed (per UC1a)"],
+      "when": "the player first renders",
+      "then": ["no skip buttons are visible — they appear only as part of UC1a's controls overlay"],
+      "_note": "Ties UC3's default state to UC1a's overlay lifecycle — confirms the build-order dependency (UC1a → UC3).",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-10", "scenario": "Skip while buffering (mobile) → seek-and-rebuffer", "type": "alternative", "source": "QA", "br_ids": ["BR-15"],
+      "given": ["the video is buffering at the current position (mobile)"],
+      "when": "the user taps a skip button",
+      "then": ["playback seeks and rebuffers at the target position — no stuck loading, no crash"],
+      "_resolved_by_code": "mobile = seek-and-rebuffer (Prisa 68329).",
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-11", "scenario": "Skip while buffering (web) → behaviour unconfirmed", "type": "error_state", "source": "QA", "br_ids": ["BR-15"],
+      "given": ["the video is buffering at the current position (web)"],
+      "when": "the user taps a skip button",
+      "then": ["[PENDING FU-3] the exact behaviour of the ±10s button mid-buffer on web is not yet confirmed", "[known] the player separately shows a 'Reconnecting' UI + allows manual scrub/scroll — a different gesture from tapping the ±10s skip"],
+      "clarifications_needed": [
+        { "q_id": "FU-3", "question": "What does the ±10s skip button do on a video/recorded LS while buffering on web? (mobile = seek-and-rebuffer is clear; the web answer only described the 'Reconnecting' UI + manual scrub.)", "status": "PENDING", "answer": null, "owner": "Web Engineering", "_severity": "low" }
+      ]
+    }
+  ],
+
+  "open_questions": [
+    "FU-3: web ±10s skip behaviour mid-buffer (Owner: Web Engineering, low)",
+    "DEV-DELTA: web rapid-tap debounce→accumulate (BR-08) — web is the lagging platform for this unit"
+  ]
+}
