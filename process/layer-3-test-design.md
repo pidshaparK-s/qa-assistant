@@ -1,6 +1,6 @@
-# Layer 3 — Test Design (Process) · 🚧 DRAFT
+# Layer 3 — Test Design (Process)
 
-> **DRAFT เพื่อเทียบภาพรวม** — ยังไม่ strip orchestration ออกจาก phase-3-* skills (รอบถัดไป)
+> **สถานะ:** gate `br_tc_coverage` ใช้งานจริงแล้ว (proven บน PDT-3418 — 105 TCs, BR+AC coverage 100%) · เหลือ strip orchestration ออกจาก phase-3-* skills (S1 รอบถัดไป)
 
 **เป้าหมาย:** เปลี่ยน story/BR ที่ final เป็น test conditions/cases + คำตัดสิน automate vs manual
 **Input:** Schema 1 (canonical) — หรือ multi-source (PRD+Jira+Figma) ถ้า AC ยังไม่ครบ
@@ -29,7 +29,7 @@
 **calls:** `phase-3-1` — 6 criteria (blocker ก่อน) → verdict **automate / manual / QA-decides** + suggested tool
 → produces: Judgment Table + "QA Must Confirm" section
 
-⛒ **Gates:** BR → Test-Condition coverage (ทุก BR มี ≥1 test condition) · Completion
+⛒ **Gate (บังคับ):** `python3 checks/br_tc_coverage.py qa/<epic>` — [L3] ทุก br_id + ac_id ของ Schema 1 มี test condition ใน `*-test-design.md` (BR→TC + AC→TC coverage) · exit 1 → หยุด · + Completion
 **note:** ทับซ้อนกับ `00-schema-process-guide.md` PHASE 6 (generate test cases) → รอบ final ต้อง unify ถ้อยคำ
 
 ---

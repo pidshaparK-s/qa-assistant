@@ -101,6 +101,7 @@ Process เป็นเจ้าของ artifact store; skill read/write เ�
 | `checks/schema1_integrity.py qa/<epic>` | L2 | Schema 1 referential: dangling/dead br_id, dup id |
 | `checks/schema_trace.py qa/<epic>` | L2 | Schema 1↔2: ac coverage, phantom ac/br, undeclared actor |
 | `checks/decision_ledger.py qa/<epic> [--autonomous]` | L2 | judgment ledger well-formed; `--autonomous` → open human decision = HALT |
+| `checks/br_tc_coverage.py qa/<epic>` | L3 | `*-test-design.md` ครอบทุก BR + AC ของ Schema 1 (BR→TC coverage) |
 
 > ทั้ง 3 เป็น stdlib-only, deterministic, no network — run มือก่อน handoff/commit. schema1_integrity + schema_trace codify script ที่จับ error จริงตอนรัน PDT-3418 (ก่อนหน้านี้เป็น ad-hoc ที่ไม่ได้ commit)
 

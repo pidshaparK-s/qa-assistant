@@ -87,6 +87,14 @@
       "rationale": "User confirmed code-incomplete does not block the process; surfacing deltas is a WIN of authoring spec before code.",
       "decided_by": "user", "status": "confirmed",
       "source_ref": "user 2026-07-09; business-rules.md code-delta section", "related": ["BR-03", "BR-08", "FU-1"]
+    },
+    {
+      "id": "DEC-10", "type": "policy", "unit": "epic", "date": "2026-07-09",
+      "decision": "L3 automation context: platforms = iOS/Android/RN/Flutter/WebUIKit (desktop web = 1-step pause); stability MIXED (mobile video/recorded stable · web overlay behaviours changing · web-Live overlay net-new); Live tests carry complex/flaky external deps (SDK + broadcast + network) → assert '≈ live within tolerance', prefer mock for stream-type gating, some real-device-farm.",
+      "rationale": "phase-3-1 requires platform/stability/deps/env before judging automate-vs-manual — these assumptions drive every L3 verdict. Set as sensible defaults so L3 can proceed; flagged for QA-lead confirmation.",
+      "decided_by": "QA", "status": "proposed",
+      "source_ref": "qa/PDT-3418/PDT-3418-test-design-overview.md; Schema 1 platforms", "related": ["L3", "UC2"],
+      "_open": "QA lead to confirm the automation context (esp. Live-env flakiness + web-Live net-new stability) before committing an automation suite."
     }
   ]
 }
