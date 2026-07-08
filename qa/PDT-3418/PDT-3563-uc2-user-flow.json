@@ -1,0 +1,614 @@
+{
+  "_schema": "user-flow-v1",
+  "_purpose": "Machine-readable actor-based flows สำหรับ AI/coding tools — generate test cases, unit tests, automation",
+  "_status": "Schema 2 output — 2026-07-09. Derived from PDT-3563-uc2-complete-jira-story.json (Layer 2 STEP 6 — NOT signed off). Reconnect + resume behaviour ground-truthed from platform-behavior-notes.md (code-verified, 2026-07-08).",
+  "_warning": "AC-02 carries a PENDING clarification (ASSUME-buffer-tolerance) → flow-UC2-F03 has an assumption flag. Non-blocking — CONF-07 already accepts 'a few seconds behind live' as expected.",
+
+  "ids": {
+    "epic_id": "PDT-3418",
+    "story_id": "PDT-3563",
+    "uc_id": "UC2"
+  },
+
+  "actors": {
+    "viewer": "Community member watching a live stream",
+    "app": "UIKit frontend (overlay, controls, pause/Reconnecting/ended indicators) — iOS / Android / RN / Flutter / WebUIKit",
+    "player": "Playback engine (AVPlayer on iOS / HLS.js on web) — seek-to-live-edge, buffering, reconnect/auto-retry",
+    "sdk": "Amity SDK — Room status (live / ended / recorded / waitingReconnect) + the real-time chat subscription",
+    "network": "Device network layer between the app and the broadcast/SDK",
+    "system": "Server-side room / broadcast lifecycle + recording"
+  },
+
+  "flows": [
+
+    {
+      "flow_id": "flow-UC2-F01",
+      "name": "Default — playing at live edge before any pause",
+      "type": "default_state",
+      "source": "QA",
+      "ac_ids": ["AC-04"],
+      "br_ids": ["BR-14"],
+      "entry_from": null,
+      "summary": "Baseline: a Live stream plays at the live edge with the chat running live and no pause indicator, before the viewer interacts.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F01-S01",
+          "actor": "viewer",
+          "action": "watches a live stream (Room status = live) at the live edge and has not yet paused"
+        },
+        {
+          "step_id": "F01-S02",
+          "actor": "sdk",
+          "action": "reports Room status = live and keeps the real-time chat subscription active",
+          "state_change": {
+            "object": "room",
+            "value": "live"
+          }
+        },
+        {
+          "step_id": "F01-S03",
+          "actor": "player",
+          "action": "plays continuously at the live edge",
+          "state_change": {
+            "object": "player",
+            "value": "playing-at-live-edge"
+          }
+        },
+        {
+          "step_id": "F01-S04",
+          "actor": "app",
+          "action": "shows no pause indicator (the ▶ overlay is absent) and renders the LIVE badge / viewer count as-is — unaffected by this feature"
+        },
+        {
+          "step_id": "F01-S05",
+          "actor": "sdk",
+          "action": "pushes new chat messages in real time; the chat displays live because nothing is paused",
+          "br_ids": ["BR-14"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "render Live player at the live edge (Room status = live) → assert NO pause indicator (▶ overlay) present",
+          "assert LIVE badge and viewer count render as-is (feature does not alter them)",
+          "mock the SDK chat subscription → assert new messages render live while nothing is paused (BR-14)"
+        ],
+        "scenario": [
+          "open a live stream and do not pause → verify playing at the live edge, no ▶ overlay, chat updating live"
+        ],
+        "e2e": [
+          "{iOS, Android, web-desktop}: load a live broadcast, assert no pause indicator and live chat streaming before any interaction"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC2-F02",
+      "name": "Pause a live stream",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-01"],
+      "br_ids": ["BR-07", "BR-11", "BR-14", "BR-01", "BR-09"],
+      "entry_from": "flow-UC2-F01",
+      "summary": "Viewer pauses a Live stream → the ▶ overlay IS the pause indicator, chat keeps running live, tapping outside dismisses the control with no seek and the stream stays paused.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F02-S01",
+          "actor": "viewer",
+          "action": "(mobile: iOS/Android) taps to reveal the controls overlay then taps the central pause button — 2 steps; (web-desktop) taps directly to pause — 1 step",
+          "br_ids": ["BR-09"]
+        },
+        {
+          "step_id": "F02-S02",
+          "actor": "player",
+          "action": "pauses live playback on the explicit user pause",
+          "state_change": {
+            "object": "player",
+            "from": "playing-at-live-edge",
+            "to": "paused"
+          }
+        },
+        {
+          "step_id": "F02-S03",
+          "actor": "app",
+          "action": "shows the central play (▶) button overlay AS the pause indicator — no separate badge or banner",
+          "br_ids": ["BR-07"],
+          "state_change": {
+            "object": "pause_overlay",
+            "from": "hidden",
+            "to": "visible"
+          }
+        },
+        {
+          "step_id": "F02-S04",
+          "actor": "sdk",
+          "action": "the chat subscription keeps running independently of playback — new messages continue to arrive and display in real time; chat is NOT paused",
+          "br_ids": ["BR-14"]
+        },
+        {
+          "step_id": "F02-S05",
+          "actor": "app",
+          "action": "leaves the LIVE badge / viewer count as-is (updating them is out of scope for this feature)"
+        },
+        {
+          "step_id": "F02-S06",
+          "actor": "viewer",
+          "action": "taps anywhere outside the play button"
+        },
+        {
+          "step_id": "F02-S07",
+          "actor": "app",
+          "action": "dismisses the overlay control (pause/play button only — a Live stream exposes no ±10s seek controls); no seek occurs",
+          "br_ids": ["BR-11", "BR-01"],
+          "state_change": {
+            "object": "pause_overlay",
+            "from": "visible",
+            "to": "dismissed"
+          }
+        },
+        {
+          "step_id": "F02-S08",
+          "actor": "player",
+          "action": "remains paused after the tap-outside — dismissing the overlay does not resume playback",
+          "br_ids": ["BR-11"],
+          "state_change": {
+            "object": "player",
+            "state": "paused — unchanged"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mobile {iOS, Android}: assert 2-step pause — reveal controls, then central pause button pauses (BR-09 / PV-1)",
+          "web-desktop: assert 1-step pause — a single tap pauses directly (BR-09 / PV-1)",
+          "on pause → assert the central play (▶) overlay IS the pause indicator; assert NO separate badge/banner element (BR-07)",
+          "assert the Live player exposes NO ±10s seek controls — only pause/play (BR-01)",
+          "mock chat during the pause → assert chat keeps receiving and displaying new messages (separate subscription, not paused — BR-14)",
+          "tap outside the play button → assert overlay dismisses AND player stays paused, no seek (BR-11)"
+        ],
+        "scenario": [
+          "iOS: reveal controls → tap pause → verify ▶ indicator, chat still live, LIVE badge unchanged; tap outside → overlay gone, still paused",
+          "web-desktop: single-tap pause → tap outside → verify overlay dismissed and stream still paused"
+        ],
+        "e2e": [
+          "per-platform matrix {iOS, Android, web-desktop}: pause a live broadcast, assert ▶ indicator + live chat continuing + tap-outside dismiss keeps the stream paused",
+          "web-mobile is EXCLUDED — it cannot pause a Live stream at all (BR-02, see flow-UC2-F08)"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC2-F03",
+      "name": "Resume → current live edge (not the paused position)",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-02"],
+      "br_ids": ["BR-13", "BR-14"],
+      "entry_from": "flow-UC2-F02",
+      "summary": "Viewer resumes → the player snaps to the CURRENT live edge (a BEHAVIOUR CHANGE vs today's resume-from-paused-position), landing within buffering tolerance, with chat uninterrupted.",
+      "assumptions": [
+        {
+          "assumption_id": "A-ASSUME-buffer-tolerance",
+          "text": "Resume-to-live uses 'a few seconds behind live' buffering tolerance as the accepted resume target; tighter is not achievable (live-streaming physics). Awaiting PM confirmation — non-blocking, CONF-07 already accepts 'expected'.",
+          "pending_clarification": "ASSUME-buffer-tolerance"
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "F03-S01",
+          "actor": "viewer",
+          "action": "taps the play button to resume the paused live stream"
+        },
+        {
+          "step_id": "F03-S02",
+          "actor": "player",
+          "action": "seeks to the CURRENT live edge (iOS seekToLiveEdge()+play()) and resumes — NOT from the previous paused position",
+          "br_ids": ["BR-13"],
+          "state_change": {
+            "object": "player",
+            "from": "paused",
+            "to": "playing-at-live-edge"
+          }
+        },
+        {
+          "step_id": "F03-S03",
+          "actor": "player",
+          "action": "a brief buffering/loading may occur while catching up to live; lands within normal buffering tolerance — a few seconds behind live is expected, not exact-live",
+          "br_ids": ["BR-13"]
+        },
+        {
+          "step_id": "F03-S04",
+          "actor": "app",
+          "action": "dismisses the pause indicator (▶ overlay) as playback resumes",
+          "state_change": {
+            "object": "pause_overlay",
+            "from": "visible",
+            "to": "dismissed"
+          }
+        },
+        {
+          "step_id": "F03-S05",
+          "actor": "sdk",
+          "action": "the chat subscription was never interrupted by the pause — no messages are missed or replayed; chat is already at the live moment",
+          "br_ids": ["BR-14"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "on resume → assert the player seeks to the current live edge, NOT the paused position (BR-13)",
+          "assert the resume target ≈ live WITHIN buffering tolerance — a few seconds behind live is EXPECTED; do NOT assert exact-live (CONF-07)",
+          "assert the pause indicator (▶ overlay) dismisses on resume",
+          "iOS: assert the seekToLiveEdge()+play() path fires (LiveStreamPlayerView.swift:27-50)",
+          "mock chat across pause→resume → assert no messages replayed or skipped (BR-14)"
+        ],
+        "scenario": [
+          "pause ~15s then resume → verify playback jumps to the live moment (not where it was paused), within tolerance, chat uninterrupted"
+        ],
+        "e2e": [
+          "BEHAVIOUR CHANGE — run on every supported platform {iOS, Android, web-desktop}: pause then resume, assert playback lands ≈ live within tolerance (NOT exact, NOT paused position), chat continuous"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC2-F04",
+      "name": "Long pause → resume still snaps to the live edge",
+      "type": "alternative",
+      "source": "QA",
+      "ac_ids": ["AC-06"],
+      "br_ids": ["BR-13", "BR-14"],
+      "entry_from": "flow-UC2-F02",
+      "summary": "After a multi-minute pause, resume snaps to the current live moment regardless of how large the jump is; a brief buffering state is acceptable while it completes.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F04-S01",
+          "actor": "viewer",
+          "action": "pauses a live stream and leaves it paused for an extended period (minutes)"
+        },
+        {
+          "step_id": "F04-S02",
+          "actor": "player",
+          "action": "stays paused throughout the extended period — no auto-resume",
+          "state_change": {
+            "object": "player",
+            "state": "paused — unchanged"
+          }
+        },
+        {
+          "step_id": "F04-S03",
+          "actor": "sdk",
+          "action": "Room remains live and the chat subscription keeps running through the long pause (independent of playback)",
+          "br_ids": ["BR-14"]
+        },
+        {
+          "step_id": "F04-S04",
+          "actor": "viewer",
+          "action": "taps play to resume after minutes away"
+        },
+        {
+          "step_id": "F04-S05",
+          "actor": "player",
+          "action": "snaps to the current live edge regardless of how far behind it is — the size of the jump does not change the guarantee",
+          "br_ids": ["BR-13"],
+          "state_change": {
+            "object": "player",
+            "from": "paused",
+            "to": "playing-at-live-edge"
+          }
+        },
+        {
+          "step_id": "F04-S06",
+          "actor": "player",
+          "action": "shows a brief buffering/loading state while the large jump completes, then lands within live buffering tolerance",
+          "br_ids": ["BR-13"]
+        },
+        {
+          "step_id": "F04-S07",
+          "actor": "app",
+          "action": "dismisses the pause indicator (▶ overlay) on resume",
+          "state_change": {
+            "object": "pause_overlay",
+            "from": "visible",
+            "to": "dismissed"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "pause for minutes then resume → assert the player snaps to the current live edge regardless of jump size (BR-13)",
+          "assert a brief buffering/loading state is acceptable while the large jump completes",
+          "assert resume NEVER returns to the paused position, no matter the pause duration"
+        ],
+        "scenario": [
+          "pause 2 min vs 10 min → verify both resume to the live moment within tolerance; the larger jump may buffer briefly"
+        ],
+        "e2e": [
+          "{iOS, Android, web-desktop}: long pause (minutes) then resume, assert live-edge snap + brief buffering acceptable, still ≈ live within tolerance (not exact)",
+          "if the Room ends during the long pause, that is flow-UC2-F06 (ended/recorded wins), not this flow"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC2-F05",
+      "name": "Chat / video re-sync on resume",
+      "type": "alternative",
+      "source": "QA",
+      "ac_ids": ["AC-07"],
+      "br_ids": ["BR-14"],
+      "entry_from": "flow-UC2-F02",
+      "summary": "Chat is a separate real-time subscription that never paused; on resume the video snaps to live and aligns with chat — no messages are replayed or skipped.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F05-S01",
+          "actor": "viewer",
+          "action": "has a live stream paused for a while; chat kept running live throughout the pause"
+        },
+        {
+          "step_id": "F05-S02",
+          "actor": "sdk",
+          "action": "the real-time chat subscription is INDEPENDENT of playback — it kept receiving and displaying new messages the whole time the video was paused; chat is never buffered or replayed to match the video",
+          "br_ids": ["BR-14"]
+        },
+        {
+          "step_id": "F05-S03",
+          "actor": "viewer",
+          "action": "taps play to resume"
+        },
+        {
+          "step_id": "F05-S04",
+          "actor": "player",
+          "action": "snaps the video to the current live moment (per AC-02 / flow-UC2-F03)",
+          "state_change": {
+            "object": "player",
+            "from": "paused",
+            "to": "playing-at-live-edge"
+          }
+        },
+        {
+          "step_id": "F05-S05",
+          "actor": "sdk",
+          "action": "chat continues uninterrupted at the live moment — no messages are replayed (re-shown) and none are skipped, because the chat was never paused",
+          "br_ids": ["BR-14"]
+        },
+        {
+          "step_id": "F05-S06",
+          "actor": "app",
+          "action": "the video and chat are now aligned at the live moment; the transition is smooth and a brief buffering is acceptable"
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "assert chat is a SEPARATE real-time SDK subscription, independent of AVPlayer/HLS.js play state (BR-14) — model chat steps distinctly from player steps",
+          "capture the chat message list before/after resume → assert NO message is replayed (re-shown) and NONE is skipped",
+          "on resume → assert the video snaps to the live moment while chat is already at live → they align"
+        ],
+        "scenario": [
+          "pause with chat active → post messages during the pause → resume → verify those messages were shown live during the pause and none re-appear on resume"
+        ],
+        "e2e": [
+          "{iOS, Android, web-desktop}: drive chat traffic during a paused window, resume, assert chat continuity (no replay/skip) and smooth video/chat alignment at the live moment"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC2-F06",
+      "name": "Stream ends while paused → ended/recorded wins",
+      "type": "alternative",
+      "source": "PM",
+      "ac_ids": ["AC-03"],
+      "br_ids": ["BR-12", "BR-15"],
+      "entry_from": "flow-UC2-F02",
+      "summary": "Room transitions to ended/recorded during the pause → the terminal state ALWAYS overrides paused, no frozen frame; if the recording is not ready the player shows 'Livestream ended' with no 'processing' state.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F06-S01",
+          "actor": "viewer",
+          "action": "has a live stream paused (player state = paused)"
+        },
+        {
+          "step_id": "F06-S02",
+          "actor": "system",
+          "action": "the broadcast / room lifecycle ends server-side; the recording may or may not be ready yet"
+        },
+        {
+          "step_id": "F06-S03",
+          "actor": "sdk",
+          "action": "pushes the Room status change from live to a terminal state (ended, or recorded once processed)",
+          "br_ids": ["BR-12"],
+          "state_change": {
+            "object": "room",
+            "from": "live",
+            "to": "ended"
+          }
+        },
+        {
+          "step_id": "F06-S04",
+          "actor": "player",
+          "action": "leaves the paused state and moves to the ended/recorded state — the terminal room state always wins over paused, even if the pause and the end occur simultaneously",
+          "br_ids": ["BR-12"],
+          "state_change": {
+            "object": "player",
+            "from": "paused",
+            "to": "ended-or-recorded"
+          }
+        },
+        {
+          "step_id": "F06-S05",
+          "actor": "app",
+          "action": "shows the appropriate ended or recorded state — the viewer is not left on a frozen frame with no feedback",
+          "br_ids": ["BR-15"]
+        },
+        {
+          "step_id": "F06-S06",
+          "actor": "app",
+          "action": "if the recording is not yet ready, shows 'Livestream ended' — there is NO intermediate 'processing' state",
+          "br_ids": ["BR-12"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "while player state = paused, flip SDK room.status live→ended → assert the player leaves paused and shows the ended state (terminal state wins, BR-12)",
+          "assert ended/recorded takes priority EVEN IF the pause and the end occur simultaneously (BR-12)",
+          "recording not yet ready → assert 'Livestream ended' is shown, with NO intermediate 'processing' state (BR-12)",
+          "assert the viewer is never left on a frozen frame with no feedback (BR-15)"
+        ],
+        "scenario": [
+          "host ends the broadcast while the viewer is paused → verify the viewer transitions to ended/recorded, not stuck on the paused frame"
+        ],
+        "e2e": [
+          "{iOS, Android, web-desktop}: pause the viewer, end the broadcast server-side (SDK room.status→ended), assert the ended state overrides paused; recording-not-ready shows 'Livestream ended' (no 'processing')",
+          "distinct from flow-UC2-F07 (network drop): here the ROOM ended (SDK terminal state) and the stream does not resume"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC2-F07",
+      "name": "Network drops while paused → Reconnecting, stays paused, resume→live",
+      "type": "error_state",
+      "source": "QA",
+      "ac_ids": ["AC-08"],
+      "br_ids": ["BR-10", "BR-15", "BR-13"],
+      "entry_from": "flow-UC2-F02",
+      "summary": "The network drops while paused → a 'Reconnecting' auto-retry indicator surfaces (platform-specific), the stream STAYS paused (no auto-resume), and on user resume it snaps to the live edge.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F07-S01",
+          "actor": "viewer",
+          "action": "has a live stream paused (player state = paused)"
+        },
+        {
+          "step_id": "F07-S02",
+          "actor": "network",
+          "action": "the device network connection drops"
+        },
+        {
+          "step_id": "F07-S03",
+          "actor": "app",
+          "action": "shows a 'Reconnecting' indicator with auto-retry (no manual retry button) — the viewer is not left on a no-feedback frozen frame. iOS: tied to device network (NWPathMonitor), shows EVEN while paused. Web: gated on a playback stall, so generally NOT shown while paused",
+          "br_ids": ["BR-15"],
+          "state_change": {
+            "object": "reconnecting_overlay",
+            "from": "hidden",
+            "to": "visible"
+          }
+        },
+        {
+          "step_id": "F07-S04",
+          "actor": "player",
+          "action": "auto-retries the connection in the background (web: HLS.js startLoad()/recoverMediaError()) but does NOT change play state — the stream stays paused, no auto-resume",
+          "br_ids": ["BR-10"],
+          "state_change": {
+            "object": "player",
+            "state": "paused — unchanged (no implicit toggle on a network stall, BR-10)"
+          }
+        },
+        {
+          "step_id": "F07-S05",
+          "actor": "network",
+          "action": "the connection recovers"
+        },
+        {
+          "step_id": "F07-S06",
+          "actor": "app",
+          "action": "dismisses the 'Reconnecting' indicator; the stream is still paused (no auto-resume)",
+          "br_ids": ["BR-10"],
+          "state_change": {
+            "object": "reconnecting_overlay",
+            "from": "visible",
+            "to": "hidden"
+          }
+        },
+        {
+          "step_id": "F07-S07",
+          "actor": "viewer",
+          "action": "taps play to resume"
+        },
+        {
+          "step_id": "F07-S08",
+          "actor": "player",
+          "action": "snaps to the current live edge (iOS seekToLiveEdge()+play()) — not the paused position (per AC-02), landing ≈ live within tolerance",
+          "br_ids": ["BR-13"],
+          "state_change": {
+            "object": "player",
+            "from": "paused",
+            "to": "playing-at-live-edge"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "iOS: the reconnecting overlay is tied to DEVICE network via NWPathMonitor → assert it shows EVEN while paused (LiveStreamViewerView.swift:244-272, NetworkMonitor.swift:11-28)",
+          "web: the 'Reconnecting' overlay is gated isLoading && isPoorConnection && isLive and fires on a playback STALL ('waiting') → assert it generally does NOT show while paused (a paused <video> emits no 'waiting'); it appears only if the SDK flips room.status='waitingReconnect' (LivestreamOverlay.tsx:57-66, LivestreamPlayer.tsx:128)",
+          "assert the stream STAYS paused through drop→recover — NO auto-resume (BR-10: play state changes only via explicit user play or a terminal room state)",
+          "assert reconnect is auto-retry with NO manual retry button (BR-15)",
+          "on user resume after recover → assert snap to the live edge, ≈ live within tolerance not exact (per AC-02); iOS seekToLiveEdge()+play() (LiveStreamPlayerView.swift:27-50)"
+        ],
+        "scenario": [
+          "iOS: pause → drop device network → verify the 'Reconnecting' scrim shows despite being paused; recover → still paused; tap play → live edge",
+          "web: pause → drop network → verify NO 'Reconnecting' overlay (no stall while paused); recover → tap play → live edge. Separately: SDK room.status='waitingReconnect' (host/broadcaster dropped) → the overlay DOES show"
+        ],
+        "e2e": [
+          "iOS: toggle device network while paused → assert overlay shows + stays paused + resume→live",
+          "web: route/network interception while paused → assert no stall overlay; then simulate room.status='waitingReconnect' → assert overlay shows; on recover + resume → assert snap to live edge",
+          "distinguish the viewer's device-network overlay from room.status='waitingReconnect' (the host/broadcaster lost connection, SDK-side)"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC2-F08",
+      "name": "Default — mobile web cannot pause a Live stream",
+      "type": "default_state",
+      "source": "QA",
+      "ac_ids": ["AC-05"],
+      "br_ids": ["BR-02"],
+      "entry_from": null,
+      "summary": "On web-mobile a Live stream offers no pause control (BR-02) — a standing platform boundary, excluded from UC2 pause/resume scope.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F08-S01",
+          "actor": "viewer",
+          "action": "on mobile web, opens a 'Live' stream (Room status = live)"
+        },
+        {
+          "step_id": "F08-S02",
+          "actor": "sdk",
+          "action": "reports Room status = live and keeps the chat subscription active"
+        },
+        {
+          "step_id": "F08-S03",
+          "actor": "player",
+          "action": "renders and plays the Live stream"
+        },
+        {
+          "step_id": "F08-S04",
+          "actor": "app",
+          "action": "offers NO pause control on mobile web for a Live stream — pause/resume of an active Live stream is not available on web-mobile; a standing platform boundary (platform table 68264), not a bug",
+          "br_ids": ["BR-02"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "render the Live player on web-mobile → assert NO pause control is offered (BR-02)",
+          "assert this is a standing platform boundary (platform table 68264), not a defect — nothing to file"
+        ],
+        "scenario": [
+          "web-mobile: open a Live stream → verify no pause/resume affordance; contrast web-desktop, which CAN pause (1-step)"
+        ],
+        "e2e": [
+          "web-mobile viewport: load a live broadcast, assert absence of any pause control; EXCLUDE web-mobile from the UC2 pause/resume suite"
+        ]
+      }
+    }
+
+  ]
+}

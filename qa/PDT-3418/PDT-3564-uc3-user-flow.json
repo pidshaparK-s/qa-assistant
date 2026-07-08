@@ -1,0 +1,599 @@
+{
+  "_schema": "user-flow-v1",
+  "_purpose": "Machine-readable actor-based flows for AI/coding tools — generate test cases, unit tests, automation. UC3 = 10-Second Skip Back/Forward for video / recorded-LS playback.",
+  "_status": "Derived from PDT-3564-uc3-complete-jira-story.json (Layer 2 STEP 6, 2026-07-09 — NOT signed off). 11 ACs → 11 flows (1:1).",
+  "_warning": "AC-11 (web ±10s skip during buffer) is PENDING FU-3 — flow-UC3-F11 carries an assumption flag (do not assert the skip result until FU-3 closes). Web rapid-tap debounce→accumulate (BR-08 / ledger GAP-07) is a dev delta — flagged as a plain assumption on flow-UC3-F06. Neither blocks its flow.",
+  "_precondition": "UC3 depends on UC1a's controls overlay being visible. Flows that assume the overlay is already up set entry_from: 'flow-UC1a-F01'. F09 is the PRE-overlay baseline (entry_from: null). F08 is Live — its overlay is revealed by UC1b, not UC1a (see flow _note).",
+  "_coverage": "happy_path: F01, F02, F06 · alternative: F03, F04, F05, F07, F10 · default_state: F08 (Live), F09 (baseline) · error_state: F11 (web buffer, FU-3). Every AC-01…AC-11 appears in exactly one flow.",
+
+  "ids": {
+    "epic_id": "PDT-3418",
+    "story_id": "PDT-3564",
+    "uc_id": "UC3"
+  },
+
+  "actors": {
+    "viewer": "Community member watching a video / recorded livestream",
+    "app": "UIKit client UI — renders the controls overlay, the −10s / +10s skip buttons, and the skip icon feedback",
+    "player": "Playback engine — does the ±10s seek, clamps at boundaries (0:00 / final frame), buffers, and holds position + play/pause state",
+    "sdk": "Social+ SDK — reports stream type / room status (video, recorded LS, Live LS)",
+    "network": "Network layer delivering media data — stalls cause the player to buffer"
+  },
+
+  "flows": [
+
+    {
+      "flow_id": "flow-UC3-F01",
+      "name": "Skip back 10s during playback",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-01"],
+      "br_ids": ["BR-04", "BR-10"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "Playing video, overlay up, position ≥10s from start — tap −10s → jumps back exactly 10s and keeps playing.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F01-S01",
+          "actor": "viewer",
+          "action": "taps the skip-back (−10s) button while the video is playing (position at least 10s from start, e.g. 1:00)"
+        },
+        {
+          "step_id": "F01-S02",
+          "actor": "app",
+          "action": "shows the −10 skip icon feedback",
+          "state_change": { "object": "skip_icon", "value": "−10 shown (per-tap value)" }
+        },
+        {
+          "step_id": "F01-S03",
+          "actor": "player",
+          "action": "seeks playback back exactly 10 seconds from the current position",
+          "br_ids": ["BR-04"],
+          "state_change": { "object": "position", "from": "P (1:00)", "to": "P−10 (0:50)" }
+        },
+        {
+          "step_id": "F01-S04",
+          "actor": "player",
+          "action": "continues playback without interruption — skip is position-only and does not toggle play/pause",
+          "br_ids": ["BR-10"],
+          "state_change": { "object": "playback_state", "from": "playing", "to": "playing", "note": "unchanged by the skip" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "player at 1:00, tap skip-back → assert seek issued with −10s → position 0:50",
+          "assert playback_state remains 'playing' after skip (BR-10)",
+          "assert skip icon text is '−10', never an accumulated total"
+        ],
+        "scenario": [
+          "play a video to 1:00, tap −10s → verify position 0:50 and video still playing"
+        ],
+        "e2e": [
+          "video playing at a known timecode → tap −10s → assert timecode decreased by exactly 10s and playback continues"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F02",
+      "name": "Skip forward 10s during playback",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-02"],
+      "br_ids": ["BR-04", "BR-10"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "Playing video, overlay up, position ≥10s from end — tap +10s → jumps forward exactly 10s and keeps playing.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F02-S01",
+          "actor": "viewer",
+          "action": "taps the skip-forward (+10s) button while the video is playing (position at least 10s from end, e.g. 1:00)"
+        },
+        {
+          "step_id": "F02-S02",
+          "actor": "app",
+          "action": "shows the +10 skip icon feedback",
+          "state_change": { "object": "skip_icon", "value": "+10 shown (per-tap value)" }
+        },
+        {
+          "step_id": "F02-S03",
+          "actor": "player",
+          "action": "seeks playback forward exactly 10 seconds from the current position",
+          "br_ids": ["BR-04"],
+          "state_change": { "object": "position", "from": "P (1:00)", "to": "P+10 (1:10)" }
+        },
+        {
+          "step_id": "F02-S04",
+          "actor": "player",
+          "action": "continues playback without interruption — skip is position-only and does not toggle play/pause",
+          "br_ids": ["BR-10"],
+          "state_change": { "object": "playback_state", "from": "playing", "to": "playing", "note": "unchanged by the skip" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "player at 1:00, tap skip-forward → assert seek issued with +10s → position 1:10",
+          "assert playback_state remains 'playing' after skip (BR-10)",
+          "assert skip icon text is '+10', never an accumulated total"
+        ],
+        "scenario": [
+          "play a video to 1:00, tap +10s → verify position 1:10 and video still playing"
+        ],
+        "e2e": [
+          "video playing at a known timecode → tap +10s → assert timecode increased by exactly 10s and playback continues"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F03",
+      "name": "Boundary skip-back near start → clamp to 0:00, preserve prior state",
+      "type": "alternative",
+      "source": "PM",
+      "ac_ids": ["AC-03"],
+      "br_ids": ["BR-05", "BR-10"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "Position <10s from start — tap skip-back → clamps to 0:00 (never negative) and PRESERVES prior state: playing continues from 0:00, paused stays paused. A boundary skip-back is NOT a forced pause.",
+      "assumptions": [],
+      "_note": "Corrects Jira AC-03 which still reads 'the video is in a paused state' — spec preserves prior state (AMB-11); PM to align Jira wording (FU-5). This is a resolved spec decision, not a pending clarification.",
+      "steps": [
+        {
+          "step_id": "F03-S01",
+          "actor": "viewer",
+          "action": "taps skip-back while the current position is less than 10s from the start (e.g. 0:05), in either play state"
+        },
+        {
+          "step_id": "F03-S02",
+          "actor": "app",
+          "action": "shows the −10 skip icon feedback",
+          "state_change": { "object": "skip_icon", "value": "−10 shown" }
+        },
+        {
+          "step_id": "F03-S03",
+          "actor": "player",
+          "action": "clamps the seek to 0:00 — does not go to a negative position",
+          "br_ids": ["BR-05"],
+          "state_change": { "object": "position", "from": "0:05", "to": "0:00", "note": "clamped at start boundary; never negative" }
+        },
+        {
+          "step_id": "F03-S04",
+          "actor": "player",
+          "action": "preserves the prior playback state — if it was playing it continues from 0:00; if it was paused it stays paused (a boundary skip-back does NOT force a pause)",
+          "br_ids": ["BR-10"],
+          "state_change": { "object": "playback_state", "value": "preserved / unchanged", "note": "playing→playing (continues from 0:00) · paused→paused" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "video at 0:05 PLAYING, tap skip-back → assert position clamps to 0:00 AND playback_state still 'playing'",
+          "video at 0:05 PAUSED, tap skip-back → assert position 0:00 AND still 'paused' (NOT force-played, NOT force-paused)",
+          "assert position never resolves to a negative value"
+        ],
+        "scenario": [
+          "video at 0:05 playing → skip back → verify jumps to 0:00 and keeps playing (corrects Jira 'paused' wording, FU-5)"
+        ],
+        "e2e": [
+          "need videos of known length for boundary tests; seek to 0:05, tap −10s → assert position 0:00 AND prior play/pause state intact"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F04",
+      "name": "Boundary skip-forward near end → final frame, end state (paused)",
+      "type": "alternative",
+      "source": "PM",
+      "ac_ids": ["AC-04"],
+      "br_ids": ["BR-05", "BR-12"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "Position within 10s of the end — tap skip-forward → clamps to the final frame and enters the end state (paused). Does not loop, does not error.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F04-S01",
+          "actor": "viewer",
+          "action": "taps skip-forward while the current position is within 10s of the end (e.g. a 2:00 video at 1:55)"
+        },
+        {
+          "step_id": "F04-S02",
+          "actor": "app",
+          "action": "shows the +10 skip icon feedback",
+          "state_change": { "object": "skip_icon", "value": "+10 shown" }
+        },
+        {
+          "step_id": "F04-S03",
+          "actor": "player",
+          "action": "clamps the seek to the final frame — does not seek past the end and does not loop back to 0:00",
+          "br_ids": ["BR-05"],
+          "state_change": { "object": "position", "from": "1:55", "to": "2:00 (final frame)", "note": "clamped at end boundary; never past final frame, never loops" }
+        },
+        {
+          "step_id": "F04-S04",
+          "actor": "player",
+          "action": "enters the end state — paused at the final frame (terminal condition; there is no content past the end to continue into)",
+          "br_ids": ["BR-12"],
+          "state_change": { "object": "playback_state", "from": "playing", "to": "paused", "note": "end state at final frame" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "player at 1:55 of a 2:00 video, tap skip-forward → assert position clamps to final frame (2:00) AND end state (paused)",
+          "assert no loop back to 0:00 and no error thrown"
+        ],
+        "scenario": [
+          "video near end → skip forward → verify lands on final frame and is paused (end state)"
+        ],
+        "e2e": [
+          "need videos of known length for boundary tests; seek to within 10s of end → tap +10s → assert final frame + paused end state, no loop"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F05",
+      "name": "Skip while paused → position updates, stays paused",
+      "type": "alternative",
+      "source": "PM",
+      "ac_ids": ["AC-05"],
+      "br_ids": ["BR-04", "BR-10"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "Video paused, overlay up — tap either skip button → position updates by ±10s but the video stays paused (skip does not auto-resume).",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F05-S01",
+          "actor": "viewer",
+          "action": "taps either skip button while the video is paused (overlay visible)"
+        },
+        {
+          "step_id": "F05-S02",
+          "actor": "app",
+          "action": "shows the ±10 skip icon feedback for the tapped direction",
+          "state_change": { "object": "skip_icon", "value": "±10 shown (per tapped direction)" }
+        },
+        {
+          "step_id": "F05-S03",
+          "actor": "player",
+          "action": "updates the position by exactly ±10 seconds accordingly",
+          "br_ids": ["BR-04"],
+          "state_change": { "object": "position", "from": "P", "to": "P±10 (per tapped direction)" }
+        },
+        {
+          "step_id": "F05-S04",
+          "actor": "player",
+          "action": "remains paused — skip does not auto-resume playback",
+          "br_ids": ["BR-10"],
+          "state_change": { "object": "playback_state", "from": "paused", "to": "paused", "note": "skip is position-only; does not auto-resume" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "player paused at P, tap skip-forward → assert position P+10 AND playback_state still 'paused'",
+          "tap skip-back while paused → assert position updated AND playback NOT auto-resumed"
+        ],
+        "scenario": [
+          "pause the video → tap +10s → verify position advances 10s and video stays paused"
+        ],
+        "e2e": [
+          "pause playback → tap a skip button → assert timecode changes but play does not resume"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F06",
+      "name": "Rapid repeated taps accumulate; icon always shows ±10",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-07"],
+      "br_ids": ["BR-04", "BR-08", "BR-10"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "Multiple quick taps each add ±10s (they accumulate — e.g. +10 ×3 at 1:00 → 1:30), while the skip icon always shows the per-tap value (+10 / −10), never the accumulated total.",
+      "assumptions": [
+        {
+          "assumption_id": "A-DEV-BR08",
+          "text": "Web UIKit currently DEBOUNCES rapid taps to a single ±10s; to satisfy AC-07 / BR-08 web must change to ACCUMULATE (each tap adds ±10s). This is a dev delta (ledger GAP-07), not a spec gap — the flow is written to the TARGET accumulate behaviour. Mobile already accumulates.",
+          "pending_clarification": null
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "F06-S01",
+          "actor": "viewer",
+          "action": "taps a skip button multiple times quickly (e.g. skip-forward ×3 while playing at 1:00)"
+        },
+        {
+          "step_id": "F06-S02",
+          "actor": "app",
+          "action": "shows the +10 skip icon on each tap — always the per-tap value, never the accumulated total (never '+30')",
+          "br_ids": ["BR-08"],
+          "state_change": { "object": "skip_icon", "value": "+10 shown per tap (not the accumulated total)" }
+        },
+        {
+          "step_id": "F06-S03",
+          "actor": "player",
+          "action": "accumulates every tap — each tap adds exactly 10 seconds to the target position",
+          "br_ids": ["BR-04", "BR-08"],
+          "state_change": { "object": "position", "from": "1:00", "to": "1:30 (three ×+10s accumulated)" }
+        },
+        {
+          "step_id": "F06-S04",
+          "actor": "player",
+          "action": "continues playback without interruption through the burst",
+          "br_ids": ["BR-10"],
+          "state_change": { "object": "playback_state", "from": "playing", "to": "playing" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "player at 1:00, dispatch 3 rapid skip-forward taps → assert final position 1:30 (accumulated, NOT 1:10)",
+          "assert skip icon text is '+10' on every tap, never '+30'"
+        ],
+        "scenario": [
+          "web: currently debounces — must accumulate; tap ×3 fast → assert net +30s (skip-forward) / −30s (skip-back)",
+          "mobile: tap ×3 fast → assert accumulated ±30s and icon only ever shows ±10"
+        ],
+        "e2e": [
+          "rapidly tap +10s three times → assert net +30s seek and the icon only ever shows +10 (regression guard for the web debounce fix)"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F07",
+      "name": "Rapid taps near boundary obey clamp mid-burst",
+      "type": "alternative",
+      "source": "PM",
+      "ac_ids": ["AC-08"],
+      "br_ids": ["BR-05", "BR-08"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "During a rapid burst near the start/end, taps accumulate until one would cross the boundary — that tap follows the clamp rules (AC-03 / AC-04): it stops at 0:00 or the final frame, never negative, never loops, even mid-burst.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F07-S01",
+          "actor": "viewer",
+          "action": "taps a skip button multiple times quickly near the start or end (e.g. skip-back ×3 starting at 0:15)"
+        },
+        {
+          "step_id": "F07-S02",
+          "actor": "app",
+          "action": "shows the ±10 skip icon per tap",
+          "state_change": { "object": "skip_icon", "value": "±10 shown per tap" }
+        },
+        {
+          "step_id": "F07-S03",
+          "actor": "player",
+          "action": "accumulates taps normally until a tap would cross the boundary",
+          "br_ids": ["BR-08"],
+          "state_change": { "object": "position", "from": "0:15", "to": "0:05 (after the first −10 of the burst)", "note": "accumulating within the burst" }
+        },
+        {
+          "step_id": "F07-S04",
+          "actor": "player",
+          "action": "clamps the boundary-crossing tap mid-burst — lands at 0:00 (or the final frame) instead of a negative position or a loop",
+          "br_ids": ["BR-05"],
+          "state_change": { "object": "position", "from": "0:05", "to": "0:00", "note": "clamp applies mid-burst per AC-03/AC-04; never negative, never loops" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "player at 0:15, 3 rapid skip-back taps → assert positions 0:05 then 0:00 (clamped) — never negative",
+          "burst near end → assert clamps at final frame mid-burst, no loop back to 0:00"
+        ],
+        "scenario": [
+          "need videos of known length for boundary tests; rapid −10s ×3 from 0:15 → verify ends at 0:00, never negative",
+          "rapid +10s ×N near the end → verify stops at the final frame, never loops"
+        ],
+        "e2e": [
+          "fast-tap −10s repeatedly near the start → assert timecode floors at 0:00 during the burst"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F08",
+      "name": "Live stream → no skip buttons (in-app)",
+      "type": "default_state",
+      "source": "PM",
+      "ac_ids": ["AC-06"],
+      "br_ids": ["BR-01"],
+      "entry_from": null,
+      "summary": "On an active Live stream the ±10s skip buttons are NOT shown in the controls overlay — seeking is not applicable to Live (in-app). Recorded LS (after Live ends) uses the video player and DOES show them.",
+      "assumptions": [],
+      "_note": "Scope = in-app buttons only. The Live overlay is revealed by UC1b (not UC1a); web-live may have no reveal-controls overlay at all (impl delta). Android OS-native media-control scrub of a Live stream (lock screen / notification / car unit) is a SEPARATE bug (FU-4 / AMB-05), independent of AC-06 — see test_hints e2e.",
+      "steps": [
+        {
+          "step_id": "F08-S01",
+          "actor": "sdk",
+          "action": "reports the stream status is Live (room status = live) — a Live LS, not video / recorded LS",
+          "br_ids": ["BR-01"]
+        },
+        {
+          "step_id": "F08-S02",
+          "actor": "app",
+          "action": "renders the controls overlay for the Live stream"
+        },
+        {
+          "step_id": "F08-S03",
+          "actor": "app",
+          "action": "does NOT render the −10 / +10 skip buttons — seeking is not applicable on a Live stream (in-app)",
+          "br_ids": ["BR-01"],
+          "state_change": { "object": "skip_buttons", "value": "not rendered (Live)" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock sdk stream type = Live → assert skip-back / skip-forward buttons NOT rendered in the overlay",
+          "mock sdk stream type = recorded LS → assert skip buttons ARE rendered (contrast case)"
+        ],
+        "scenario": [
+          "open a Live stream, reveal controls → verify no ±10s buttons; open that stream's recording → verify ±10s buttons present"
+        ],
+        "e2e": [
+          "Live stream overlay → assert absence of in-app skip buttons",
+          "OUT OF SCOPE for this flow: Android OS-native transport scrub on a Live stream (FU-4 bug), which is not an AC-06 gap"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F09",
+      "name": "Default baseline — no skip buttons before the overlay is revealed",
+      "type": "default_state",
+      "source": "QA",
+      "ac_ids": ["AC-09"],
+      "br_ids": [],
+      "entry_from": null,
+      "summary": "A video / recorded LS is loaded but the UC1a controls overlay has not yet been revealed — no skip buttons are visible. They appear only as part of UC1a's overlay.",
+      "assumptions": [],
+      "_note": "Ties UC3's default state to UC1a's overlay lifecycle (build-order dependency UC1a → UC3). entry_from is null because this is the PRE-overlay baseline; revealing the overlay is UC1a (flow-UC1a-F01), after which F01–F07 / F10 / F11 apply.",
+      "steps": [
+        {
+          "step_id": "F09-S01",
+          "actor": "viewer",
+          "action": "loads a video / recorded LS but has not yet tapped to reveal the controls overlay (per UC1a)"
+        },
+        {
+          "step_id": "F09-S02",
+          "actor": "player",
+          "action": "renders the video surface and plays"
+        },
+        {
+          "step_id": "F09-S03",
+          "actor": "app",
+          "action": "shows no skip buttons — the ±10s skip controls appear only as part of UC1a's controls overlay, which has not been revealed",
+          "state_change": { "object": "skip_buttons", "value": "not visible (overlay not yet revealed)" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "render the player fresh (overlay not revealed) → assert skip buttons absent from the tree",
+          "reveal the overlay (UC1a) → assert skip buttons now present (transition guard)"
+        ],
+        "scenario": [
+          "open a video without tapping → verify no ±10s buttons on screen until controls are revealed"
+        ],
+        "e2e": [
+          "load a video, do not tap → assert no skip buttons; tap to reveal (UC1a) → assert skip buttons appear"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F10",
+      "name": "Skip while buffering (mobile) → seek-and-rebuffer",
+      "type": "alternative",
+      "source": "QA",
+      "ac_ids": ["AC-10"],
+      "br_ids": ["BR-15"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "On mobile, tapping a skip button while the player is buffering makes it seek to the target and rebuffer there — no stuck loading, no crash. Resolved by code (Prisa 68329).",
+      "assumptions": [],
+      "_note": "Mobile behaviour resolved by code — seek-and-rebuffer (Prisa 68329). The web equivalent is UNCONFIRMED — see flow-UC3-F11 / FU-3.",
+      "steps": [
+        {
+          "step_id": "F10-S01",
+          "actor": "network",
+          "action": "delivers media data slowly at the current position (mobile), so the player cannot play smoothly"
+        },
+        {
+          "step_id": "F10-S02",
+          "actor": "player",
+          "action": "is in a buffering state at the current position",
+          "state_change": { "object": "player_state", "value": "buffering (mobile)" }
+        },
+        {
+          "step_id": "F10-S03",
+          "actor": "viewer",
+          "action": "taps a skip button while the player is buffering"
+        },
+        {
+          "step_id": "F10-S04",
+          "actor": "player",
+          "action": "seeks to the target position and rebuffers there — surfaces a loading state at the new position, then resumes; no stuck loading, no crash",
+          "br_ids": ["BR-15"],
+          "state_change": { "object": "position", "from": "P", "to": "P±10 (seek target)", "note": "seek-and-rebuffer at target; explicit loading feedback, never a silent frozen frame" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "put the mobile player in a buffering state, tap skip → assert a seek to the target is issued and buffering re-enters at the target (not stuck at the old position)",
+          "assert no crash and no infinite spinner"
+        ],
+        "scenario": [
+          "throttle the network to force buffering on mobile → tap +10s → verify the player rebuffers at the new position and eventually resumes"
+        ],
+        "e2e": [
+          "mobile: simulate buffering, tap skip → assert the target position loads (seek-and-rebuffer), no stuck loading"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC3-F11",
+      "name": "Skip while buffering (web) → behaviour unconfirmed",
+      "type": "error_state",
+      "source": "QA",
+      "ac_ids": ["AC-11"],
+      "br_ids": ["BR-15"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "On web, the exact behaviour of the ±10s skip tap while buffering is NOT yet confirmed (FU-3). Known: web separately shows a 'Reconnecting' UI and allows manual scrub/scroll — a different gesture from tapping the ±10s skip. Per BR-15 the viewer is never left on a silent frozen frame.",
+      "assumptions": [
+        {
+          "assumption_id": "A-FU3",
+          "text": "Web ±10s skip behaviour mid-buffer is not yet confirmed (Owner: Web Engineering). The flow captures only what is known: web shows a 'Reconnecting' UI and allows manual scrub/scroll, which is a DIFFERENT gesture from the discrete ±10s skip tap. The skip-tap outcome itself is pending — do NOT assert a specific seek result until FU-3 closes.",
+          "pending_clarification": "FU-3"
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "F11-S01",
+          "actor": "network",
+          "action": "delivers media data slowly / stalls at the current position (web), so the player cannot play smoothly"
+        },
+        {
+          "step_id": "F11-S02",
+          "actor": "player",
+          "action": "is in a buffering state; the app surfaces the 'Reconnecting' UI (known behaviour) and manual scrub/scroll remains available",
+          "br_ids": ["BR-15"],
+          "state_change": { "object": "player_state", "value": "buffering + 'Reconnecting' UI shown (manual scrub/scroll available)" }
+        },
+        {
+          "step_id": "F11-S03",
+          "actor": "viewer",
+          "action": "taps a ±10s skip button while buffering (distinct from the manual scrub/scroll gesture)"
+        },
+        {
+          "step_id": "F11-S04",
+          "actor": "player",
+          "action": "[PENDING FU-3] the exact outcome of the ±10s skip tap mid-buffer on web is not confirmed — the known 'Reconnecting' + manual scrub/scroll is a separate gesture, not the skip-tap result",
+          "state_change": { "object": "skip_result", "value": "UNCONFIRMED (pending FU-3)" }
+        },
+        {
+          "step_id": "F11-S05",
+          "actor": "app",
+          "action": "[known / BR-15] never leaves the viewer on a frozen frame with no feedback — an explicit state (Reconnecting) is surfaced regardless of the skip outcome",
+          "br_ids": ["BR-15"],
+          "state_change": { "object": "ui_feedback", "value": "explicit state surfaced (no silent frozen frame)" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "[BLOCKED on FU-3] cannot assert the exact web skip-during-buffer seek result yet",
+          "assert web shows the 'Reconnecting' UI while buffering (known)",
+          "assert manual scrub/scroll remains available and is treated as a separate gesture from the ±10s skip"
+        ],
+        "scenario": [
+          "web: force buffering, tap ±10s → OBSERVE and record the behaviour to close FU-3 (do not assert until confirmed)",
+          "verify no silent frozen frame — the 'Reconnecting' state is visible (BR-15)"
+        ],
+        "e2e": [
+          "web: simulate a poor connection → assert the 'Reconnecting' UI appears; the ±10s skip outcome is DEFERRED pending FU-3"
+        ]
+      }
+    }
+
+  ]
+}

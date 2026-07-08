@@ -1,0 +1,686 @@
+{
+  "_schema": "user-flow-v1",
+  "_purpose": "Machine-readable actor-based flows สำหรับ AI/coding tools — generate test cases, unit tests, automation",
+  "_status": "Generated from PDT-3562-uc1b-complete-jira-story.json (Layer 2 STEP 6, 2026-07-09 — NOT signed off). UC1b = the 'Live' player component (QA-internal split of PDT-3562 by player component).",
+  "_warning": "FU-2 (central button hit-target) is PENDING and the web-Live reveal-controls overlay is NET-NEW (DEV-DELTA — bare Plyr pause/play only today). Flows touching these carry assumption flags — NOT blocked. There is NO resume flow in UC1b: live resume-to-live is owned by UC2.",
+
+  "ids": {
+    "epic_id": "PDT-3418",
+    "story_id": "PDT-3562",
+    "uc_id": "UC1b"
+  },
+
+  "actors": {
+    "viewer": "Community member watching a 'Live' live stream (Room status: live)",
+    "app": "Host app shell that mounts the Live player in a feed/fullscreen surface and bridges OS lifecycle",
+    "player": "The 'Live' player component (UC1b) — controls overlay reveal/dismiss, central pause/play button + icon, 1s auto-dismiss timer, seek-control presence. NET-NEW on web-Live.",
+    "sdk": "Amity SDK / live stream engine — true playback state (playing/paused/buffering), room status (live), live edge",
+    "network": "Network layer between the player and the live stream source — stalls cause buffering",
+    "system": "OS / platform runtime — app background/foreground lifecycle, OS-level media pause"
+  },
+
+  "flows": [
+
+    {
+      "flow_id": "flow-UC1b-F01",
+      "name": "Default baseline — active Live before any tap",
+      "type": "default_state",
+      "source": "QA",
+      "ac_ids": ["AC-06"],
+      "br_ids": [],
+      "entry_from": null,
+      "summary": "A 'Live' stream renders with the standing LIVE badge and viewer count and NO controls overlay before the first tap",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F01-S01",
+          "actor": "viewer",
+          "action": "opens a feed/post containing an actively broadcasting 'Live' stream and performs no tap yet"
+        },
+        {
+          "step_id": "F01-S02",
+          "actor": "app",
+          "action": "mounts the Live player component on the current surface (inline feed or fullscreen)"
+        },
+        {
+          "step_id": "F01-S03",
+          "actor": "sdk",
+          "action": "reports room status = live with playback active"
+        },
+        {
+          "step_id": "F01-S04",
+          "actor": "player",
+          "action": "renders the live video surface with the standing LIVE badge and viewer count and NO controls overlay",
+          "ac_ids": ["AC-06"],
+          "state_change": {
+            "object": "controls_overlay",
+            "value": "hidden (baseline — LIVE badge + viewer count shown)"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "render Live player with sdk room_status=live and no tap → assert controls overlay NOT present in the view/DOM",
+          "assert LIVE badge and viewer-count element are visible at baseline"
+        ],
+        "scenario": [
+          "open a feed with an active Live post → verify only video + LIVE badge + viewer count, no overlay before interaction"
+        ],
+        "e2e": [
+          "load a Live post → before any interaction assert no controls overlay and LIVE badge present"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F02",
+      "name": "Tap reveals controls (mobile) — playback continues",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-01"],
+      "br_ids": ["BR-09", "BR-10"],
+      "entry_from": "flow-UC1b-F01",
+      "summary": "On mobile (iOS / Android / web-on-mobile) the first tap reveals the controls overlay WITHOUT toggling playback; the stream keeps playing and the central pause icon is shown",
+      "assumptions": [
+        {
+          "assumption_id": "A-DEV-DELTA",
+          "text": "web-Live reveal-controls overlay is NET-NEW — no existing implementation (LIVE path today is a bare <video>+Plyr with pause/play only, LivestreamPlayer.tsx). Build + verify from scratch, not against existing behaviour.",
+          "pending_clarification": "DEV-DELTA"
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "F02-S01",
+          "actor": "viewer",
+          "action": "taps anywhere on the playing 'Live' player surface (mobile: iOS / Android / web-on-mobile)"
+        },
+        {
+          "step_id": "F02-S02",
+          "actor": "player",
+          "action": "reveals the controls overlay WITHOUT issuing pause/play — mobile first-tap is reveal-only",
+          "br_ids": ["BR-09"],
+          "state_change": {
+            "object": "controls_overlay",
+            "from": "hidden",
+            "to": "visible"
+          }
+        },
+        {
+          "step_id": "F02-S03",
+          "actor": "sdk",
+          "action": "keeps playback running uninterrupted — no pause is issued by the reveal",
+          "br_ids": ["BR-10"],
+          "state_change": {
+            "object": "playback",
+            "state": "playing — unchanged"
+          }
+        },
+        {
+          "step_id": "F02-S04",
+          "actor": "player",
+          "action": "shows the central pause icon, reflecting the still-playing state",
+          "ac_ids": ["AC-01"]
+        },
+        {
+          "step_id": "F02-S05",
+          "actor": "player",
+          "action": "starts the 1s idle auto-dismiss countdown (see flow-UC1b-F05)"
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock a playing Live stream on mobile → simulate tap → assert overlay visible AND sdk playback still playing (NOT paused)",
+          "assert central button icon = pause after reveal"
+        ],
+        "scenario": [
+          "iOS / Android / web-mobile: tap a playing Live player → verify controls appear and the stream keeps playing"
+        ],
+        "e2e": [
+          "web-mobile — tap the Live player → assert overlay appears and video.paused === false",
+          "web-Live overlay is net-new — verify from scratch, not against any existing overlay behaviour"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F03",
+      "name": "Desktop variant — 1-Step Pause (platform split BR-09)",
+      "type": "alternative",
+      "source": "PM",
+      "ac_ids": ["AC-01"],
+      "br_ids": ["BR-09", "BR-10"],
+      "entry_from": "flow-UC1b-F01",
+      "summary": "On desktop (Web UIKit) the first tap is a direct 1-Step Pause — it does NOT use the mobile reveal-controls path; playback pauses immediately",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F03-S01",
+          "actor": "viewer",
+          "action": "taps the playing 'Live' player once on desktop (Web UIKit)"
+        },
+        {
+          "step_id": "F03-S02",
+          "actor": "player",
+          "action": "routes the tap to a direct 1-Step Pause (desktop interaction model), NOT reveal-only",
+          "br_ids": ["BR-09"]
+        },
+        {
+          "step_id": "F03-S03",
+          "actor": "sdk",
+          "action": "pauses playback — on desktop a single tap toggles pause/play directly",
+          "br_ids": ["BR-10"],
+          "ac_ids": ["AC-01"],
+          "state_change": {
+            "object": "playback",
+            "from": "playing",
+            "to": "paused"
+          }
+        },
+        {
+          "step_id": "F03-S04",
+          "actor": "player",
+          "action": "shows the play icon, reflecting the paused state"
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "desktop Web UIKit — simulate tap on a playing Live player → assert direct pause (playback paused), NOT a reveal-only outcome"
+        ],
+        "scenario": [
+          "desktop browser — single tap on a playing Live player → verify it pauses immediately (1-step); the mobile reveal path is not used"
+        ],
+        "e2e": [
+          "desktop viewport — click the Live player once → assert video.paused === true; contrast with the mobile reveal path (flow-UC1b-F02)",
+          "platform split is BR-09: never author one shared cross-platform expected for the first-tap AC"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F04",
+      "name": "Tap outside button (playing) — overlay dismisses, playback continues",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-02"],
+      "br_ids": ["BR-10", "BR-11"],
+      "entry_from": "flow-UC1b-F02",
+      "summary": "With the overlay visible and the stream playing, tapping outside the central button dismisses the overlay while playback continues",
+      "assumptions": [
+        {
+          "assumption_id": "A-FU-2",
+          "text": "Central pause/play button hit-target size/spec is not yet defined (FU-2, Owner: Design). The pause-vs-dismiss boundary test is non-deterministic until specified; tests assume a tap clearly outside the button's visible bounds dismisses.",
+          "pending_clarification": "FU-2"
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "F04-S01",
+          "actor": "viewer",
+          "action": "taps the player surface OUTSIDE the central pause/play button's tap target (overlay visible, stream playing)"
+        },
+        {
+          "step_id": "F04-S02",
+          "actor": "player",
+          "action": "dismisses the controls overlay",
+          "br_ids": ["BR-11"],
+          "state_change": {
+            "object": "controls_overlay",
+            "from": "visible",
+            "to": "hidden"
+          }
+        },
+        {
+          "step_id": "F04-S03",
+          "actor": "sdk",
+          "action": "keeps playback running — a tap outside the button is not a pause",
+          "br_ids": ["BR-10"],
+          "ac_ids": ["AC-02"],
+          "state_change": {
+            "object": "playback",
+            "state": "playing — unchanged"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "overlay visible + playing → simulate tap outside the button bounds → assert overlay hidden AND playback still playing"
+        ],
+        "scenario": [
+          "reveal controls, tap a corner of the player away from the central button → verify overlay disappears and the stream keeps playing"
+        ],
+        "e2e": [
+          "reveal overlay → click clearly outside the central button → assert overlay gone and video.paused === false",
+          "FU-2 (button hit-target) is undefined — pick a tap point clearly outside the visible button until the spec lands"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F05",
+      "name": "No action 1s (playing) — overlay auto-dismisses",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-03"],
+      "br_ids": ["BR-03", "BR-11"],
+      "entry_from": "flow-UC1b-F02",
+      "summary": "With the overlay visible and the stream playing, 1 second of no interaction auto-dismisses the overlay; playback continues",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F05-S01",
+          "actor": "viewer",
+          "action": "takes no further action for 1 second while the overlay is visible and the stream is playing"
+        },
+        {
+          "step_id": "F05-S02",
+          "actor": "player",
+          "action": "after 1s of no interaction, auto-dismisses the controls overlay",
+          "br_ids": ["BR-03", "BR-11"],
+          "ac_ids": ["AC-03"],
+          "state_change": {
+            "object": "controls_overlay",
+            "from": "visible",
+            "to": "hidden"
+          }
+        },
+        {
+          "step_id": "F05-S03",
+          "actor": "sdk",
+          "action": "keeps playback running — auto-dismiss does not affect playback",
+          "state_change": {
+            "object": "playback",
+            "state": "playing — unchanged"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "overlay visible + playing → advance the timer 1000ms with no interaction → assert overlay hidden and playback unaffected"
+        ],
+        "scenario": [
+          "reveal controls, wait 1s without touching → verify the overlay auto-hides and the stream is still playing"
+        ],
+        "e2e": [
+          "reveal overlay, wait 1s → assert overlay gone",
+          "web-Live overlay + auto-dismiss timer is net-new — verify from scratch; web currently uses 3000ms and MUST be changed to 1s (iOS is already 1s)"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F06",
+      "name": "Idle timer resets on control interaction",
+      "type": "alternative",
+      "source": "QA",
+      "ac_ids": ["AC-07"],
+      "br_ids": ["BR-03"],
+      "entry_from": "flow-UC1b-F02",
+      "summary": "Interacting with an overlay control before the 1s timeout restarts the countdown; the overlay does not disappear mid-interaction and dismisses 1s after the last interaction",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F06-S01",
+          "actor": "viewer",
+          "action": "interacts with an overlay control before the 1s timeout elapses"
+        },
+        {
+          "step_id": "F06-S02",
+          "actor": "player",
+          "action": "restarts the 1s idle countdown on the interaction — the overlay does NOT disappear while interacting",
+          "br_ids": ["BR-03"],
+          "ac_ids": ["AC-07"],
+          "state_change": {
+            "object": "idle_timer",
+            "operation": "restart"
+          }
+        },
+        {
+          "step_id": "F06-S03",
+          "actor": "viewer",
+          "action": "stops interacting with the overlay"
+        },
+        {
+          "step_id": "F06-S04",
+          "actor": "player",
+          "action": "auto-dismisses the overlay 1s after the last interaction",
+          "br_ids": ["BR-03"],
+          "state_change": {
+            "object": "controls_overlay",
+            "from": "visible",
+            "to": "hidden"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "overlay visible → fire a control interaction at 800ms → assert overlay still visible at 1000ms (timer reset); assert overlay hidden 1000ms after the last interaction"
+        ],
+        "scenario": [
+          "reveal controls, tap a control every ~0.8s → verify the overlay stays; stop → verify it hides ~1s later"
+        ],
+        "e2e": [
+          "reveal overlay, interact just before 1s several times → assert overlay persists; then idle → assert it hides after 1s"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F07",
+      "name": "Tap pause on Live — pauses, play icon persists, NO seek controls, tap-outside stays paused",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-04"],
+      "br_ids": ["BR-01", "BR-10", "BR-11"],
+      "entry_from": "flow-UC1b-F02",
+      "summary": "Tapping the central pause button pauses the Live stream; the play icon persists; NO ±10s seek controls appear (Live has none — BR-01); a subsequent tap-outside dismisses the overlay and the stream stays paused. Resume-to-live is owned by UC2 — not authored here.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F07-S01",
+          "actor": "viewer",
+          "action": "taps the central pause button (controls overlay visible, stream playing)"
+        },
+        {
+          "step_id": "F07-S02",
+          "actor": "sdk",
+          "action": "pauses live playback",
+          "br_ids": ["BR-10"],
+          "state_change": {
+            "object": "playback",
+            "from": "playing",
+            "to": "paused"
+          }
+        },
+        {
+          "step_id": "F07-S03",
+          "actor": "player",
+          "action": "switches the central button icon pause→play and keeps it visible",
+          "state_change": {
+            "object": "center_button_icon",
+            "from": "pause",
+            "to": "play"
+          }
+        },
+        {
+          "step_id": "F07-S04",
+          "actor": "player",
+          "action": "shows NO seek/skip (±10s) controls — a Live stream has no seek controls",
+          "br_ids": ["BR-01"],
+          "ac_ids": ["AC-04"]
+        },
+        {
+          "step_id": "F07-S05",
+          "actor": "viewer",
+          "action": "taps anywhere outside the play button"
+        },
+        {
+          "step_id": "F07-S06",
+          "actor": "player",
+          "action": "dismisses the overlay — a paused overlay dismisses only on a tap outside the play button",
+          "br_ids": ["BR-11"],
+          "state_change": {
+            "object": "controls_overlay",
+            "from": "visible",
+            "to": "hidden"
+          }
+        },
+        {
+          "step_id": "F07-S07",
+          "actor": "sdk",
+          "action": "leaves playback paused — the stream stays paused (NO resume here; resume-to-live is owned by UC2)",
+          "br_ids": ["BR-11"],
+          "state_change": {
+            "object": "playback",
+            "state": "paused — unchanged"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "playing Live + overlay visible → tap the central pause → assert playback paused, icon = play persists, and assert NO seek buttons appear on the Live pause overlay (BR-01)",
+          "assert no ±10s / back-forward skip elements are rendered on the Live overlay in any state"
+        ],
+        "scenario": [
+          "pause a Live stream → verify the play icon stays and verify NO seek buttons appear on the Live pause overlay; tap outside → verify overlay hides and the stream is still paused"
+        ],
+        "e2e": [
+          "reveal → tap pause → assert video.paused === true, play icon visible, seek buttons absent; tap outside → assert overlay hidden and video still paused",
+          "do NOT test resume here — resume-to-live is UC2"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F08",
+      "name": "Behaviour identical across in-scope surfaces (surface-invariant)",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-05"],
+      "br_ids": ["BR-06"],
+      "entry_from": null,
+      "summary": "The AC-01…AC-04 interactions behave identically whether the Live stream is inline in a feed or in fullscreen/gallery view (surface-invariant, NOT platform-invariant)",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F08-S01",
+          "actor": "viewer",
+          "action": "performs the AC-01…AC-04 interactions (reveal, tap-outside dismiss, 1s auto-dismiss, pause) on a 'Live' stream playing INLINE in a feed"
+        },
+        {
+          "step_id": "F08-S02",
+          "actor": "player",
+          "action": "on the inline surface behaves per flow-UC1b-F02 / F04 / F05 / F07"
+        },
+        {
+          "step_id": "F08-S03",
+          "actor": "viewer",
+          "action": "repeats the same interactions on the same 'Live' stream in FULLSCREEN / gallery view"
+        },
+        {
+          "step_id": "F08-S04",
+          "actor": "player",
+          "action": "on the fullscreen surface behaves IDENTICALLY to the inline surface",
+          "br_ids": ["BR-06"],
+          "ac_ids": ["AC-05"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "parametrize the reveal/dismiss/auto-dismiss/pause tests over surface = [inline, fullscreen] → assert identical outcomes"
+        ],
+        "scenario": [
+          "run the full UC1b interaction matrix on the inline feed then in fullscreen → verify no behavioural difference"
+        ],
+        "e2e": [
+          "inline vs fullscreen — reveal / dismiss / pause on both → assert identical results",
+          "BR-06 is surface-invariant, NOT platform-invariant — desktop still differs (flow-UC1b-F03)"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F09",
+      "name": "Pause tap coincides with auto-dismiss timer firing (race)",
+      "type": "alternative",
+      "source": "QA",
+      "ac_ids": ["AC-08"],
+      "br_ids": ["BR-10", "BR-11"],
+      "entry_from": "flow-UC1b-F02",
+      "summary": "When the user taps pause at the exact instant the 1s idle timer would fire, the pause wins — playback pauses, the play icon persists, and the overlay is NOT swallowed by the expiring timer",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F09-S01",
+          "actor": "player",
+          "action": "the 1s idle auto-dismiss timer is about to fire (overlay visible, stream playing)"
+        },
+        {
+          "step_id": "F09-S02",
+          "actor": "viewer",
+          "action": "taps the central pause button at that exact instant"
+        },
+        {
+          "step_id": "F09-S03",
+          "actor": "sdk",
+          "action": "pauses playback",
+          "br_ids": ["BR-10"],
+          "state_change": {
+            "object": "playback",
+            "from": "playing",
+            "to": "paused"
+          }
+        },
+        {
+          "step_id": "F09-S04",
+          "actor": "player",
+          "action": "shows and KEEPS the play icon — the pause is not swallowed by the expiring timer",
+          "br_ids": ["BR-11"],
+          "ac_ids": ["AC-08"],
+          "state_change": {
+            "object": "center_button_icon",
+            "from": "pause",
+            "to": "play"
+          }
+        },
+        {
+          "step_id": "F09-S05",
+          "actor": "player",
+          "action": "keeps the overlay visible — it dismisses only on a subsequent tap-outside (a paused overlay persists)",
+          "br_ids": ["BR-11"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "set the timer to fire at t=1000ms and dispatch the pause at t=1000ms → assert final state paused + play icon visible + overlay still shown (not auto-dismissed)"
+        ],
+        "scenario": [
+          "reveal controls, wait ~1s, tap pause exactly as it would auto-hide → verify it pauses and the overlay stays (paused state wins the race)"
+        ],
+        "e2e": [
+          "reveal → wait ~950ms → tap pause → assert paused, play icon persists, overlay visible until a tap-outside"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F10",
+      "name": "Tap during buffering / stall",
+      "type": "error_state",
+      "source": "QA",
+      "ac_ids": ["AC-09"],
+      "br_ids": ["BR-15"],
+      "entry_from": null,
+      "summary": "While the Live stream is buffering (not yet playing), a tap reveals the overlay with the central button reflecting the REAL state — never a false 'playing' icon — with no crash or frozen overlay",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F10-S01",
+          "actor": "network",
+          "action": "the live stream stalls — data underruns / connection is poor"
+        },
+        {
+          "step_id": "F10-S02",
+          "actor": "sdk",
+          "action": "reports the stream as buffering (not yet playing)",
+          "state_change": {
+            "object": "playback",
+            "state": "buffering"
+          }
+        },
+        {
+          "step_id": "F10-S03",
+          "actor": "viewer",
+          "action": "taps the player surface during buffering"
+        },
+        {
+          "step_id": "F10-S04",
+          "actor": "player",
+          "action": "reveals the overlay; the central button reflects the real (buffering) state, NOT a false 'playing' icon",
+          "br_ids": ["BR-15"],
+          "ac_ids": ["AC-09"]
+        },
+        {
+          "step_id": "F10-S05",
+          "actor": "player",
+          "action": "surfaces an explicit state — no crash and no frozen overlay",
+          "br_ids": ["BR-15"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock sdk state = buffering → simulate tap → assert overlay shown, central button reflects buffering (NOT a false pause/playing icon), no exception thrown"
+        ],
+        "scenario": [
+          "throttle the network to force buffering on a Live stream → tap → verify the overlay appears with the correct state, no crash/freeze"
+        ],
+        "e2e": [
+          "use network throttling / route stall to force buffering → tap the player → assert overlay + correct state indicator",
+          "web-Live overlay is net-new — verify from scratch"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1b-F11",
+      "name": "App backgrounded during an active overlay/timer (OS default)",
+      "type": "error_state",
+      "source": "QA",
+      "ac_ids": ["AC-10"],
+      "br_ids": ["BR-10"],
+      "entry_from": "flow-UC1b-F02",
+      "summary": "Backgrounding the app mid-countdown and returning leaves the player/overlay in a well-defined state via the OS default (Option 1) with no stale mid-countdown overlay. Foreground snap-to-live is UC2's rule — not asserted here.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F11-S01",
+          "actor": "viewer",
+          "action": "sends the app to the background while the controls overlay is visible (mid-countdown)"
+        },
+        {
+          "step_id": "F11-S02",
+          "actor": "system",
+          "action": "OS suspends the app; iOS pauses AVPlayer (no background-audio mode); web delegates to the browser's native <video>/HLS.js",
+          "state_change": {
+            "object": "app_lifecycle",
+            "from": "foreground",
+            "to": "background"
+          }
+        },
+        {
+          "step_id": "F11-S03",
+          "actor": "viewer",
+          "action": "returns the app to the foreground"
+        },
+        {
+          "step_id": "F11-S04",
+          "actor": "app",
+          "action": "resumes and re-attaches the Live player view"
+        },
+        {
+          "step_id": "F11-S05",
+          "actor": "player",
+          "action": "reaches a well-defined state via the OS default (Option 1) — the 1s auto-dismiss timer is wall-clock, so a playing overlay is already dismissed on return and a paused overlay persists; no stale mid-countdown overlay",
+          "br_ids": ["BR-10"],
+          "ac_ids": ["AC-10"],
+          "state_change": {
+            "object": "controls_overlay",
+            "value": "well-defined (no stale mid-countdown)"
+          }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "assert the 1s auto-dismiss timer is wall-clock so no mid-countdown overlay survives backgrounding; assert no explicit background handler forces a spurious state (code-verified: neither repo handles backgrounding — delegated to OS)"
+        ],
+        "scenario": [
+          "reveal overlay → background the app for >1s → foreground → verify no stale mid-countdown overlay; player in a well-defined state"
+        ],
+        "e2e": [
+          "iOS / Android — background then foreground with the overlay up → assert no frozen/stale overlay",
+          "do NOT assert resume-to-live here — that is UC2"
+        ]
+      }
+    }
+
+  ]
+}

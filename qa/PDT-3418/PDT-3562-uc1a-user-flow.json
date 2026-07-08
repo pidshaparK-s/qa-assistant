@@ -1,0 +1,647 @@
+{
+  "_schema": "user-flow-v1",
+  "_purpose": "Machine-readable actor-based flows for AI/coding tools — generate test cases, unit tests, automation. Derived from PDT-3562-uc1a-complete-jira-story.json (11 ACs) + platform-behavior-notes.md.",
+  "_status": "Derived from Layer 2 STEP 6 complete-jira-story (2026-07-09). NOT signed off — team sign-off pending.",
+  "_warning": "PENDING items flagged on affected flows: FU-2 (central button hit-target, Design) on flow-UC1a-F04; ASSUME-recorded-resume (Engineering) on flow-UC1a-F08. PLATFORM SPLIT (BR-09): first tap differs mobile (reveal, no pause) vs desktop/Web UIKit (1-Step Pause) — see flow-UC1a-F02 vs flow-UC1a-F03; never write a single cross-platform expected. WEB DELTA: web auto-dismiss currently 3s (VideoPlayerControls.tsx:60-70) must become 1s (AC-03/BR-03).",
+
+  "ids": {
+    "epic_id": "PDT-3418",
+    "story_id": "PDT-3562",
+    "uc_id": "UC1a"
+  },
+
+  "actors": {
+    "viewer": "the community member watching the video / recorded live stream",
+    "app": "UIKit frontend — controls overlay, control buttons, tap/click handling and routing",
+    "player": "playback engine (AVPlayer on iOS / HLS.js+Plyr / native <video> on web) — play, pause, seek, buffer",
+    "network": "network layer between the client and the media/CDN",
+    "system": "the OS / device layer — app backgrounding, wall-clock timers"
+  },
+
+  "flows": [
+
+    {
+      "flow_id": "flow-UC1a-F01",
+      "name": "Default baseline — playing, no controls before first tap",
+      "type": "default_state",
+      "source": "QA",
+      "ac_ids": ["AC-07"],
+      "br_ids": [],
+      "entry_from": null,
+      "summary": "A video or recorded live stream renders and plays; before any tap the player shows only the media surface — no controls overlay.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F01-S01",
+          "actor": "viewer",
+          "action": "opens a post containing a video or recorded live stream on any in-scope surface (global / user / community / event-discussion feed, media gallery, or fullscreen)"
+        },
+        {
+          "step_id": "F01-S02",
+          "actor": "player",
+          "action": "plays the media",
+          "state_change": { "object": "media", "to": "playing" }
+        },
+        {
+          "step_id": "F01-S03",
+          "actor": "app",
+          "action": "renders only the media surface and shows no controls overlay — the surface stays clean until the first tap",
+          "ac_ids": ["AC-07"],
+          "state_change": { "object": "controls_overlay", "value": "hidden" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "render VideoPlayer with a playing source and no prior interaction → assert controls overlay is NOT in the view hierarchy / DOM",
+          "assert only the media surface paints on first render (no overlay element present)"
+        ],
+        "scenario": [
+          "open a video post on each in-scope surface → verify no controls overlay before any tap; media is playing"
+        ],
+        "e2e": [
+          "load a feed with an autoplaying video → assert no controls overlay visible until the first tap"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F02",
+      "name": "Tap reveals controls, playback continues (mobile)",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-01", "AC-06"],
+      "br_ids": ["BR-09", "BR-10", "BR-06"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "On mobile (iOS / Android / web-on-mobile) the first tap on a playing player reveals the controls overlay and playback continues — it does NOT toggle pause. The pause icon reflects the playing state, and the behaviour is identical across every in-scope surface.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F02-S01",
+          "actor": "viewer",
+          "action": "taps anywhere on the playing player surface (overlay currently hidden) on a mobile surface — iOS / Android / web-on-mobile"
+        },
+        {
+          "step_id": "F02-S02",
+          "actor": "app",
+          "action": "reveals the controls overlay in response to the tap — first-tap = reveal, not a pause toggle (mobile branch of BR-09)",
+          "br_ids": ["BR-09"],
+          "ac_ids": ["AC-01"],
+          "state_change": { "object": "controls_overlay", "from": "hidden", "to": "visible" }
+        },
+        {
+          "step_id": "F02-S03",
+          "actor": "player",
+          "action": "continues playback uninterrupted — the tap does not pause the media (no implicit toggle)",
+          "br_ids": ["BR-10"],
+          "ac_ids": ["AC-01"],
+          "state_change": { "object": "media", "state": "playing — unchanged" }
+        },
+        {
+          "step_id": "F02-S04",
+          "actor": "app",
+          "action": "shows the central button with the PAUSE icon, reflecting the playing state",
+          "ac_ids": ["AC-01"]
+        },
+        {
+          "step_id": "F02-S05",
+          "actor": "app",
+          "action": "applies the identical reveal behaviour on every in-scope surface (global / user / community / event-discussion feed, media gallery, fullscreen) — surface-invariant",
+          "br_ids": ["BR-06"],
+          "ac_ids": ["AC-06"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock playing + hidden overlay → dispatch tap → assert overlay becomes visible AND play/pause state is unchanged (still playing)",
+          "assert central button renders the PAUSE icon while playing (not the play icon)",
+          "web: assert first tap does NOT call pause() on mobile form factor — guard the reveal-vs-pause branch on form factor (BR-09)"
+        ],
+        "scenario": [
+          "mobile matrix {iOS, Android, web-mobile}: tap a playing video → controls appear, video keeps playing, pause icon shown",
+          "surface-invariance (AC-06): repeat the reveal on global/user/community/event feed + media gallery + fullscreen → identical result"
+        ],
+        "e2e": [
+          "mobile viewport: tap an autoplaying video → assert overlay visible AND currentTime keeps advancing (playback continued)",
+          "DESKTOP DIFFERS — do NOT reuse this expected on Web UIKit desktop; desktop first tap = 1-Step Pause (see flow-UC1a-F03, BR-09)"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F03",
+      "name": "Desktop first tap = 1-Step Pause (platform variant of AC-01)",
+      "type": "alternative",
+      "source": "PM+QA",
+      "ac_ids": ["AC-01"],
+      "br_ids": ["BR-09", "BR-10"],
+      "entry_from": "flow-UC1a-F01",
+      "summary": "Platform split (BR-09): on Web UIKit desktop the first click on a playing player pauses directly (1-step), instead of the mobile reveal-then-pause (2-step). The reveal-controls change is mobile-only; desktop keeps the existing 1-step pause.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F03-S01",
+          "actor": "viewer",
+          "action": "on Web UIKit desktop, clicks the playing player surface"
+        },
+        {
+          "step_id": "F03-S02",
+          "actor": "app",
+          "action": "routes the click to a direct pause/play toggle (1-Step Pause) — the desktop branch of BR-09, NOT the mobile reveal path",
+          "br_ids": ["BR-09"],
+          "ac_ids": ["AC-01"]
+        },
+        {
+          "step_id": "F03-S03",
+          "actor": "player",
+          "action": "pauses playback at the current position immediately on the first click",
+          "br_ids": ["BR-10"],
+          "state_change": { "object": "media", "from": "playing", "to": "paused" }
+        },
+        {
+          "step_id": "F03-S04",
+          "actor": "app",
+          "action": "shows the central play icon and keeps the ±10s skip controls visible (video/recorded) — reaching the same paused state that mobile reaches only after a 2nd tap (AC-04)"
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "web desktop form factor: dispatch first click on a playing player → assert pause() is called (1-step) and the mobile reveal branch is NOT taken (BR-09)"
+        ],
+        "scenario": [
+          "Web UIKit desktop: click a playing video → it pauses on the FIRST click; contrast with mobile where the first tap only reveals (flow-UC1a-F02)"
+        ],
+        "e2e": [
+          "desktop viewport (Web UIKit): single click on an autoplaying video → assert playback paused (currentTime stops) — 1-Step Pause; never assert the mobile reveal expected here"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F04",
+      "name": "Tap outside button dismisses overlay, playback continues",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-02"],
+      "br_ids": ["BR-10", "BR-11"],
+      "entry_from": "flow-UC1a-F02",
+      "summary": "With the overlay visible and the media playing, tapping the player surface outside the central button's tap target dismisses the overlay and playback continues.",
+      "assumptions": [
+        {
+          "assumption_id": "A-FU-2",
+          "text": "The central pause/play button's exact hit-target size/spec is unconfirmed ('same size, refer from figma' is not a concrete spec). The pause-vs-dismiss boundary is assumed to be the visible button bounds until Design confirms.",
+          "pending_clarification": "FU-2"
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "F04-S01",
+          "actor": "viewer",
+          "action": "taps the player surface outside the central pause/play button's tap target while the overlay is visible and the media is playing"
+        },
+        {
+          "step_id": "F04-S02",
+          "actor": "app",
+          "action": "dismisses the controls overlay — while playing, a tap outside the button hides the overlay",
+          "br_ids": ["BR-11"],
+          "ac_ids": ["AC-02"],
+          "state_change": { "object": "controls_overlay", "from": "visible", "to": "hidden" }
+        },
+        {
+          "step_id": "F04-S03",
+          "actor": "player",
+          "action": "continues playback uninterrupted — the tap-outside does not pause",
+          "br_ids": ["BR-10"],
+          "ac_ids": ["AC-02"],
+          "state_change": { "object": "media", "state": "playing — unchanged" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "overlay visible + playing → dispatch tap at coordinates outside the central button bounds → assert overlay hidden AND still playing",
+          "boundary: tap just inside vs just outside the button hit-target → inside = pause path, outside = dismiss (needs FU-2 spec to fix the exact px boundary deterministically)"
+        ],
+        "scenario": [
+          "reveal controls on a playing video → tap a corner of the player → overlay disappears, video keeps playing"
+        ],
+        "e2e": [
+          "tap to reveal → tap outside the button → assert overlay gone AND currentTime still advancing"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F05",
+      "name": "1s idle auto-dismiss (playing)",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-03"],
+      "br_ids": ["BR-03", "BR-11"],
+      "entry_from": "flow-UC1a-F02",
+      "summary": "With the overlay visible and the media playing, after 1 second of no interaction the overlay auto-dismisses and playback continues.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F05-S01",
+          "actor": "viewer",
+          "action": "takes no further action for 1 second while the overlay is visible and the media is playing"
+        },
+        {
+          "step_id": "F05-S02",
+          "actor": "app",
+          "action": "auto-dismisses the controls overlay after the 1s idle timeout elapses",
+          "br_ids": ["BR-03", "BR-11"],
+          "ac_ids": ["AC-03"],
+          "state_change": { "object": "controls_overlay", "from": "visible", "to": "hidden" }
+        },
+        {
+          "step_id": "F05-S03",
+          "actor": "player",
+          "action": "continues playback throughout",
+          "ac_ids": ["AC-03"],
+          "state_change": { "object": "media", "state": "playing — unchanged" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "fake timers: reveal overlay → advance 1000ms with no interaction → assert overlay hidden AND still playing",
+          "WEB DELTA: web auto-dismiss is currently 3000ms (VideoPlayerControls.tsx:60-70) — must change to 1s per AC-03/BR-03; iOS already 1s. Assert the timeout constant = 1000ms after the fix"
+        ],
+        "scenario": [
+          "reveal controls, do not touch → overlay disappears at ~1s (NOT 3s) on web; video keeps playing"
+        ],
+        "e2e": [
+          "reveal controls → wait 1s → assert overlay auto-dismissed; playback continued"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F06",
+      "name": "Idle timer resets on control interaction",
+      "type": "alternative",
+      "source": "QA",
+      "ac_ids": ["AC-08"],
+      "br_ids": ["BR-03"],
+      "entry_from": "flow-UC1a-F02",
+      "summary": "Interacting with an overlay control (volume / scrubber) before the 1s timeout restarts the idle countdown, so the overlay does not vanish mid-interaction; it dismisses 1s after the last interaction. Playback continues throughout.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F06-S01",
+          "actor": "viewer",
+          "action": "interacts with an overlay control (e.g. volume or scrubber) before the 1s idle timeout elapses"
+        },
+        {
+          "step_id": "F06-S02",
+          "actor": "app",
+          "action": "restarts the 1s idle countdown on the interaction — the overlay stays visible while the user is interacting",
+          "br_ids": ["BR-03"],
+          "ac_ids": ["AC-08"],
+          "state_change": { "object": "idle_timer", "operation": "reset", "value": "1s" }
+        },
+        {
+          "step_id": "F06-S03",
+          "actor": "viewer",
+          "action": "stops interacting"
+        },
+        {
+          "step_id": "F06-S04",
+          "actor": "app",
+          "action": "auto-dismisses the overlay 1s after the last interaction",
+          "br_ids": ["BR-03"],
+          "ac_ids": ["AC-08"],
+          "state_change": { "object": "controls_overlay", "from": "visible", "to": "hidden" }
+        },
+        {
+          "step_id": "F06-S05",
+          "actor": "player",
+          "action": "continues playback throughout",
+          "ac_ids": ["AC-08"],
+          "state_change": { "object": "media", "state": "playing — unchanged" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "fake timers: reveal → at 800ms fire a control interaction → assert overlay still visible AND timer reset; advance another 1000ms with no interaction → assert overlay hidden",
+          "assert repeated interactions each restart the countdown (overlay never dismisses while interacting)"
+        ],
+        "scenario": [
+          "reveal controls → drag volume for ~3s → overlay stays visible the whole time → release → overlay dismisses ~1s later; video keeps playing"
+        ],
+        "e2e": [
+          "reveal → interact with the scrubber a few times over >1s → assert overlay persists during interaction, then dismisses 1s after the last touch"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F07",
+      "name": "Pause via central button; icon + seek persist; tap-outside stays paused",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-04"],
+      "br_ids": ["BR-01", "BR-11"],
+      "entry_from": "flow-UC1a-F02",
+      "summary": "Tapping the central pause button (after the mobile 2-step reveal) pauses at the current position; the icon switches pause→play and stays visible, the ±10s skip controls remain visible (video/recorded), and a subsequent tap outside the play button dismisses the overlay while the media stays paused.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F07-S01",
+          "actor": "viewer",
+          "action": "taps the central pause button while the overlay is visible and the media is playing (mobile: this is the 2nd step after reveal; desktop reaches paused via the 1-step click in flow-UC1a-F03)"
+        },
+        {
+          "step_id": "F07-S02",
+          "actor": "player",
+          "action": "pauses playback at the current position",
+          "ac_ids": ["AC-04"],
+          "state_change": { "object": "media", "from": "playing", "to": "paused" }
+        },
+        {
+          "step_id": "F07-S03",
+          "actor": "app",
+          "action": "switches the central button icon pause→play and keeps it visible",
+          "ac_ids": ["AC-04"],
+          "state_change": { "object": "central_button_icon", "from": "pause", "to": "play" }
+        },
+        {
+          "step_id": "F07-S04",
+          "actor": "app",
+          "action": "keeps the ±10s skip (back/forward seek) controls visible — present on the video/recorded component",
+          "br_ids": ["BR-01"],
+          "ac_ids": ["AC-04"]
+        },
+        {
+          "step_id": "F07-S05",
+          "actor": "viewer",
+          "action": "taps anywhere outside the play button"
+        },
+        {
+          "step_id": "F07-S06",
+          "actor": "app",
+          "action": "dismisses the overlay — a paused overlay dismisses only on a tap outside the play button",
+          "br_ids": ["BR-11"],
+          "ac_ids": ["AC-04"],
+          "state_change": { "object": "controls_overlay", "from": "visible", "to": "hidden" }
+        },
+        {
+          "step_id": "F07-S07",
+          "actor": "player",
+          "action": "remains paused — the tap-outside does not resume playback",
+          "br_ids": ["BR-11"],
+          "ac_ids": ["AC-04"],
+          "state_change": { "object": "media", "state": "paused — unchanged" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "playing + overlay visible → tap central pause → assert media paused AND icon = play AND ±10s skip controls still rendered",
+          "paused + overlay visible → tap outside the play button → assert overlay hidden AND media STILL paused (does not resume)",
+          "assert ±10s skip controls are present on the video/recorded component (BR-01) — they must NOT appear on a Live stream"
+        ],
+        "scenario": [
+          "reveal controls → tap pause → verify play icon + back/forward skip visible → tap outside → overlay gone, video still paused"
+        ],
+        "e2e": [
+          "mobile: reveal → pause → assert paused; tap outside → assert overlay gone and video remains paused (currentTime frozen)",
+          "note the platform path into paused: mobile = reveal-then-pause (2-step); desktop = 1-step pause (flow-UC1a-F03)"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F08",
+      "name": "Resume from exact paused position",
+      "type": "happy_path",
+      "source": "PM",
+      "ac_ids": ["AC-05"],
+      "br_ids": ["BR-13"],
+      "entry_from": "flow-UC1a-F07",
+      "summary": "Tapping the central play button while a video is paused resumes playback from the exact position at which it was paused; the icon switches play→pause.",
+      "assumptions": [
+        {
+          "assumption_id": "A-ASSUME-recorded-resume",
+          "text": "PM's AC text says 'a video' specifically. Recorded LS shares the video component, so it is assumed to also resume from the exact paused position (not the live edge). Pending Engineering confirmation.",
+          "pending_clarification": "ASSUME-recorded-resume"
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "F08-S01",
+          "actor": "viewer",
+          "action": "taps the central play button while the video is paused (play button displayed)"
+        },
+        {
+          "step_id": "F08-S02",
+          "actor": "player",
+          "action": "resumes playback from the exact position at which it was paused — video/recorded resumes exact, not the live edge",
+          "br_ids": ["BR-13"],
+          "ac_ids": ["AC-05"],
+          "state_change": { "object": "media", "from": "paused", "to": "playing (exact paused position)" }
+        },
+        {
+          "step_id": "F08-S03",
+          "actor": "app",
+          "action": "switches the central button icon play→pause",
+          "ac_ids": ["AC-05"],
+          "state_change": { "object": "central_button_icon", "from": "play", "to": "pause" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "pause at t=42s → tap play → assert player.currentTime == 42s (exact resume, no seek to 0 / live edge) AND icon = pause (BR-13)",
+          "recorded LS (shares the video component): assert the same exact-position resume — pending ASSUME-recorded-resume confirmation"
+        ],
+        "scenario": [
+          "video: pause mid-playback, note the position → tap play → resumes from that exact second",
+          "recorded LS: repeat and verify exact-position resume (flagged assumption ASSUME-recorded-resume)"
+        ],
+        "e2e": [
+          "pause a video → record currentTime → play → assert resume within tolerance of the exact paused position (not from 0, not the live edge)"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F09",
+      "name": "Pause tap coincides with auto-dismiss timer firing (race)",
+      "type": "alternative",
+      "source": "QA",
+      "ac_ids": ["AC-09"],
+      "br_ids": ["BR-10", "BR-11"],
+      "entry_from": "flow-UC1a-F02",
+      "summary": "Pause-vs-timer race: when the user taps the central pause button at the instant the 1s idle timer is about to fire, playback pauses, the play icon shows and persists (not swallowed by the expiring timer), and the overlay dismisses only on a subsequent tap-outside.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F09-S01",
+          "actor": "viewer",
+          "action": "taps the central pause button at the exact instant the 1s idle auto-dismiss timer is about to fire (overlay visible, media playing)"
+        },
+        {
+          "step_id": "F09-S02",
+          "actor": "player",
+          "action": "pauses playback",
+          "br_ids": ["BR-10"],
+          "ac_ids": ["AC-09"],
+          "state_change": { "object": "media", "from": "playing", "to": "paused" }
+        },
+        {
+          "step_id": "F09-S03",
+          "actor": "app",
+          "action": "shows the play icon and keeps it and the overlay persistent — the pause is not caught/undone by the expiring auto-dismiss timer (transition to paused deactivates the playing auto-dismiss)",
+          "br_ids": ["BR-11"],
+          "ac_ids": ["AC-09"],
+          "state_change": { "object": "controls_overlay", "value": "persists (paused)" }
+        },
+        {
+          "step_id": "F09-S04",
+          "actor": "app",
+          "action": "dismisses the overlay only on a subsequent tap-outside (paused-overlay dismiss rule), never via the expired timer",
+          "br_ids": ["BR-11"],
+          "ac_ids": ["AC-09"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "fake timers: reveal → advance to ~999ms → fire the pause tap → then advance past 1000ms → assert media paused, play icon shown, overlay STILL visible (the timer did not dismiss the now-paused overlay)",
+          "assert the transition to paused cancels/deactivates the playing-state auto-dismiss timer (BR-11: paused overlay persists)"
+        ],
+        "scenario": [
+          "race: pause right as the controls are about to auto-hide → verify controls stay (paused), play icon persists, no flicker to hidden"
+        ],
+        "e2e": [
+          "hard to time in e2e — prefer unit/component with fake timers; if attempted, throttle and pause near the 1s mark, then assert the overlay persists in the paused state"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F10",
+      "name": "Tap during buffering / stall",
+      "type": "error_state",
+      "source": "QA",
+      "ac_ids": ["AC-10"],
+      "br_ids": ["BR-15"],
+      "entry_from": null,
+      "summary": "When the media is buffering (not yet playing) — typically due to a slow/stalled network — a tap reveals the overlay and the central button reflects the real state (loading/paused), never a false 'playing' icon; there is no crash or frozen overlay, and the icon updates once playback starts.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F10-S01",
+          "actor": "network",
+          "action": "is slow or stalled, so the media has not started playing yet"
+        },
+        {
+          "step_id": "F10-S02",
+          "actor": "player",
+          "action": "is in a buffering / loading state (not yet playing)",
+          "state_change": { "object": "media", "value": "buffering — not yet playing" }
+        },
+        {
+          "step_id": "F10-S03",
+          "actor": "viewer",
+          "action": "taps the player surface while it is buffering"
+        },
+        {
+          "step_id": "F10-S04",
+          "actor": "app",
+          "action": "reveals the controls overlay",
+          "ac_ids": ["AC-10"],
+          "state_change": { "object": "controls_overlay", "from": "hidden", "to": "visible" }
+        },
+        {
+          "step_id": "F10-S05",
+          "actor": "app",
+          "action": "shows the central button reflecting the REAL state (loading/paused) — not a false 'playing' pause-icon; no crash, no frozen overlay — the viewer always sees an explicit state",
+          "br_ids": ["BR-15"],
+          "ac_ids": ["AC-10"]
+        },
+        {
+          "step_id": "F10-S06",
+          "actor": "player",
+          "action": "starts playback once enough has buffered",
+          "state_change": { "object": "media", "from": "buffering", "to": "playing" }
+        },
+        {
+          "step_id": "F10-S07",
+          "actor": "app",
+          "action": "updates the central button icon to reflect the playing state once playback starts",
+          "ac_ids": ["AC-10"],
+          "state_change": { "object": "central_button_icon", "value": "updates to playing state" }
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "mock buffering/loading state → tap → assert overlay visible AND central button shows loading/paused (NOT the playing pause-icon) (BR-15)",
+          "transition buffering→playing → assert the icon updates; assert no exception is thrown on tap during buffering"
+        ],
+        "scenario": [
+          "throttle the network to force buffering → tap the player → verify overlay + correct loading/paused indicator, no frozen/blank overlay; once it plays, the icon updates"
+        ],
+        "e2e": [
+          "use network throttling / route delay to hold the video in buffering → tap → assert overlay + non-'playing' state → release throttle → assert the icon updates to playing"
+        ]
+      }
+    },
+
+    {
+      "flow_id": "flow-UC1a-F11",
+      "name": "App backgrounded during an active overlay/timer (OS default)",
+      "type": "error_state",
+      "source": "QA",
+      "ac_ids": ["AC-11"],
+      "br_ids": ["BR-10"],
+      "entry_from": "flow-UC1a-F02",
+      "summary": "App backgrounded while the overlay is active (playing or paused), then foregrounded: the player/overlay reach a well-defined state via the OS default (Option 1, code-grounded). On iOS the OS pauses the media on background and does not auto-resume; the wall-clock 1s timer has already elapsed, so a playing overlay is dismissed and a paused overlay persists — no stale mid-countdown overlay.",
+      "assumptions": [],
+      "steps": [
+        {
+          "step_id": "F11-S01",
+          "actor": "viewer",
+          "action": "backgrounds the app while the controls overlay is visible (either playing or paused — entry from the playing overlay of flow-UC1a-F02, or the paused overlay of flow-UC1a-F07)"
+        },
+        {
+          "step_id": "F11-S02",
+          "actor": "system",
+          "action": "(OS) on iOS pauses the media on background (no background-audio mode) and does not auto-resume; the app has no explicit background handler — behaviour is delegated to the OS (Option 1)",
+          "br_ids": ["BR-10"],
+          "ac_ids": ["AC-11"],
+          "state_change": { "object": "media", "value": "iOS: OS-paused on background, no auto-resume" }
+        },
+        {
+          "step_id": "F11-S03",
+          "actor": "viewer",
+          "action": "returns the app to the foreground"
+        },
+        {
+          "step_id": "F11-S04",
+          "actor": "app",
+          "action": "reaches a well-defined state via the OS default: because the 1s auto-dismiss timer is wall-clock, it has already elapsed while backgrounded → a playing overlay is dismissed, a paused overlay persists",
+          "ac_ids": ["AC-11"],
+          "state_change": { "object": "controls_overlay", "value": "playing → dismissed / paused → persists (wall-clock timer already elapsed)" }
+        },
+        {
+          "step_id": "F11-S05",
+          "actor": "app",
+          "action": "shows no stale mid-countdown overlay — the state is explicit, never a frozen partial overlay",
+          "ac_ids": ["AC-11"]
+        }
+      ],
+      "test_hints": {
+        "unit": [
+          "iOS: no scenePhase / willResignActive handler on the viewer path — isPlaying stays true; assert the 1s timer is wall-clock (Debouncer.swift:17-21, PlayerControlsVisibility.swift:16) so on return a playing overlay is already dismissed and a paused overlay persists",
+          "assert no mid-countdown / stale overlay after foreground"
+        ],
+        "scenario": [
+          "iOS: reveal controls on a playing video → background the app → wait >1s → foreground → assert the media is paused by the OS (no auto-resume) and the playing overlay is gone; repeat from a paused state → the paused overlay persists",
+          "web: no visibilitychange / blur handler — background pause is delegated to the browser's native <video> / HLS.js"
+        ],
+        "e2e": [
+          "device / simulator: background then foreground with an active overlay → assert the OS-default state (iOS paused, overlay resolved per the wall-clock timer); OS backgrounding is not automatable on web — treat as manual/scenario"
+        ]
+      }
+    }
+
+  ]
+}
