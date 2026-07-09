@@ -1,0 +1,254 @@
+{
+  "_schema": "qa-test-cases-v1",
+  "_purpose": "Executable test cases (EC) for UC3 — runnable expansion of the scenarios. Per scenario: 1 success EC + exactly one alternative EC per expected.alternative[] entry.",
+  "_status": "phase-3-4 output — 2026-07-09. Derived from PDT-3564-uc3-scenarios.json.",
+  "_id_note": "EC- = Executable Case. Chain: AC → SC → EC. (TC- = L3 condition; SC- = scenario.)",
+
+  "ids": { "epic_id": "PDT-3418", "story_id": "PDT-3564", "uc_id": "UC3" },
+
+  "cases": [
+    {
+      "ec_id": "EC-UC3-001", "sc_id": "SC-UC3-01", "ac_id": "AC-01", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify skip-back at 1:00 while playing jumps to 0:50 and continues",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing", "the controls overlay is visible", "position = 1:00"],
+      "test_data": { "position": "1:00", "play_state": "playing", "direction": "back" },
+      "steps": ["Play the video to 1:00 with the overlay visible", "Tap the skip-back (−10s) button", "Assert: position is exactly 0:50", "Assert: playback continues (state = playing)"],
+      "expected_result": "Playback jumps back exactly 10 seconds (1:00 → 0:50) and continues playing."
+    },
+    {
+      "ec_id": "EC-UC3-002", "sc_id": "SC-UC3-01", "ac_id": "AC-01", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify skip-back moves exactly 10s (not 9 or 11)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing", "position = 0:30"],
+      "test_data": { "position": "0:30", "play_state": "playing", "direction": "back" },
+      "steps": ["Play to 0:30", "Tap skip-back", "Assert: position is exactly 0:20 — not 0:19 or 0:21"],
+      "expected_result": "The skip moves by exactly 10s — not 9 or 11 (off-by-one guard)."
+    },
+    {
+      "ec_id": "EC-UC3-003", "sc_id": "SC-UC3-02", "ac_id": "AC-02", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify skip-forward at 1:00 while playing jumps to 1:10 and continues",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing", "the controls overlay is visible", "position = 1:00 (≥10s from end)"],
+      "test_data": { "position": "1:00", "play_state": "playing", "direction": "forward" },
+      "steps": ["Play the video to 1:00", "Tap the skip-forward (+10s) button", "Assert: position is exactly 1:10", "Assert: playback continues (state = playing)"],
+      "expected_result": "Playback jumps forward exactly 10 seconds (1:00 → 1:10) and continues playing."
+    },
+    {
+      "ec_id": "EC-UC3-004", "sc_id": "SC-UC3-02", "ac_id": "AC-02", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify skip-forward moves exactly 10s (not 9 or 11)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing", "position = 0:30"],
+      "test_data": { "position": "0:30", "play_state": "playing", "direction": "forward" },
+      "steps": ["Play to 0:30", "Tap skip-forward", "Assert: position is exactly 0:40 — not 0:39 or 0:41"],
+      "expected_result": "The skip moves by exactly 10s — not 9 or 11 (off-by-one guard)."
+    },
+    {
+      "ec_id": "EC-UC3-005", "sc_id": "SC-UC3-03a", "ac_id": "AC-03", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify skip-back at 0:05 while playing clamps to 0:00 and continues",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing", "position = 0:05 (<10s from start)"],
+      "test_data": { "position": "0:05", "play_state": "playing", "direction": "back" },
+      "steps": ["Play the video to 0:05", "Tap skip-back", "Assert: position clamps to 0:00 (never negative)", "Assert: playback continues from 0:00 (state = playing)"],
+      "expected_result": "Position clamps to 0:00 and playback continues (prior PLAYING state preserved — not force-paused)."
+    },
+    {
+      "ec_id": "EC-UC3-006", "sc_id": "SC-UC3-03a", "ac_id": "AC-03", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify skip-back at exactly 0:00 stays at 0:00",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing", "position = 0:00"],
+      "test_data": { "position": "0:00", "play_state": "playing", "direction": "back" },
+      "steps": ["Position the video at 0:00 while playing", "Tap skip-back", "Assert: position stays 0:00 (never a negative value)"],
+      "expected_result": "A skip-back at exactly 0:00 stays at 0:00 — the position never resolves to a negative value."
+    },
+    {
+      "ec_id": "EC-UC3-007", "sc_id": "SC-UC3-03b", "ac_id": "AC-03", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify skip-back at 0:05 while paused clamps to 0:00 and stays paused",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is paused", "position = 0:05 (<10s from start)"],
+      "test_data": { "position": "0:05", "play_state": "paused", "direction": "back" },
+      "steps": ["Pause the video at 0:05", "Tap skip-back", "Assert: position clamps to 0:00 (never negative)", "Assert: media stays paused (state = paused)"],
+      "expected_result": "Position clamps to 0:00 and the media stays paused (prior PAUSED state preserved — not force-played)."
+    },
+    {
+      "ec_id": "EC-UC3-008", "sc_id": "SC-UC3-03b", "ac_id": "AC-03", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify paused skip-back at exactly 0:00 stays at 0:00",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is paused", "position = 0:00"],
+      "test_data": { "position": "0:00", "play_state": "paused", "direction": "back" },
+      "steps": ["Pause the video at 0:00", "Tap skip-back", "Assert: position stays 0:00 (never a negative value)"],
+      "expected_result": "A skip-back at exactly 0:00 stays at 0:00 — the position never resolves to a negative value."
+    },
+    {
+      "ec_id": "EC-UC3-009", "sc_id": "SC-UC3-04", "ac_id": "AC-04", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify skip-forward near the end lands on the final frame in the end state",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 2:00 video is playing", "position = 1:55 (within 10s of the end)"],
+      "test_data": { "duration": "2:00", "position": "1:55", "play_state": "playing", "direction": "forward" },
+      "steps": ["Play a 2:00 video to 1:55", "Tap skip-forward", "Assert: position clamps to the final frame (2:00)", "Assert: the player is in the end state (paused at the final frame)"],
+      "expected_result": "Playback jumps to the final frame and enters the end state (paused at the final frame)."
+    },
+    {
+      "ec_id": "EC-UC3-010", "sc_id": "SC-UC3-04", "ac_id": "AC-04", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify skip-forward past the end does not loop to 0:00",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 2:00 video", "position = 1:55"],
+      "test_data": { "duration": "2:00", "position": "1:55", "direction": "forward" },
+      "steps": ["Play to 1:55", "Tap skip-forward", "Assert: position does NOT wrap to 0:00"],
+      "expected_result": "It does not loop back to 0:00."
+    },
+    {
+      "ec_id": "EC-UC3-011", "sc_id": "SC-UC3-04", "ac_id": "AC-04", "path": "alternative", "alt_index": 1,
+      "name": "[Video player] Verify skip-forward past the end throws no error",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 2:00 video", "position = 1:55"],
+      "test_data": { "duration": "2:00", "position": "1:55", "direction": "forward" },
+      "steps": ["Play to 1:55", "Tap skip-forward", "Assert: no error / crash is raised"],
+      "expected_result": "It does not throw an error."
+    },
+    {
+      "ec_id": "EC-UC3-012", "sc_id": "SC-UC3-05", "ac_id": "AC-05", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify skip while paused updates position and stays paused",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the video is paused", "the controls overlay is visible", "position = 1:00"],
+      "test_data": { "position": "1:00", "play_state": "paused", "direction": "forward" },
+      "steps": ["Pause the video at 1:00", "Tap skip-forward", "Assert: position updates to 1:10", "Assert: media stays paused"],
+      "expected_result": "The position updates by ±10s and the video remains paused."
+    },
+    {
+      "ec_id": "EC-UC3-013", "sc_id": "SC-UC3-05", "ac_id": "AC-05", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify skip while paused never auto-resumes playback",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the video is paused", "position = 1:00"],
+      "test_data": { "position": "1:00", "play_state": "paused", "direction": "back" },
+      "steps": ["Pause the video", "Tap skip-back", "Assert: state is still paused (no implicit paused → playing transition)"],
+      "expected_result": "Skip never triggers an implicit paused → playing transition (no auto-resume)."
+    },
+    {
+      "ec_id": "EC-UC3-014", "sc_id": "SC-UC3-06", "ac_id": "AC-06", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify a Live stream shows no in-app skip buttons",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible"],
+      "test_data": { "stream_type": "Live" },
+      "steps": ["Mock: SDK stream type = Live", "Reveal the overlay", "Assert: the −10s / +10s buttons are NOT rendered"],
+      "expected_result": "On an active Live stream the ±10s skip buttons are not shown (seeking not applicable in-app)."
+    },
+    {
+      "ec_id": "EC-UC3-015", "sc_id": "SC-UC3-06", "ac_id": "AC-06", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify a recorded LS shows the skip buttons (contrast)",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible"],
+      "test_data": { "stream_type": "recorded" },
+      "steps": ["Mock: SDK stream type = recorded LS", "Reveal the overlay", "Assert: the ±10s skip buttons ARE rendered"],
+      "expected_result": "On a recorded LS the ±10s skip buttons ARE shown."
+    },
+    {
+      "ec_id": "EC-UC3-016", "sc_id": "SC-UC3-06", "ac_id": "AC-06", "path": "alternative", "alt_index": 1,
+      "name": "[Video player] Verify a video shows the skip buttons (contrast)",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible"],
+      "test_data": { "stream_type": "video" },
+      "steps": ["Mock: SDK stream type = video", "Reveal the overlay", "Assert: the ±10s skip buttons ARE rendered"],
+      "expected_result": "On a video the ±10s skip buttons ARE shown."
+    },
+    {
+      "ec_id": "EC-UC3-017", "sc_id": "SC-UC3-07", "ac_id": "AC-07", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify three quick +10 taps accumulate to 1:30 with a +10 icon each tap",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing", "position = 1:00"],
+      "test_data": { "position": "1:00", "taps": 3, "direction": "forward" },
+      "steps": ["Play to 1:00", "Tap skip-forward 3× quickly", "Assert: net position is 1:30 (each tap adds 10s)", "Assert: the skip icon shows '+10' on every tap"],
+      "expected_result": "Three quick +10 taps accumulate to 1:30, and the icon shows the per-tap value (+10) each time."
+    },
+    {
+      "ec_id": "EC-UC3-018", "sc_id": "SC-UC3-07", "ac_id": "AC-07", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify three quick −10 taps accumulate to −30s",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing", "position = 1:00"],
+      "test_data": { "position": "1:00", "taps": 3, "direction": "back" },
+      "steps": ["Play to 1:00", "Tap skip-back 3× quickly", "Assert: net position is 0:30 (−30s accumulated)"],
+      "expected_result": "Three quick −10 taps accumulate to −30s."
+    },
+    {
+      "ec_id": "EC-UC3-019", "sc_id": "SC-UC3-07", "ac_id": "AC-07", "path": "alternative", "alt_index": 1,
+      "name": "[Video player] Verify the skip icon never shows the accumulated total",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing", "position = 1:00"],
+      "test_data": { "position": "1:00", "taps": 3, "direction": "forward" },
+      "steps": ["Play to 1:00", "Tap skip-forward 3× quickly", "Assert: the icon text is '+10' on every tap and never '+30'"],
+      "expected_result": "The icon never shows the accumulated total (never '+30')."
+    },
+    {
+      "ec_id": "EC-UC3-020", "sc_id": "SC-UC3-08", "ac_id": "AC-08", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify a rapid skip-back burst near the start clamps to 0:00 mid-burst",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS", "position = 0:15"],
+      "test_data": { "position": "0:15", "taps": 3, "direction": "back" },
+      "steps": ["Position at 0:15", "Tap skip-back 3× quickly", "Assert: position goes 0:05 then clamps to 0:00 mid-burst (never negative)"],
+      "expected_result": "During a rapid burst near the start, taps accumulate until one would cross 0:00 — that tap clamps to 0:00, never negative, even mid-burst."
+    },
+    {
+      "ec_id": "EC-UC3-021", "sc_id": "SC-UC3-08", "ac_id": "AC-08", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify a rapid skip-forward burst near the end stops at the final frame",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 2:00 video", "position = 1:45"],
+      "test_data": { "duration": "2:00", "position": "1:45", "taps": 3, "direction": "forward" },
+      "steps": ["Position a 2:00 video at 1:45", "Tap skip-forward 3× quickly", "Assert: position stops at the final frame (2:00) mid-burst and never loops back to 0:00"],
+      "expected_result": "A rapid burst near the end stops at the final frame mid-burst and never loops back to 0:00."
+    },
+    {
+      "ec_id": "EC-UC3-022", "sc_id": "SC-UC3-09", "ac_id": "AC-09", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify no skip buttons before the overlay is revealed",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is loaded", "the UC1a controls overlay has not been revealed"],
+      "test_data": { "overlay": "hidden" },
+      "steps": ["Load the video player without tapping", "Assert: no skip buttons are visible"],
+      "expected_result": "No skip buttons are visible until the controls overlay is revealed."
+    },
+    {
+      "ec_id": "EC-UC3-023", "sc_id": "SC-UC3-09", "ac_id": "AC-09", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify skip buttons appear after the overlay is revealed",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is loaded", "overlay hidden"],
+      "test_data": { "overlay": "revealed via UC1a" },
+      "steps": ["Load the video player", "Tap to reveal the controls overlay (UC1a)", "Assert: the skip buttons now appear"],
+      "expected_result": "After revealing the overlay (UC1a) the skip buttons appear (transition guard)."
+    },
+    {
+      "ec_id": "EC-UC3-024", "sc_id": "SC-UC3-10", "ac_id": "AC-10", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify skip while buffering on mobile seeks and rebuffers at the target",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["mobile", "the video is buffering at the current position"],
+      "test_data": { "platform": "mobile", "player_state": "buffering", "direction": "forward" },
+      "steps": ["Mock: throttle the network to force buffering", "Tap a skip button", "Assert: the player seeks to the target and rebuffers there (loading shown), then resumes — no stuck spinner, no crash"],
+      "expected_result": "On mobile, tapping a skip button while buffering seeks to the target and rebuffers there — surfacing loading feedback, never a silent frozen frame."
+    },
+    {
+      "ec_id": "EC-UC3-025", "sc_id": "SC-UC3-10", "ac_id": "AC-10", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify a buffering skip never leaves a frozen frame without feedback",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["mobile", "the video is buffering"],
+      "test_data": { "platform": "mobile", "player_state": "buffering" },
+      "steps": ["Force buffering on mobile", "Tap a skip button", "Assert: an explicit loading state is shown throughout (never a silent frozen frame)"],
+      "expected_result": "The viewer is never left on a frozen frame with no feedback."
+    },
+    {
+      "ec_id": "EC-UC3-026", "sc_id": "SC-UC3-11", "ac_id": "AC-11", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify web buffering shows Reconnecting UI and keeps manual scrub available",
+      "priority": "P2", "test_layer": "manual",
+      "preconditions": ["web", "the video is buffering at the current position"],
+      "test_data": { "platform": "web", "player_state": "buffering" },
+      "steps": ["Force buffering on web", "Assert: the 'Reconnecting' UI is shown", "Assert: manual scrub/scroll remains available (no silent frozen frame)"],
+      "expected_result": "The web player surfaces the 'Reconnecting' UI and keeps manual scrub/scroll available — the viewer is never left on a silent frozen frame (BR-15)."
+    },
+    {
+      "ec_id": "EC-UC3-027", "sc_id": "SC-UC3-11", "ac_id": "AC-11", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Observe the ±10s skip result mid-buffer on web (do NOT assert — FU-3)",
+      "priority": "P2", "test_layer": "manual",
+      "preconditions": ["web", "the video is buffering"],
+      "test_data": { "platform": "web", "player_state": "buffering", "gesture": "±10s skip tap" },
+      "steps": ["Force buffering on web", "Tap a ±10s skip button", "Observe and record the outcome (screenshot + notes)"],
+      "expected_result": "OBSERVE/RECORD ONLY — the exact ±10s-skip result mid-buffer on web is unconfirmed; do NOT assert until Web Engineering closes FU-3."
+    }
+  ]
+}

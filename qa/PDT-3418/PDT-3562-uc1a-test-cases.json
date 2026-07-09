@@ -1,0 +1,290 @@
+{
+  "_schema": "qa-test-cases-v1",
+  "_purpose": "Executable test cases (EC) for UC1a — runnable expansion of the scenarios. Per scenario: 1 success EC + exactly one alternative EC per expected.alternative[] entry.",
+  "_status": "phase-3-4 output — 2026-07-09. Derived from PDT-3562-uc1a-scenarios.json (12 SC / 11 AC). UC1a = the video / recorded-LS player component (surface token = 'Video player'). SC-UC1a-05 alt[1] (recorded-LS exact-resume) is observe/record — held under pending FU ASSUME-recorded-resume; its success (video exact-resume) and alt[0] (Live-edge contrast) are assertable now.",
+  "_id_note": "EC- = Executable Case. Chain: AC → SC → EC. (TC- = L3 condition; SC- = scenario.)",
+
+  "ids": { "epic_id": "PDT-3418", "story_id": "PDT-3562", "uc_id": "UC1a" },
+
+  "cases": [
+    {
+      "ec_id": "EC-UC1a-001", "sc_id": "SC-UC1a-01", "ac_id": "AC-01", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify first tap reveals controls without toggling playback (mobile, playing)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing on a mobile surface (iOS)", "the controls overlay is hidden", "currentTime is advancing (position 0:30)"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "viewport": "390x844", "play_state": "playing", "position": "0:30", "overlay": "hidden" },
+      "steps": ["Tap anywhere on the player surface (first tap) at position 0:30", "Assert: the controls overlay is visible", "Assert: playback continues — currentTime keeps advancing past 0:30 and video.paused is false", "Assert: the central button icon is PAUSE"],
+      "expected_result": "On mobile, the first tap on a playing video/recorded LS reveals the controls overlay while playback continues uninterrupted (currentTime keeps advancing, video.paused===false) and the central button shows the PAUSE icon — the tap does not toggle playback."
+    },
+    {
+      "ec_id": "EC-UC1a-002", "sc_id": "SC-UC1a-01", "ac_id": "AC-01", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify first tap never pauses the media (mobile accidental-interrupt guard)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing on a mobile surface (iOS)", "the controls overlay is hidden", "position 0:30"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "viewport": "390x844", "play_state": "playing", "position": "0:30", "overlay": "hidden" },
+      "steps": ["Tap anywhere on the player surface (first tap) at position 0:30", "Assert: video.paused is false — currentTime keeps advancing, the tap did NOT pause", "Assert: the central button icon is PAUSE, not PLAY (a PLAY icon would be the desktop 1-Step-Pause class)"],
+      "expected_result": "On mobile, a first tap that PAUSES the media (currentTime stops / play icon shows) is the wrong class — that is the desktop 1-Step-Pause behaviour (BR-09); on mobile a reveal that toggles playback is the accidental-interrupt regression this story exists to prevent (BR-10)."
+    },
+    {
+      "ec_id": "EC-UC1a-003", "sc_id": "SC-UC1a-01", "ac_id": "AC-01", "path": "alternative", "alt_index": 1,
+      "name": "[Video player] Verify first tap is never a no-op (overlay must appear)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing on a mobile surface (iOS)", "the controls overlay is hidden", "position 0:30"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "viewport": "390x844", "play_state": "playing", "position": "0:30", "overlay": "hidden" },
+      "steps": ["Tap anywhere on the player surface (first tap) at position 0:30", "Assert: the controls overlay is visible — the tap was not swallowed as a no-op", "Assert: playback also did not pause (video.paused is false)"],
+      "expected_result": "The overlay must actually appear — a first tap that neither reveals the controls nor pauses (a no-op) is a failure."
+    },
+    {
+      "ec_id": "EC-UC1a-004", "sc_id": "SC-UC1a-02", "ac_id": "AC-02", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify tap outside the central button dismisses the overlay and playback continues",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "the central button's rendered hit-target is 64x64px (FU-2 resolved)"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "visible", "hit_target": "64x64px", "tap_location": "outside the central button" },
+      "steps": ["Tap the player surface OUTSIDE the central button's 64x64px tap target", "Assert: the overlay is dismissed (no longer visible)", "Assert: video.paused is false — playback continues uninterrupted, state stays playing"],
+      "expected_result": "Tapping outside the 64x64px central button dismisses the overlay while playback continues uninterrupted (state stays playing) — the dismiss is not an implicit pause."
+    },
+    {
+      "ec_id": "EC-UC1a-005", "sc_id": "SC-UC1a-02", "ac_id": "AC-02", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify a tap just inside the 64x64px central button pauses instead of dismissing (boundary)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "the central button's rendered hit-target is 64x64px (FU-2 resolved)"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "visible", "hit_target": "64x64px", "tap_location": "just inside the central button" },
+      "steps": ["Tap just INSIDE the rendered 64x64px central button", "Assert: video.paused becomes true (state transitions playing -> paused) — this is a pause, not a dismiss", "Assert: the overlay is NOT dismissed by this tap"],
+      "expected_result": "A tap just INSIDE the rendered 64x64px central button pauses (playing -> paused) instead of dismissing — the pause-vs-dismiss boundary (FU-2 resolved: 64x64px; assert against the rendered target, which may be native)."
+    },
+    {
+      "ec_id": "EC-UC1a-006", "sc_id": "SC-UC1a-02", "ac_id": "AC-02", "path": "alternative", "alt_index": 1,
+      "name": "[Video player] Verify tap-outside never implicitly pauses the media",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "the central button's rendered hit-target is 64x64px (FU-2 resolved)"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "visible", "hit_target": "64x64px", "tap_location": "outside the central button" },
+      "steps": ["Tap the player surface OUTSIDE the 64x64px central button", "Assert: video.paused stays false — the tap-outside did NOT transition playing -> paused"],
+      "expected_result": "A tap-outside that transitions playing -> paused is a failure — dismissing the overlay must never implicitly pause the media (BR-10)."
+    },
+    {
+      "ec_id": "EC-UC1a-007", "sc_id": "SC-UC1a-03", "ac_id": "AC-03", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify overlay auto-dismisses after 1s of no action (playing)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "no further user interaction occurs"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "visible", "idle_timer_ms": 1000, "clock": "fake-timers / Playwright clock" },
+      "steps": ["Reveal the overlay while playing, then take no action", "Advance the idle timer to 900ms; Assert: the overlay is still visible", "Advance the idle timer to 1000ms; Assert: the overlay is auto-dismissed", "Assert: playback continues throughout — currentTime is still advancing"],
+      "expected_result": "After exactly 1s (1000ms) of no interaction while playing, the overlay auto-dismisses and playback continues (currentTime still advancing); at 900ms it is still visible."
+    },
+    {
+      "ec_id": "EC-UC1a-008", "sc_id": "SC-UC1a-03", "ac_id": "AC-03", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify overlay still visible at 900ms (never dismisses before 1s)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "no further user interaction occurs"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "visible", "elapsed_ms": 900, "clock": "fake-timers / Playwright clock" },
+      "steps": ["Reveal the overlay while playing, take no action", "Advance the idle timer to 900ms", "Assert: the overlay is still visible at 900ms (not dismissed before the 1s bound)"],
+      "expected_result": "At 900ms (just below the 1s bound) the overlay must still be visible — dismissing before 1s is a boundary failure."
+    },
+    {
+      "ec_id": "EC-UC1a-009", "sc_id": "SC-UC1a-03", "ac_id": "AC-03", "path": "alternative", "alt_index": 1,
+      "name": "[Video player] Verify overlay dismisses at 1000ms not 3000ms (web 3s->1s regression guard)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "no further user interaction occurs"],
+      "test_data": { "surface": "community feed", "platform": "web", "play_state": "playing", "overlay": "visible", "idle_timer_ms": 1000, "web_legacy_timer_ms": 3000, "clock": "fake-timers / Playwright clock" },
+      "steps": ["Reveal the overlay while playing, take no action", "Advance the idle timer to 1000ms", "Assert: the overlay is dismissed at 1000ms — not held until 3000ms (VideoPlayerControls.tsx:60-70)"],
+      "expected_result": "The overlay must auto-dismiss at 1000ms, not 3000ms — web currently uses a 3s timer (VideoPlayerControls.tsx:60-70); any dismiss later than 1s fails the regression guard (iOS is already 1s)."
+    },
+    {
+      "ec_id": "EC-UC1a-010", "sc_id": "SC-UC1a-04", "ac_id": "AC-04", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify pause shows play icon + seek controls, paused overlay persists, tap-outside stays paused",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is playing with the controls overlay visible", "the central button's rendered hit-target is 64x64px (FU-2 resolved)"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "stream_type": "video", "play_state": "playing -> paused", "overlay": "visible", "hit_target": "64x64px", "elapsed_ms": 1500 },
+      "steps": ["Tap the central pause button", "Assert: video.paused is true — paused at the current position", "Assert: the icon switched pause -> play and the PLAY icon remains visible", "Assert: BOTH the -10s AND the +10s skip buttons remain visible (video/recorded component — BR-01)", "Advance >1000ms (to 1500ms) with no interaction; Assert: the overlay persists (the paused branch has no idle auto-dismiss)", "Tap outside the 64x64px central button; Assert: the overlay is dismissed AND video.paused is still true (the media did not resume)"],
+      "expected_result": "On a playing video/recorded LS the central pause tap pauses playback at the current position and the play icon persists; the +/-10s seek controls remain visible; while paused the overlay persists past 1s (no idle auto-dismiss); a tap-outside dismisses the overlay and the media stays paused."
+    },
+    {
+      "ec_id": "EC-UC1a-011", "sc_id": "SC-UC1a-04", "ac_id": "AC-04", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify an active Live stream shows no +/-10s seek controls (contrast)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["an active Live stream is playing with the controls overlay visible", "SDK stream type mocked = Live"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "stream_type": "Live", "play_state": "playing -> paused", "overlay": "visible" },
+      "steps": ["Mock: SDK stream type = Live", "Reveal the overlay and tap the central pause button", "Assert: neither the -10s nor the +10s skip button is rendered (seek is gated to video/recorded)"],
+      "expected_result": "Contrast: on an active Live stream the +/-10s seek controls are NOT shown — proving the seek gate is stream-type driven; seek exists only on video/recorded (BR-01, TC-UC1a-01c)."
+    },
+    {
+      "ec_id": "EC-UC1a-012", "sc_id": "SC-UC1a-04", "ac_id": "AC-04", "path": "alternative", "alt_index": 1,
+      "name": "[Video player] Verify a paused overlay never auto-dismisses on the 1s idle timer",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is paused with the controls overlay (play icon) visible", "no further user interaction occurs"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "stream_type": "video", "play_state": "paused", "overlay": "visible", "elapsed_ms": 1500, "clock": "fake-timers / Playwright clock" },
+      "steps": ["Pause the media so the overlay shows the PLAY icon", "Advance >1000ms (to 1500ms) with no interaction", "Assert: the overlay still persists — the paused branch has no idle timeout (does not auto-dismiss at 1s)"],
+      "expected_result": "A paused overlay must NOT auto-dismiss on the 1s idle timer — the paused branch has no idle timeout, so it persists until a tap-outside (BR-11)."
+    },
+    {
+      "ec_id": "EC-UC1a-013", "sc_id": "SC-UC1a-04", "ac_id": "AC-04", "path": "alternative", "alt_index": 2,
+      "name": "[Video player] Verify tap-outside while paused never resumes playback",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is paused with the controls overlay visible", "the central button's rendered hit-target is 64x64px (FU-2 resolved)"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "stream_type": "video", "play_state": "paused", "overlay": "visible", "hit_target": "64x64px", "tap_location": "outside the central button" },
+      "steps": ["With the media paused and the overlay visible, tap outside the 64x64px central button", "Assert: the overlay is dismissed", "Assert: video.paused is still true — the media did not resume (the dismiss is not an implicit play)"],
+      "expected_result": "A tap-outside while paused must never resume playback — the dismiss is not an implicit play; the media stays paused (BR-10)."
+    },
+    {
+      "ec_id": "EC-UC1a-014", "sc_id": "SC-UC1a-05", "ac_id": "AC-05", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify tap play resumes a paused video from the exact position (0:42)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video is paused at a known position (t=42s) on a known-length local fixture", "the central play button is displayed"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "stream_type": "video", "play_state": "paused", "position": "0:42", "duration": "3:00" },
+      "steps": ["With the video paused at 0:42, tap the central play button", "Assert: playback resumes from currentTime === 0:42 (not 0:00, not the live edge)", "Assert: the icon switched play -> pause"],
+      "expected_result": "Tapping the central play button on a paused video resumes playback from the exact paused position (t=42s -> resumes at 42s, not 0 and not the live edge); the icon switches play -> pause."
+    },
+    {
+      "ec_id": "EC-UC1a-015", "sc_id": "SC-UC1a-05", "ac_id": "AC-05", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify resume on a Live stream jumps to the live edge (not the paused position)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a Live stream is paused at t=42s", "SDK stream type mocked = Live"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "stream_type": "Live", "play_state": "paused", "position": "0:42", "tolerance": "UC2 CONF-07" },
+      "steps": ["Mock: SDK stream type = Live, paused at 0:42", "Tap the central play button", "Assert: playback resumes at the current live edge (approx. live within the CONF-07 tolerance), NOT 0:42"],
+      "expected_result": "On a Live stream, resume goes to the current live edge (approx. live within tolerance), NOT the exact paused position — a media-type contrast (BR-13; cross-ref UC2 CONF-07 tolerance)."
+    },
+    {
+      "ec_id": "EC-UC1a-016", "sc_id": "SC-UC1a-05", "ac_id": "AC-05", "path": "alternative", "alt_index": 1,
+      "name": "[Video player] Observe recorded-LS resume position (ASSUME-recorded-resume — do NOT assert)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a recorded LS is paused at t=42s", "SDK stream type mocked = recorded LS"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "stream_type": "recorded LS", "play_state": "paused", "position": "0:42" },
+      "steps": ["Mock: SDK stream type = recorded LS, paused at 0:42", "Tap the central play button", "Observe and record the resume position (screenshot + notes): does it resume at 0:42 like video, or snap to the live edge?"],
+      "expected_result": "OBSERVE/RECORD ONLY — recorded LS is assumed to resume from the exact paused position (0:42) like video, but this is unconfirmed; do NOT assert until Engineering closes ASSUME-recorded-resume (TC-UC1a-07b). Record whether recorded LS resumes at 0:42 or snaps to the live edge."
+    },
+    {
+      "ec_id": "EC-UC1a-017", "sc_id": "SC-UC1a-06", "ac_id": "AC-06", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify reveal / dismiss / pause / resume behaviour is identical across all 6 in-scope surfaces",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS renders on an in-scope surface", "the platform (form factor) is held fixed while the surface varies"],
+      "test_data": { "surfaces": ["global feed", "user feed", "community feed", "event-discussion feed", "media gallery", "fullscreen"], "platform": "mobile (iOS, held fixed)", "play_state": "playing" },
+      "steps": ["For each of the 6 surfaces {global feed, user feed, community feed, event-discussion feed, media gallery, fullscreen}: perform reveal, tap-outside dismiss, 1s auto-dismiss, pause, resume; record the outcomes", "Assert: on every surface the outcomes are identical — the overlay reveals and playback continues the same way (surface-invariant)"],
+      "expected_result": "The reveal / tap-outside-dismiss / 1s auto-dismiss / pause / resume behaviours produce identical outcomes across all 6 in-scope surfaces {global, user, community, event-discussion feed, media gallery, fullscreen} (surface-invariant)."
+    },
+    {
+      "ec_id": "EC-UC1a-018", "sc_id": "SC-UC1a-06", "ac_id": "AC-06", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify no in-scope surface diverges from another (surface-invariance break)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS renders on an in-scope surface", "the platform (form factor) is held fixed while the surface varies"],
+      "test_data": { "surfaces": ["global feed", "user feed", "community feed", "event-discussion feed", "media gallery", "fullscreen"], "platform": "mobile (iOS, held fixed)", "play_state": "playing" },
+      "steps": ["Run the reveal / dismiss / auto-dismiss / pause / resume flow on all 6 in-scope surfaces with the platform held fixed", "Compare the outcomes pairwise across surfaces", "Assert: no surface produces a different outcome than another in-scope surface (any divergence is a BR-06 surface-invariance break)"],
+      "expected_result": "Any in-scope surface producing a DIFFERENT reveal / dismiss / auto-dismiss / pause / resume outcome than another in-scope surface is a surface-invariance break (BR-06 violation)."
+    },
+    {
+      "ec_id": "EC-UC1a-019", "sc_id": "SC-UC1a-07", "ac_id": "AC-07", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify no controls overlay before the first tap (default state)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is actively playing on an in-scope surface", "the post has just rendered", "no tap has occurred yet"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "not yet revealed", "taps": 0 },
+      "steps": ["Render the actively-playing post without any tap", "Assert: no controls overlay element exists in the view hierarchy / DOM", "Assert: only the media surface is visible"],
+      "expected_result": "On first render of an actively-playing video/recorded LS on any in-scope surface, with no tap yet, no controls overlay element exists in the view hierarchy / DOM — only the media surface is visible (baseline default state)."
+    },
+    {
+      "ec_id": "EC-UC1a-020", "sc_id": "SC-UC1a-07", "ac_id": "AC-07", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify the overlay is never present pre-interaction (baseline default-state guard)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a video / recorded LS is actively playing on an in-scope surface", "no tap has occurred yet"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "not yet revealed", "taps": 0 },
+      "steps": ["Render the actively-playing post with no tap", "Assert: no controls-overlay element is present in the view hierarchy / DOM before any tap"],
+      "expected_result": "The controls overlay must NOT be present before any tap — an overlay element rendered pre-interaction is a baseline default-state failure."
+    },
+    {
+      "ec_id": "EC-UC1a-021", "sc_id": "SC-UC1a-08", "ac_id": "AC-08", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify a control interaction resets the 1s idle countdown",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "the 1s idle countdown is running"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "visible", "control": "scrubber", "interaction_at_ms": 800, "idle_timer_ms": 1000, "clock": "fake-timers / Playwright clock" },
+      "steps": ["With the overlay visible over playing media and the 1s countdown running, interact with the scrubber at 800ms", "Assert: the countdown restarts — the overlay is still visible past the original 1000ms", "Take no further action; Assert: the overlay auto-dismisses 1000ms after the LAST interaction", "Assert: playback continues throughout"],
+      "expected_result": "A control interaction at 800ms restarts the 1s idle countdown — the overlay stays visible through the interaction and auto-dismisses only 1000ms after the LAST interaction; playback continues throughout."
+    },
+    {
+      "ec_id": "EC-UC1a-022", "sc_id": "SC-UC1a-08", "ac_id": "AC-08", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify the countdown never ignores a later interaction (must not dismiss on first reveal)",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "the 1s idle countdown is running"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "visible", "control": "scrubber", "interaction_at_ms": 800, "idle_timer_ms": 1000, "clock": "fake-timers / Playwright clock" },
+      "steps": ["Reveal the overlay, then interact with a control (scrubber) at 800ms", "Advance the clock to 1000ms after the FIRST reveal", "Assert: the overlay is still visible — the timer restarted on the interaction and did NOT dismiss 1000ms after the first reveal"],
+      "expected_result": "If the overlay dismisses 1000ms after the FIRST reveal — ignoring the later interaction — the countdown-reset failed; the timer must restart on every control interaction, so repeated interactions each less than 1s apart never dismiss the overlay while the user is still interacting (TC-UC1a-02d)."
+    },
+    {
+      "ec_id": "EC-UC1a-023", "sc_id": "SC-UC1a-09", "ac_id": "AC-09", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify pause tap wins the race against the auto-dismiss timer",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "the 1s idle auto-dismiss timer is about to fire (t approx 999ms)"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "visible", "pause_tap_at_ms": 999, "idle_timer_ms": 1000, "timing": "fake-timer race" },
+      "steps": ["Dispatch a central pause-button tap at ~999ms — the instant the auto-dismiss would fire (fake-timer race)", "Assert: the explicit pause WINS — video.paused becomes true", "Assert: the PLAY icon is shown and persists (not swallowed by the expiring timer)", "Assert: the overlay dismisses only on a subsequent tap-outside, not from the fired timer"],
+      "expected_result": "When the central pause tap lands at ~999ms as the 1s auto-dismiss is about to fire, the explicit pause wins: the media pauses, the play icon shows and persists (not swallowed by the expiring timer), and the overlay dismisses only on a subsequent tap-outside."
+    },
+    {
+      "ec_id": "EC-UC1a-024", "sc_id": "SC-UC1a-09", "ac_id": "AC-09", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify the expiring 1s timer never swallows the pause",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible over a playing video / recorded LS", "the 1s idle auto-dismiss timer is about to fire (t approx 999ms)"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing", "overlay": "visible", "pause_tap_at_ms": 999, "idle_timer_ms": 1000, "timing": "fake-timer race" },
+      "steps": ["Dispatch the central pause tap at ~999ms as the 1s timer fires (fake-timer race)", "Assert: the overlay does NOT auto-dismiss discarding the pause — the paused / play-icon state is retained (video.paused is true) and the media does not stay playing"],
+      "expected_result": "The expiring 1s timer must not swallow the pause — a race where the overlay auto-dismisses and the paused / play-icon state is lost (or the media stays playing) is the failure mode; a PLAYING overlay would have dismissed on the timer, but once paused the overlay persists (dismisses only via tap-outside)."
+    },
+    {
+      "ec_id": "EC-UC1a-025", "sc_id": "SC-UC1a-10", "ac_id": "AC-10", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify tap during buffering reveals the real state, never a false playing icon",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the media is buffering (not yet playing)", "buffering is forced via network throttle / route delay or a state mock"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "buffering", "buffering_source": "network throttle / route delay" },
+      "steps": ["Force buffering via network throttle / route delay, then tap the player surface", "Assert: the controls overlay is visible", "Assert: the central button reflects the REAL state (loading/paused) — NOT a false 'playing' pause-icon", "Assert: no crash and no frozen overlay", "Release the throttle; Assert: once playback starts the icon updates to the playing state"],
+      "expected_result": "Tapping the player surface while buffering reveals the overlay with the central button reflecting the real state (loading/paused) — never a false 'playing' pause-icon — with no crash and no frozen overlay; once playback starts the icon updates to the playing state."
+    },
+    {
+      "ec_id": "EC-UC1a-026", "sc_id": "SC-UC1a-10", "ac_id": "AC-10", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify a mid-playback stall surfaces a loading state (never a silent frozen frame)",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the media was playing, then the network stalls mid-playback", "the stall is injected via network manipulation (mock preferred — flake risk)"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "playing -> stalled", "buffering_source": "mid-play network stall (mock preferred)" },
+      "steps": ["Start playback, then inject a mid-playback network stall (mock preferred — flake risk)", "Assert: an explicit loading/stall state is surfaced — the viewer is not left on a silent frozen frame (BR-15)"],
+      "expected_result": "[AI-INFERRED] A mid-playback stall (was playing, then the network stalls) must surface an explicit loading/stall state — the viewer is never left on a silent frozen frame (BR-15). Extends AC-10's initial-buffer case to a mid-play stall per BR-15 'any interruption' (TC-UC1a-08c); inject via network manipulation — flake risk, mock preferred."
+    },
+    {
+      "ec_id": "EC-UC1a-027", "sc_id": "SC-UC1a-10", "ac_id": "AC-10", "path": "alternative", "alt_index": 1,
+      "name": "[Video player] Verify the central button never shows a false playing icon while buffering",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the media is buffering (not yet playing)", "buffering is forced via network throttle / route delay or a state mock"],
+      "test_data": { "surface": "community feed", "platform": "mobile (iOS)", "play_state": "buffering", "buffering_source": "network throttle / route delay" },
+      "steps": ["Force buffering, then tap the player surface", "Assert: the central button never shows a 'playing' pause-icon while buffering — it reflects the real (loading/paused) state"],
+      "expected_result": "The central button must never show a false 'playing' pause-icon while the media is buffering — it must reflect the real (loading/paused) state."
+    },
+    {
+      "ec_id": "EC-UC1a-028", "sc_id": "SC-UC1a-11a", "ac_id": "AC-11", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify backgrounding while playing OS-pauses and dismisses the playing overlay on foreground",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["iOS", "the controls overlay is visible while the media is PLAYING", "the app is backgrounded", "wall-clock time > 1s passes while backgrounded"],
+      "test_data": { "surface": "community feed", "platform": "iOS", "play_state": "playing", "overlay": "visible", "background_wait": "> 1s (wall clock)" },
+      "steps": ["Background the app with a playing overlay visible", "Wait > 1s (wall clock)", "Return the app to the foreground", "Assert: the OS paused the media on background and does NOT auto-resume (video.paused is true)", "Assert: the playing overlay is dismissed (its wall-clock 1s idle timer elapsed while backgrounded)", "Assert: no stale mid-countdown overlay is shown"],
+      "expected_result": "On returning to the foreground after backgrounding while PLAYING, the OS-paused media does not auto-resume and the playing overlay is dismissed (its wall-clock 1s idle timer elapsed while backgrounded); there is no stale mid-countdown overlay."
+    },
+    {
+      "ec_id": "EC-UC1a-029", "sc_id": "SC-UC1a-11a", "ac_id": "AC-11", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify the media never silently auto-resumes on foreground (playing branch)",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["iOS", "the controls overlay was visible while the media was PLAYING", "the app was backgrounded > 1s"],
+      "test_data": { "surface": "community feed", "platform": "iOS", "play_state": "playing", "overlay": "visible", "background_wait": "> 1s (wall clock)" },
+      "steps": ["Background while playing, wait > 1s, return the app to the foreground", "Assert: video.paused stays true — no silent auto-resume (the OS pause is terminal, BR-10)", "Assert: no stale mid-countdown overlay is left frozen on screen"],
+      "expected_result": "The media must not silently auto-resume on foreground — the OS pause is a terminal action, not an implicit app toggle (BR-10); and no stale mid-countdown overlay may be left frozen on screen."
+    },
+    {
+      "ec_id": "EC-UC1a-030", "sc_id": "SC-UC1a-11b", "ac_id": "AC-11", "path": "success", "alt_index": null,
+      "name": "[Video player] Verify backgrounding while paused keeps it paused and persists the paused overlay on foreground",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["iOS", "the controls overlay is visible while the media is PAUSED", "the app is backgrounded", "the user then returns the app to the foreground"],
+      "test_data": { "surface": "community feed", "platform": "iOS", "play_state": "paused", "overlay": "visible" },
+      "steps": ["Background the app with a paused overlay visible", "Return the app to the foreground", "Assert: the media stays paused (video.paused is true; no auto-resume)", "Assert: the paused overlay persists (no idle timer to elapse)", "Assert: no stale mid-countdown overlay is shown"],
+      "expected_result": "On returning to the foreground after backgrounding while PAUSED, the media stays paused (no auto-resume) and the paused overlay persists (the paused branch has no idle timer to elapse); there is no stale mid-countdown overlay."
+    },
+    {
+      "ec_id": "EC-UC1a-031", "sc_id": "SC-UC1a-11b", "ac_id": "AC-11", "path": "alternative", "alt_index": 0,
+      "name": "[Video player] Verify the paused overlay never vanishes and never auto-resumes on foreground (paused branch)",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["iOS", "the controls overlay was visible while the media was PAUSED", "the app was backgrounded and then foregrounded"],
+      "test_data": { "surface": "community feed", "platform": "iOS", "play_state": "paused", "overlay": "visible" },
+      "steps": ["Background while paused, return the app to the foreground", "Assert: video.paused stays true — no auto-resume", "Assert: the paused overlay is still present (did not vanish) and no stale mid-countdown overlay is shown"],
+      "expected_result": "The media must not auto-resume and the paused overlay must not vanish on foreground — the paused branch has no idle timer and the OS pause is terminal (BR-11 + BR-10); no stale mid-countdown overlay."
+    }
+  ]
+}

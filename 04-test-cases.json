@@ -1,0 +1,62 @@
+{
+  "_schema": "qa-test-cases-v1",
+  "_purpose": "Executable test cases (EC) — the runnable expansion of scenarios (SC). Per scenario: 1 success EC + EXACTLY one alternative EC per expected.alternative[] entry. Produced by phase-3-4-test-cases; validated by checks/test_case_coverage.py.",
+  "_status": "EXAMPLE — expands the scenarios in 03-scenarios.json (SC-EX-01, SC-EX-03). Real output: qa/<epic>/PDT-XXXX-ucN-test-cases.json.",
+  "_id_note": "EC- = Executable Case (this layer). Distinct from TC- (L3 test condition) and SC- (scenario). Chain: AC → SC → EC.",
+  "_rule": "count(path=alternative EC for a scenario) MUST equal len(scenario.expected.alternative[]) — not fewer (gap), not more (over-test). alt_index maps each alternative EC to its scenario.expected.alternative[i].",
+
+  "ids": { "epic_id": "PDT-XXXX", "story_id": "PDT-YYYY", "uc_id": "UCn" },
+
+  "cases": [
+    {
+      "ec_id": "EC-EX-001",
+      "sc_id": "SC-EX-01", "ac_id": "AC-01", "path": "success", "alt_index": null,
+      "name": "[Sign in] Verify a 6-character password is accepted",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["On the sign-in screen", "Email field contains a valid address"],
+      "test_data": { "email": "admin@acme.co", "password": "Sunfl0" },
+      "steps": ["Navigate to /login", "Enter admin@acme.co in the Email field", "Enter Sunfl0 (6 chars) in the Password field", "Assert: Sign in is accepted"],
+      "expected_result": "A password of 6 or more characters is accepted."
+    },
+    {
+      "ec_id": "EC-EX-002",
+      "sc_id": "SC-EX-01", "ac_id": "AC-01", "path": "alternative", "alt_index": 0,
+      "name": "[Sign in] Verify a 5-character password is rejected",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["On the sign-in screen", "Email field contains a valid address"],
+      "test_data": { "email": "admin@acme.co", "password": "Sunf1" },
+      "steps": ["Navigate to /login", "Enter admin@acme.co in the Email field", "Enter Sunf1 (5 chars) in the Password field", "Assert: rejected with 'Your password must be 6 characters or more.'"],
+      "expected_result": "A password of 5 characters (below min) is rejected with 'Your password must be 6 characters or more.'"
+    },
+    {
+      "ec_id": "EC-EX-003",
+      "sc_id": "SC-EX-03", "ac_id": "AC-05", "path": "success", "alt_index": null,
+      "name": "[Moderation] Verify a moderator approves a pending post",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["A pending post exists"],
+      "test_data": { "role": "moderator", "post_status": "pending" },
+      "steps": ["Sign in as a moderator", "Open the pending post", "Tap Approve", "Assert: post status becomes published"],
+      "expected_result": "A moderator approving a pending post → status becomes published."
+    },
+    {
+      "ec_id": "EC-EX-004",
+      "sc_id": "SC-EX-03", "ac_id": "AC-05", "path": "alternative", "alt_index": 0,
+      "name": "[Moderation] Verify a member cannot approve (no permission)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["A pending post exists"],
+      "test_data": { "role": "member", "post_status": "pending" },
+      "steps": ["Sign in as a member", "Open the pending post", "Assert: Approve is hidden/blocked"],
+      "expected_result": "A member (no permission) → Approve is hidden/blocked."
+    },
+    {
+      "ec_id": "EC-EX-005",
+      "sc_id": "SC-EX-03", "ac_id": "AC-05", "path": "alternative", "alt_index": 1,
+      "name": "[Moderation] Verify approve is blocked on a non-pending post",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["A published (non-pending) post exists"],
+      "test_data": { "role": "moderator", "post_status": "published" },
+      "steps": ["Sign in as a moderator", "Open a published post", "Attempt Approve", "Assert: blocked (wrong state)"],
+      "expected_result": "A moderator approving a non-pending post → blocked (wrong state)."
+    }
+  ]
+}

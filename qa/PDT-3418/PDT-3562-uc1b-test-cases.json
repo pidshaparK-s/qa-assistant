@@ -1,0 +1,245 @@
+{
+  "_schema": "qa-test-cases-v1",
+  "_purpose": "Executable test cases (EC) for UC1b ('Live' tap-to-reveal) — runnable expansion of the scenarios. Per scenario: 1 success EC + exactly one alternative EC per expected.alternative[] entry.",
+  "_status": "phase-3-4 output — 2026-07-09. Derived from PDT-3562-uc1b-scenarios.json.",
+  "_id_note": "EC- = Executable Case. Chain: AC → SC → EC.",
+
+  "ids": { "epic_id": "PDT-3418", "story_id": "PDT-3562", "uc_id": "UC1b" },
+
+  "cases": [
+    {
+      "ec_id": "EC-UC1b-001", "sc_id": "SC-UC1b-01", "ac_id": "AC-01", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify first tap on a playing Live stream reveals controls without pausing (mobile)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 'Live' stream is playing on a mobile surface", "the controls overlay is hidden"],
+      "test_data": { "surface": "mobile", "play_state": "playing", "tap": "first" },
+      "steps": ["Play a Live stream on mobile with the overlay hidden", "Tap anywhere on the player surface", "Assert: the controls overlay appears", "Assert: video.paused === false (still playing)", "Assert: the central button shows the pause icon"],
+      "expected_result": "On mobile, the first tap reveals the controls overlay while the Live stream keeps playing (video.paused===false) and the central button shows the pause icon — the tap does not toggle playback."
+    },
+    {
+      "ec_id": "EC-UC1b-002", "sc_id": "SC-UC1b-01", "ac_id": "AC-01", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify first tap never pauses the Live stream (accidental-interrupt guard)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 'Live' stream is playing on mobile", "overlay hidden"],
+      "test_data": { "surface": "mobile", "play_state": "playing", "tap": "first" },
+      "steps": ["Play a Live stream on mobile", "Tap the player surface once", "Assert: playback state stays playing (no pause)"],
+      "expected_result": "The first tap must NOT pause the stream — a reveal that also toggles playback is the accidental-interrupt regression this story exists to prevent."
+    },
+    {
+      "ec_id": "EC-UC1b-003", "sc_id": "SC-UC1b-01", "ac_id": "AC-01", "path": "alternative", "alt_index": 1,
+      "name": "[Live player] Verify first tap actually reveals the overlay (no-op is a failure)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 'Live' stream is playing on mobile", "overlay hidden"],
+      "test_data": { "surface": "mobile", "play_state": "playing", "tap": "first" },
+      "steps": ["Play a Live stream on mobile", "Tap the player surface once", "Assert: the controls overlay is now visible"],
+      "expected_result": "The overlay must actually appear — a first tap that neither reveals nor pauses (a no-op) is a failure."
+    },
+    {
+      "ec_id": "EC-UC1b-004", "sc_id": "SC-UC1b-02", "ac_id": "AC-02", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify tap-outside the button dismisses the overlay and keeps playing",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible", "the 'Live' stream is playing"],
+      "test_data": { "play_state": "playing", "tap_target": "outside the 64x64px central button" },
+      "steps": ["With the overlay visible and playing, tap outside the 64x64px central button", "Assert: the overlay dismisses", "Assert: playback continues (still playing)"],
+      "expected_result": "Tapping outside the 64x64px central button dismisses the overlay while the Live stream keeps playing — the dismiss is not an implicit pause."
+    },
+    {
+      "ec_id": "EC-UC1b-005", "sc_id": "SC-UC1b-02", "ac_id": "AC-02", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify tap-outside never pauses the stream",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["overlay visible", "'Live' stream playing"],
+      "test_data": { "play_state": "playing", "tap_target": "outside button" },
+      "steps": ["Tap outside the central button", "Assert: playback state does NOT change to paused"],
+      "expected_result": "A tap-outside that transitions playing → paused is a failure — dismissing the overlay must never pause the stream (BR-10)."
+    },
+    {
+      "ec_id": "EC-UC1b-006", "sc_id": "SC-UC1b-03", "ac_id": "AC-03", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify the overlay auto-dismisses after 1s of no interaction while playing",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible", "the 'Live' stream is playing"],
+      "test_data": { "play_state": "playing", "idle_ms": 1000 },
+      "steps": ["Reveal the overlay while playing", "Wait 999ms — assert: overlay still visible", "Wait to 1000ms with no interaction", "Assert: the overlay auto-dismisses and playback continues"],
+      "expected_result": "After exactly 1s (1000ms) of no interaction while playing, the overlay auto-dismisses and playback continues; at 999ms it is still visible."
+    },
+    {
+      "ec_id": "EC-UC1b-007", "sc_id": "SC-UC1b-03", "ac_id": "AC-03", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify the overlay is still visible at 999ms (lower boundary)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["overlay visible", "playing"],
+      "test_data": { "play_state": "playing", "idle_ms": 999 },
+      "steps": ["Reveal the overlay", "Wait 999ms with no interaction", "Assert: the overlay is still visible"],
+      "expected_result": "At 999ms (just before the 1s boundary) the overlay must still be visible — dismissing before 1s is a boundary failure."
+    },
+    {
+      "ec_id": "EC-UC1b-008", "sc_id": "SC-UC1b-03", "ac_id": "AC-03", "path": "alternative", "alt_index": 1,
+      "name": "[Live player] Verify the overlay dismisses at 1000ms, not 3000ms (web 3s→1s regression guard)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["overlay visible", "playing", "web"],
+      "test_data": { "play_state": "playing", "idle_ms": 1000, "legacy_ms": 3000 },
+      "steps": ["Reveal the overlay on web", "Wait past 1000ms with no interaction", "Assert: the overlay has dismissed by 1000ms (NOT still visible until 3000ms)"],
+      "expected_result": "The overlay must dismiss at 1000ms, not 3000ms — web currently uses a 3s timer (VideoPlayerControls.tsx:60-70); any dismiss later than 1s fails the regression guard."
+    },
+    {
+      "ec_id": "EC-UC1b-009", "sc_id": "SC-UC1b-04", "ac_id": "AC-04", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify pause on a Live stream — play icon persists, no seek, overlay persists, tap-outside stays paused",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 'Live' stream is playing", "the controls overlay is visible"],
+      "test_data": { "stream_type": "Live", "play_state": "playing" },
+      "steps": ["Tap the central pause button", "Assert: playback pauses and the play icon persists", "Assert: no ±10s seek buttons are shown", "Wait >1s — assert: the paused overlay persists", "Tap outside the button — assert: overlay dismisses and stream stays paused"],
+      "expected_result": "On a Live stream the central pause tap pauses playback and the play icon persists; the ±10s seek buttons are never shown; while paused the overlay persists past 1s; a tap-outside dismisses it and the stream stays paused (resume-to-live is UC2)."
+    },
+    {
+      "ec_id": "EC-UC1b-010", "sc_id": "SC-UC1b-04", "ac_id": "AC-04", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify a recorded/video stream DOES show the ±10s buttons (contrast)",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible"],
+      "test_data": { "stream_type": "recorded" },
+      "steps": ["Mock: SDK stream type = recorded / video", "Reveal the overlay", "Assert: the ±10s skip buttons ARE present"],
+      "expected_result": "Contrast: on a recorded / video stream the ±10s skip buttons ARE present — proving the seek gate is stream-type driven, not always-off (TC-UC1b-01c)."
+    },
+    {
+      "ec_id": "EC-UC1b-011", "sc_id": "SC-UC1b-04", "ac_id": "AC-04", "path": "alternative", "alt_index": 1,
+      "name": "[Live player] Verify the paused overlay does NOT auto-dismiss on the 1s idle timer",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 'Live' stream is paused", "overlay visible"],
+      "test_data": { "stream_type": "Live", "play_state": "paused", "idle_ms": 1000 },
+      "steps": ["Pause the Live stream", "Wait >1s with no interaction", "Assert: the paused overlay is still visible (did NOT auto-dismiss)"],
+      "expected_result": "The paused overlay must NOT auto-dismiss on the 1s idle timer — a paused overlay that vanishes after 1s is a BR-11 failure."
+    },
+    {
+      "ec_id": "EC-UC1b-012", "sc_id": "SC-UC1b-04", "ac_id": "AC-04", "path": "alternative", "alt_index": 2,
+      "name": "[Live player] Verify tap-outside while paused never resumes the stream",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["a 'Live' stream is paused", "overlay visible"],
+      "test_data": { "stream_type": "Live", "play_state": "paused", "tap_target": "outside button" },
+      "steps": ["With the Live stream paused, tap outside the central button", "Assert: the overlay dismisses AND the stream stays paused (no resume)"],
+      "expected_result": "A tap-outside while paused must never resume the stream — resume is out of scope here (UC2)."
+    },
+    {
+      "ec_id": "EC-UC1b-013", "sc_id": "SC-UC1b-05", "ac_id": "AC-05", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify reveal/dismiss/auto-dismiss/pause are identical across surfaces",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["a 'Live' stream renders on an in-scope surface"],
+      "test_data": { "surfaces": ["inline-feed", "fullscreen/gallery"] },
+      "steps": ["Run reveal, tap-outside-dismiss, 1s auto-dismiss, and pause on the inline-feed surface", "Repeat on the fullscreen/gallery surface", "Assert: the outcomes are identical across both surfaces"],
+      "expected_result": "The reveal / tap-outside-dismiss / 1s auto-dismiss / pause behaviours produce identical outcomes on the inline-feed and fullscreen/gallery surfaces (surface-invariant)."
+    },
+    {
+      "ec_id": "EC-UC1b-014", "sc_id": "SC-UC1b-05", "ac_id": "AC-05", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify a per-surface behaviour difference is a surface-invariance break",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["a 'Live' stream renders on ≥2 in-scope surfaces"],
+      "test_data": { "surfaces": ["inline-feed", "fullscreen/gallery"] },
+      "steps": ["Compare reveal/dismiss/auto-dismiss/pause outcomes across surfaces", "Assert: no surface produces a different outcome"],
+      "expected_result": "Any surface producing a DIFFERENT reveal, dismiss, auto-dismiss, or pause outcome than another in-scope surface is a surface-invariance break (BR-06 violation)."
+    },
+    {
+      "ec_id": "EC-UC1b-015", "sc_id": "SC-UC1b-06", "ac_id": "AC-06", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify baseline — no overlay before any tap, LIVE badge + viewer count visible",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["an actively-playing 'Live' post", "no tap has occurred"],
+      "test_data": { "stream_type": "Live", "room_status": "live", "tap": "none" },
+      "steps": ["Render an actively-playing Live post without tapping", "Assert: no controls overlay is present", "Assert: the live video surface, the LIVE badge, and the viewer count are visible"],
+      "expected_result": "On first render of an actively-playing Live post with no tap, no controls overlay is present — only the live video surface, the standing LIVE badge, and the viewer count are visible (baseline S0)."
+    },
+    {
+      "ec_id": "EC-UC1b-016", "sc_id": "SC-UC1b-06", "ac_id": "AC-06", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify no overlay is rendered before any interaction",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["an actively-playing 'Live' post", "no tap"],
+      "test_data": { "stream_type": "Live", "tap": "none" },
+      "steps": ["Render the Live post without tapping", "Assert: the controls overlay is absent from the DOM/tree"],
+      "expected_result": "The controls overlay must NOT be present before any tap — an overlay rendered pre-interaction is a baseline-state failure."
+    },
+    {
+      "ec_id": "EC-UC1b-017", "sc_id": "SC-UC1b-07", "ac_id": "AC-07", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify a control interaction restarts the 1s auto-dismiss countdown",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible", "the 'Live' stream is playing"],
+      "test_data": { "play_state": "playing", "interaction_at_ms": 800 },
+      "steps": ["Reveal the overlay", "Interact with a control at 800ms", "Assert: the overlay is still visible past the original 1000ms", "Assert: it auto-dismisses only 1000ms after the interaction"],
+      "expected_result": "A control interaction at 800ms restarts the 1s countdown — the overlay stays visible past the original 1000ms and auto-dismisses only 1000ms after the last interaction."
+    },
+    {
+      "ec_id": "EC-UC1b-018", "sc_id": "SC-UC1b-07", "ac_id": "AC-07", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify the countdown does not ignore a later interaction",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["overlay visible", "playing", "an interaction occurred after the reveal"],
+      "test_data": { "play_state": "playing", "interaction_at_ms": 800 },
+      "steps": ["Reveal the overlay, interact at 800ms", "Assert: the overlay does NOT dismiss at 1000ms-after-reveal (the timer restarted on the interaction)"],
+      "expected_result": "If the overlay dismisses 1000ms after the FIRST reveal (ignoring the later interaction) the countdown-reset failed — the timer must restart on every control interaction."
+    },
+    {
+      "ec_id": "EC-UC1b-019", "sc_id": "SC-UC1b-08", "ac_id": "AC-08", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify a pause tap at the auto-dismiss instant — pause wins",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["overlay visible", "playing", "the 1s idle timer is about to fire"],
+      "test_data": { "play_state": "playing", "race": "pause tap at t=1000ms" },
+      "steps": ["Let the 1s idle timer reach the firing instant", "Tap the central pause button at that exact instant", "Assert: state becomes paused, the play icon persists, and the overlay is not swallowed by the expiring timer", "Assert: the overlay dismisses only on a later tap-outside"],
+      "expected_result": "When the pause tap lands at the exact instant the 1s auto-dismiss fires, the explicit pause wins: state becomes paused, the play icon persists, and the overlay is not swallowed by the expiring timer — it dismisses only on a later tap-outside."
+    },
+    {
+      "ec_id": "EC-UC1b-020", "sc_id": "SC-UC1b-08", "ac_id": "AC-08", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify the expiring timer does not swallow the pause",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["overlay visible", "playing", "timer about to fire"],
+      "test_data": { "play_state": "playing", "race": "pause tap at t=1000ms" },
+      "steps": ["Fire the pause tap at the auto-dismiss instant", "Assert: the overlay does not auto-dismiss losing the paused/play-icon state, and the stream does not stay playing"],
+      "expected_result": "The expiring timer must not swallow the pause — a race where the overlay auto-dismisses and the paused / play-icon state is lost (or the stream stays playing) is the failure mode."
+    },
+    {
+      "ec_id": "EC-UC1b-021", "sc_id": "SC-UC1b-09", "ac_id": "AC-09", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify tap during buffering reveals the overlay with the real state (no false play icon)",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the 'Live' stream is buffering (not yet playing)"],
+      "test_data": { "player_state": "buffering" },
+      "steps": ["Force the Live stream into a buffering state", "Tap the player surface", "Assert: the overlay appears with the central button reflecting the real buffering state (not a false 'playing' pause-icon)", "Assert: no crash and no frozen overlay"],
+      "expected_result": "Tapping the player while the Live stream is buffering reveals the overlay with the central button reflecting the real buffering state — never a false 'playing' pause-icon — with no crash and no frozen overlay."
+    },
+    {
+      "ec_id": "EC-UC1b-022", "sc_id": "SC-UC1b-09", "ac_id": "AC-09", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify a mid-play stall surfaces an explicit buffering/Reconnecting state [AI-INFERRED]",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the 'Live' stream was playing, then the network stalls"],
+      "test_data": { "player_state": "playing → stalled" },
+      "steps": ["Play the Live stream, then stall the network mid-play", "Assert: an explicit buffering / 'Reconnecting' state surfaces (never a silent frozen frame)"],
+      "expected_result": "[AI-INFERRED] Mid-play stall: an explicit buffering / 'Reconnecting' state must surface — the viewer is never left on a silent frozen frame (BR-15). (paused-reconnect is UC2.)"
+    },
+    {
+      "ec_id": "EC-UC1b-023", "sc_id": "SC-UC1b-09", "ac_id": "AC-09", "path": "alternative", "alt_index": 1,
+      "name": "[Live player] Verify the central button never shows a false 'playing' icon while buffering",
+      "priority": "P1", "test_layer": "e2e",
+      "preconditions": ["the 'Live' stream is buffering"],
+      "test_data": { "player_state": "buffering" },
+      "steps": ["Force buffering", "Reveal the overlay", "Assert: the central button reflects the buffering/loading state, never a 'playing' pause-icon"],
+      "expected_result": "The central button must never show a false 'playing' pause-icon while the stream is buffering — the state must reflect reality."
+    },
+    {
+      "ec_id": "EC-UC1b-024", "sc_id": "SC-UC1b-10", "ac_id": "AC-10", "path": "success", "alt_index": null,
+      "name": "[Live player] Verify backgrounding during an active overlay/timer resolves to the OS-default state",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["the controls overlay is visible", "the app is backgrounded for >1s"],
+      "test_data": { "background_ms": 2000 },
+      "steps": ["Reveal the overlay/timer, then background the app for >1s", "Return to foreground", "Assert: a well-defined state via the OS default — no stale mid-countdown overlay, no implicit play/pause toggle beyond the OS default"],
+      "expected_result": "Backgrounding the app for >1s while the overlay/timer is active and returning to foreground yields a well-defined state via the OS default — no stale mid-countdown overlay and no implicit play/pause toggle beyond the OS default."
+    },
+    {
+      "ec_id": "EC-UC1b-025", "sc_id": "SC-UC1b-10", "ac_id": "AC-10", "path": "alternative", "alt_index": 0,
+      "name": "[Live player] Verify no stale overlay or implicit toggle after foreground",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["overlay active", "app backgrounded then foregrounded"],
+      "test_data": { "background_ms": 2000 },
+      "steps": ["Background with the overlay active, then foreground", "Assert: no stale mid-countdown overlay remains and no implicit play/pause toggle beyond the OS default occurred"],
+      "expected_result": "A stale mid-countdown overlay left on screen after foreground, or an implicit play/pause toggle beyond the OS default, is the failure mode."
+    },
+    {
+      "ec_id": "EC-UC1b-026", "sc_id": "SC-UC1b-10", "ac_id": "AC-10", "path": "alternative", "alt_index": 1,
+      "name": "[Live player] Observe Live foreground snap-to-live (UC2 behaviour — do NOT assert)",
+      "priority": "P2", "test_layer": "e2e",
+      "preconditions": ["a 'Live' stream", "app backgrounded then foregrounded"],
+      "test_data": { "background_ms": 2000, "scope_note": "UC2" },
+      "steps": ["Background then foreground a Live stream", "Observe whether playback snaps toward the live edge", "Record the observation — do NOT assert (this is UC2's behaviour)"],
+      "expected_result": "OBSERVE/RECORD ONLY — Live foreground snap-to-live is UC2's behaviour; observed here, never asserted."
+    }
+  ]
+}

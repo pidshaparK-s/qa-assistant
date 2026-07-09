@@ -49,6 +49,7 @@ Skills เป็น Claude skills อยู่ที่ `.claude/skills/<name>/S
 | `phase-3-1-automation-judgment` | — | 6 criteria: automate vs manual, suggested tools |
 | `phase-3-2-br-to-test-conditions` | — | multi-source (PRD+Jira+Figma) → BR → Test Conditions |
 | `phase-3-3-scenarios` | — | AC + BR + conditions → functional scenarios (1 success + alternative[]); 1 SC/AC (split per precondition-state); 1 owning scenario per BR (no re-test) |
+| `phase-3-4-test-cases` | — | scenarios → executable test cases (EC); 1 success + exactly-N alternative per SC; concrete steps + test_data |
 | `qa-clarifications-review` | — | review answered clarifications → resolved/followup/ac-change/still-ambiguous |
 | `qa-story-diff` | — | Jira story เปลี่ยน → diff กับ stored JSON → แนะนำ re-run phases |
 
