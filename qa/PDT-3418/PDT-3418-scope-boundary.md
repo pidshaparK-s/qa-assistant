@@ -3,7 +3,7 @@
 _Skill: `phase-2-6-scope-and-gap-analysis` · Reuses: Relationship Map + User Need (L1 phase-1-1/1-2) · Input: 4 units, 41 ACs, 15 BRs, resolved clarifications, code-verified behavior_
 _Purpose: the LAST gate before sprint — lock what's in/out/assumed/constrained/open so no scope creep mid-sprint._
 
-> **Status: QA-prepared draft — NOT yet signed off.** Sign-off (PM + Dev lead + QA) is a team action; placeholders below. Nothing here invents a decision the team hasn't made — resolved items cite their clarification id; genuinely-open items are listed as Open Gaps with an owner.
+> **Status: SIGNED OFF — 2026-07-09.** PM + Dev lead + QA approved (DEC-06 / DEC-07 / DEC-10 → `confirmed` in the decision ledger). Resolved items cite their clarification id; the one remaining open gap (FU-3) has an owner.
 
 ---
 
@@ -58,7 +58,7 @@ All silent actors explicitly classified — none left ambiguous.
 
 ## SCOPE BOUNDARY — PDT-3418 (Video & live streaming — tap/pause/skip)
 
-**Sprint:** _[TBD]_ · **Agreed by:** _[PM — pending] · [Dev lead — pending] · [QA — Pidshapar]_ · **Date:** 2026-07-09 (draft)
+**Sprint:** _[TBD]_ · **Agreed by:** PM ✓ · Dev lead ✓ · QA (Pidshapar) ✓ · **Date:** 2026-07-09 (signed off)
 
 ### ✓ IN SCOPE
 - **UC1a** — Tap-to-reveal on **video / recorded LS** (all platforms): tap reveals (mobile) / 1-step pause (desktop, BR-09); tap-outside dismiss; 1s auto-dismiss + reset-on-interaction; pause→play-icon+seek persist; resume from exact position.
@@ -93,10 +93,11 @@ All silent actors explicitly classified — none left ambiguous.
 ### ? OPEN GAPS (must have owner + due before sprint day 1)
 | Gap | Owner | Due | Severity |
 |---|---|---|---|
-| **FU-2** — concrete hit-target size of the central pause/play button (needed for a deterministic pause-vs-dismiss boundary test, UC1 AC-02) | Design | before UC1 dev | Medium (test determinism) |
 | **FU-3** — exact behaviour of the ±10s button mid-buffer on **web** (mobile resolved) | Web Eng | before UC3 dev | Low |
 
-_Everything else that was open is now closed:_ the 17 original clarifications (resolved/ac-change/followup), CONF-08 + AMB-11 (decided), and the 2 STEP-2 pendings (resolved from source code). FU-1 (PRD cleanup) and FU-5 (Jira align) are doc-hygiene, not scope gaps.
+_**FU-2 RESOLVED 2026-07-09** — central button hit-target = **64×64px** (Figma); implementation is the developer's call (may use the platform-native control). The pause-vs-dismiss boundary test now targets the rendered 64×64 area._
+
+_Everything else that was open is now closed:_ the 17 original clarifications, CONF-08 + AMB-11 (decided), and the 2 STEP-2 pendings (resolved from source code). **FU-1** (PRD cleanup) → **ignored** (team, not worth the edit). **FU-5** (Jira align) → **PM declined; this repo is authoritative for the corrections this round (see ledger DEC-11)**. **FU-4** → confirmed bug, folded into release testing (cross-platform parity).
 
 ---
 
@@ -117,7 +118,7 @@ _Everything else that was open is now closed:_ the 17 original clarifications (r
 - ✅ Every assumption has owner + risk
 - ✅ Every open gap has an owner (due = "before sprint day 1"; dates TBD with team)
 - ✅ Every out-of-scope item documented with reason
-- ⬜ **PM + Dev lead + QA sign-off** — pending (team action)
+- ✅ **PM + Dev lead + QA sign-off** — 2026-07-09 (DEC-06/07/10 confirmed in ledger)
 - ✅ No Schema-2 flow sourced from an unclosed gap
 
 ---

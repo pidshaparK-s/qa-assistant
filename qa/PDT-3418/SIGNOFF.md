@@ -1,21 +1,21 @@
 # Sign-off package — PDT-3418 (Video & live streaming)
 
 **Epic:** PDT-3418 · **Stories:** PDT-3562 (UC1, split QA-internal into UC1a/UC1b), PDT-3563 (UC2), PDT-3564 (UC3)
-**Prepared:** 2026-07-09 · **Status:** L1 → L2 → L3 complete, all gates green · **NOT yet signed off**
+**Prepared:** 2026-07-09 · **Status:** L1 → L2 → L3 complete, all gates green · **✅ SIGNED OFF 2026-07-09**
 **Reviewers:** PM · Dev lead · QA lead
 
 ---
 
-## What we're asking
+## Outcome — signed off 2026-07-09
 
-1. **Approve 3 open decisions** (below) — these are the only judgment calls not yet locked. Everything else is settled (7 decisions confirmed / code-resolved).
-2. **Acknowledge 5 follow-ups** (FU-1…FU-5) — non-blocking, owned, tracked. One (FU-5) is a **sync-integrity** action for PM; one (FU-3) blocks exactly 1 of 105 test conditions.
+1. **3 decisions APPROVED** — DEC-06 (priority · PM), DEC-07 (badge scope · PM), DEC-10 (automation context · QA lead) → all `confirmed` in the ledger. All 11 decisions now settled; `decision_ledger.py --autonomous` exits 0.
+2. **5 follow-ups dispositioned** — FU-1 ignored · FU-2 resolved (**64×64px**) · FU-3 open (blocks 1 TC) · FU-4 confirmed bug → verify in release · FU-5 PM declined → **this repo is authoritative** (ledger DEC-11).
 
-Approving the 3 decisions closes the scope-boundary sign-off (`PDT-3418-scope-boundary.md`) and unblocks sprint commit.
+Scope-boundary is now **signed off**; sprint commit is unblocked.
 
 ---
 
-## ① Decisions to sign off
+## ① Decisions — approved 2026-07-09
 
 | # | Type | Decision | Owner | Approve = |
 |---|---|---|---|---|
@@ -28,8 +28,7 @@ Approving the 3 decisions closes the scope-boundary sign-off (`PDT-3418-scope-bo
 - **DEC-07** — pulling badge live-update *into* scope adds new ACs + TCs to UC2 (badge behaviour during pause/resume) and enlarges the hardest unit.
 - **DEC-10** — if Live env is actually CI-stable, or web-Live is already validated, several `Automate (with mock)` / `when stable` verdicts become plain `Automate` (cheaper). If it's flakier than assumed, more shift to Manual/real-device.
 
-Full text + rationale + source refs: [`decisions.json`](decisions.json) (DEC-06, DEC-07, DEC-10).
-Autonomous runs HALT on these until settled — `python3 checks/decision_ledger.py qa/PDT-3418 --autonomous`.
+Full text + rationale + source refs: [`decisions.json`](decisions.json). **All three approved 2026-07-09 → status `confirmed`.** The ledger now has 0 open decisions — `decision_ledger.py qa/PDT-3418 --autonomous` exits 0.
 
 ---
 
@@ -39,7 +38,7 @@ Autonomous runs HALT on these until settled — `python3 checks/decision_ledger.
 |---|---|---|---|
 | **L1** BA Requirement Analysis | enriched AC · clarification register · platform notes | 19 clarifications processed · **0 still-ambiguous** (2 → follow-ups) | [clarifications.json](clarifications.json) · [platform-behavior-notes.md](platform-behavior-notes.md) · [FOLLOWUPS.md](FOLLOWUPS.md) |
 | **L2** QA Story Authoring | Schema 1 (spec) → Schema 2 (flows) | **40 ACs** · **15 BRs** (32 instances) · **41 flows** · UC1 split UC1a/UC1b | [story-shape](PDT-3418-story-shape.md) · [business-rules](PDT-3418-business-rules.md) · [scope-boundary](PDT-3418-scope-boundary.md) · Schema 1/2 ×4 |
-| **L3** Test Design | test conditions + automation judgment | **105 TCs** · automate-family **98** · partial 3 · manual 4 · **BR+AC coverage 100%** | [test-design-overview](PDT-3418-test-design-overview.md) · 4× `*-test-design.md` |
+| **L3** Test Design | test conditions + automation judgment | **105 TCs** · automate-family **99** · partial 2 · manual 4 · **BR+AC coverage 100%** | [test-design-overview](PDT-3418-test-design-overview.md) · 4× `*-test-design.md` |
 
 **Traceability (verifiable end-to-end):** `epic → story → uc → br/ac → flow → TC`.
 
@@ -59,13 +58,13 @@ Split note: **UC1a/UC1b is a QA-INTERNAL split** of the single Jira ticket PDT-3
 
 ## ③ Follow-ups (non-blocking, owned)
 
-| FU | Owner | Action | Blocking? |
+| FU | Owner | Action | Status (2026-07-09) |
 |---|---|---|---|
-| **FU-1** | PM / BA | Remove stale "(assume 3s)" note from PRD — auto-dismiss is 1s | No (doc hygiene) |
-| **FU-2** | Design | Provide concrete hit-target size of central pause/play button (makes UC1 AC-02 boundary testable) | No (low) |
-| **FU-3** | Eng (Web) | Confirm what the **±10s skip** button does on video/recorded **while buffering on web** | ⚠️ blocks **1 TC** (UC3-07b) only |
-| **FU-4** | Eng (Android) / QA | File bug: OS-native media control can FF/rewind a **Live** stream (separate from in-app; not an AC gap). Fix → **cross-platform parity re-check** | No (separate defect) |
-| **FU-5** | **PM** | **Align Jira AC text** to the 2026-07-08 decisions (seek on video/recorded only; UC3 skip-back preserves prior state) — else next sync re-introduces the conflicts | ⚠️ **sync-integrity** |
+| **FU-1** | PM / BA | Remove stale "(assume 3s)" note from PRD — auto-dismiss is 1s | **Ignored** (not worth the edit) |
+| **FU-2** | Design → answered | Central pause/play button hit-target | ✅ **Resolved — 64×64px** (Figma); dev's call, may use native |
+| **FU-3** | Eng (Web) | What the **±10s skip** button does on video/recorded **while buffering on web** | ⏳ **Open** — blocks 1 TC (UC3-07b) |
+| **FU-4** | Eng (Android) / QA | OS-native control can FF/rewind a **Live** stream (separate defect, not an AC gap) | 🐞 **Bug** — verify in release (parity check) |
+| **FU-5** | ~~PM~~ → QA (repo) | Align Jira AC text to the decisions. **PM declined.** | **Repo authoritative** (ledger DEC-11) |
 
 **Standing platform fact (carry into every test case):** first tap on a playing player = **mobile: reveal controls (no pause)** vs **desktop Web UIKit: 1-Step Pause**. Author a separate expected per platform. Not a closeable item.
 
@@ -88,8 +87,8 @@ All exit 0 as of 2026-07-09.
 
 | Role | Name | Approves DEC-06 / 07 / 10 | Date | Notes |
 |---|---|---|---|---|
-| PM | | ☐ 06 ☐ 07 | | |
-| Dev lead | | ☐ (feasibility) | | |
-| QA lead | | ☐ 10 | | |
+| PM | | ☑ 06 ☑ 07 | 2026-07-09 | approved |
+| Dev lead | | ☑ feasibility | 2026-07-09 | approved |
+| QA lead | Pidshapar | ☑ 10 | 2026-07-09 | approved |
 
-_Once all three sign, update `PDT-3418-scope-boundary.md` status to "signed off" and re-bless the ledger (`decisions.json`: set DEC-06/07/10 status → `confirmed`)._
+_Done 2026-07-09: scope-boundary status → "signed off"; ledger re-blessed (DEC-06/07/10 → `confirmed`); **DEC-11** added — this repo is authoritative for the CONF-08/AMB-11 corrections since PM declined FU-5._

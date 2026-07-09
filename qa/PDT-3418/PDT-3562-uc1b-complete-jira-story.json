@@ -74,7 +74,7 @@
       "when": "the user taps the player surface outside the central pause/play button's tap target",
       "then": ["the overlay dismisses", "playback continues uninterrupted"],
       "clarifications_needed": [
-        { "q_id": "FU-2", "question": "Central pause/play button hit-target size/spec? — needed for a deterministic pause-vs-dismiss boundary test.", "status": "PENDING", "answer": null, "owner": "Design" }
+        { "q_id": "FU-2", "question": "Central pause/play button hit-target size/spec?", "status": "RESOLVED", "answer": "64x64px per Figma; dev's call on impl (may use native). Test against the rendered 64x64 target.", "owner": "Design" }
       ]
     },
     {
@@ -139,7 +139,7 @@
   ],
 
   "open_questions": [
-    "FU-2: central pause/play button hit-target size (Owner: Design)",
+    "FU-2 RESOLVED (2026-07-09): central button hit-target 64x64px (Figma); dev's call on impl",
     "DEV-DELTA: web-Live reveal-controls overlay is net-new (no existing impl) — build + first-time verify"
   ]
 }

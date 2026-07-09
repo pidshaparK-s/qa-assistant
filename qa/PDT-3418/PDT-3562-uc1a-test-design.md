@@ -44,7 +44,7 @@ Per **DEC-10**: video/recorded = local-media → *stable* → default **Automate
 | TC-ID | BR-ID | ac_id | flow_id | Condition | Technique | Priority | Platform note |
 |---|---|---|---|---|---|---|---|
 | TC-UC1a-05a | BR-10 | AC-01 | F02 | Playing + tap-to-reveal (mobile) → state stays `playing` (reveal is not an implicit pause) | State Transition | P1 | no-op transition; mobile |
-| TC-UC1a-05b | BR-10 | AC-02 | F04 | Playing + overlay visible + tap outside the button → overlay hidden but state stays `playing` (dismiss is not an implicit pause) | State Transition | P1 | uses coarse outside coords (exact boundary = TC-UC1a-06d/FU-2) |
+| TC-UC1a-05b | BR-10 | AC-02 | F04 | Playing + overlay visible + tap outside the button → overlay hidden but state stays `playing` (dismiss is not an implicit pause) | State Transition | P1 | exact boundary = TC-UC1a-06d (64×64, FU-2 resolved) |
 | TC-UC1a-05c | BR-10 | AC-04 | F07 | Playing + explicit central pause tap → transition `playing → paused` (the only valid user trigger) | State Transition | P1 | mobile = 2-step (reveal then pause); desktop reaches paused in 1-step (F03) |
 | TC-UC1a-05d | BR-10 | AC-09 | F09 | **CONCURRENT** — pause tap fires at ~999ms as the 1s auto-dismiss timer is about to fire → explicit pause wins: state `paused`, play icon persists, NOT undone by the expiring timer | State Transition (concurrent) | P2 | fake-timers race; e2e timing flaky → unit/component only |
 | TC-UC1a-05e | BR-10 | AC-11 | F11 | App backgrounded while playing (iOS) → OS pauses the media (terminal OS action, not an implicit app toggle) and does NOT auto-resume on foreground | State Transition | P2 | iOS OS-default (`Debouncer.swift:17-21`, `PlayerControlsVisibility.swift:16`); confirm on real device; web has no `visibilitychange` handler |
@@ -56,7 +56,7 @@ Per **DEC-10**: video/recorded = local-media → *stable* → default **Automate
 | TC-UC1a-06a | BR-11 | AC-04 | F07 | Overlay visible + **paused**, advance > 1000ms with no interaction → overlay PERSISTS (no auto-dismiss); media stays paused | State Transition | P1 | paused branch = no idle timer |
 | TC-UC1a-06b | BR-11 | AC-04 | F07 | Overlay visible + paused + tap outside the play button → overlay hidden AND media STILL paused (does not resume) | State Transition | P1 | tap-outside never resumes |
 | TC-UC1a-06c | BR-11 | AC-02, AC-09 | F04/F05/F09 | Dismiss-rule contrast: **playing** overlay dismisses via the 1s timer OR tap-outside; **paused** overlay dismisses ONLY via tap-outside, never by the timer | State Transition | P2 | ties the AC-09 race outcome to the paused-persists rule |
-| TC-UC1a-06d | BR-11 | AC-02 | F04 | **COARSE** hit-target boundary: tap clearly OUTSIDE the central button bounds → dismiss path (overlay hidden, playing); tap clearly INSIDE → pause path. Exact px boundary is NOT asserted | State Transition / boundary | P2 | **FU-2 PENDING** (Design) — 'same size, refer from figma' is not a spec → precise just-inside/just-outside boundary blocked; keep coarse |
+| TC-UC1a-06d | BR-11 | AC-02 | F04 | Hit-target pause-vs-dismiss boundary: tap just OUTSIDE the central button → dismiss (overlay hidden, playing); tap just INSIDE → pause. Boundary = the rendered **64×64px** target (Figma) | State Transition / boundary | P2 | **FU-2 RESOLVED**: 64×64px (Figma); impl may be native → assert against the *rendered* button bounds |
 
 ### BR-13 [state] — resume target by media type: video/recorded resumes from the exact paused position; Live resumes at the current live edge → State Transition
 
@@ -112,12 +112,12 @@ AC-07 has `br_ids: []` (QA default_state baseline) — TC derived directly from 
 | TC-UC1a-08c | Mid-play stall → explicit feedback | Automate (with mock) | 5 (stall injection) | Playwright network manipulation · Detox + mock | [AI-INFERRED]; flake risk — mock preferred |
 | TC-UC1a-02b | 1000ms → overlay auto-dismissed | Automate (when stable) | 4 (web behaviour changing) | Vitest fake timers · Playwright clock | REGRESSION GUARD — mobile now; web when 3s→1s fix lands |
 | TC-UC1a-05e | Background/foreground (iOS OS default) | Partial | 2 (OS backgrounding), 4 (real-device) | Detox background/foreground + real-device confirm | web backgrounding not automatable → manual/scenario |
-| TC-UC1a-06d | Hit-target pause-vs-dismiss boundary | Partial | 5 (spec incomplete for deterministic boundary) | Playwright · Detox (coarse) | coarse inside/outside automatable; **precise px boundary blocked on FU-2** |
+| TC-UC1a-06d | Hit-target pause-vs-dismiss boundary | Automate | — (FU-2 resolved: 64×64) | Playwright · Detox | assert just-inside/just-outside against the rendered 64×64 target (impl may be native) |
 
 ## QA must confirm
 
 - **Feature stability**
-  - **FU-2 (Design, PENDING)** — central pause/play button hit-target size/spec. Affects **TC-UC1a-06d** (and the coarse coords in TC-UC1a-05b). Without it there is no deterministic just-inside/just-outside pause-vs-dismiss boundary. Q: what is the exact hit-target (px / dp), or is it the visible button bounds?
+  - **FU-2 (Design) — RESOLVED 2026-07-09:** hit-target = **64×64px** (Figma); final impl is the developer's call (may use the platform-native control). **TC-UC1a-06d** moves Partial → Automate — assert just-inside/just-outside against the *rendered* 64×64 target. No longer blocking.
   - **ASSUME-recorded-resume (Engineering, PENDING)** — recorded LS resumes from the exact paused position like video. Affects **TC-UC1a-07b**. The assertion (exact resume, not live edge) is held until Engineering confirms; if recorded LS instead snaps to live edge, TC-UC1a-07b flips toward the TC-UC1a-07c expected.
   - **Web overlay 3s→1s (BR-03, DEV DELTA)** — is the web fix (`VideoPlayerControls.tsx:60-70`, 3000ms→1000ms) committed for this sprint? **TC-UC1a-02b** is a regression guard authored to the 1s target; it fails on web until the fix lands (iOS already 1s). Q: PM/dev sprint commitment + target date.
   - **web-Live overlay is net-new** (per DEC-10) — TC-UC1a-01c's Live contrast runs against the video component here; the actual Live overlay validation belongs to UC1b. Confirm the Live component surface before extending.
@@ -131,4 +131,4 @@ AC-07 has `br_ids: []` (QA default_state baseline) — TC derived directly from 
 
 - **BR → TC:** 8/8 covered — BR-01 (01a/b/c) · BR-03 (02a/b/c/d) · BR-06 (03a/b) · BR-09 (04a/b) · BR-10 (05a/b/c/d/e) · BR-11 (06a/b/c/d) · BR-13 (07a/b/c) · BR-15 (08a/b/c). **0-TC BRs: none.**
 - **AC → TC:** 11/11 touched — AC-01 (04a,04b,05a) · AC-02 (05b,06c,06d) · AC-03 (02a,02b,06c) · AC-04 (01a,01b,05c,06a,06b) · AC-05 (07a,07b,07c) · AC-06 (03a,03b) · AC-07 (09) · AC-08 (02c,02d) · AC-09 (05d,06c) · AC-10 (08a,08b,08c) · AC-11 (05e). **Untouched ACs: none.**
-- **Verdicts:** Automate 17 · variants 8 (7 with-mock + 1 when-stable) · Partial 2 · Manual 0 · **Total 27**.
+- **Verdicts:** Automate 18 · variants 8 (7 with-mock + 1 when-stable) · Partial 1 · Manual 0 · **Total 27**. _(FU-2 resolved → TC-UC1a-06d Partial→Automate)_

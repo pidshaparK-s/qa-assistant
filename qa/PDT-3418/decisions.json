@@ -62,17 +62,17 @@
       "id": "DEC-06", "type": "priority", "unit": "epic", "date": "2026-07-09",
       "decision": "MoSCoW: UC1a = Must, UC1b = Must, UC2 = Should, UC3 = Could (sprint order 1,1,2,3).",
       "rationale": "QA-effort + dependency ordering; UC3 is the real descope lever ('nice-to-have' ≠ cheap, still scored High).",
-      "decided_by": "QA", "status": "pending-human",
-      "source_ref": "qa/PDT-3418/PDT-3418-prioritization.md", "related": ["scope-boundary sign-off"],
-      "_open": "PM must confirm MoSCoW before sprint commit — this is part of the team sign-off package."
+      "decided_by": "PM", "status": "confirmed",
+      "source_ref": "qa/PDT-3418/PDT-3418-prioritization.md; team sign-off 2026-07-09", "related": ["scope-boundary sign-off"],
+      "_signed_off": "2026-07-09 — approved in team sign-off (PM)."
     },
     {
       "id": "DEC-07", "type": "scope", "unit": "UC2", "date": "2026-07-09",
       "decision": "The LIVE badge / viewer-count live-update stays as-is — updating it is OUT of scope for this feature (a separate enhancement).",
       "rationale": "PM ACs scope the pause/resume behaviour only; badge/count is orthogonal.",
-      "decided_by": "QA", "status": "proposed",
-      "source_ref": "qa/PDT-3418/PDT-3418-scope-boundary.md; UC2-AC-01/AC-04", "related": ["UC2-AC-01", "UC2-AC-04"],
-      "_open": "Part of the scope-boundary doc awaiting PM + Dev lead + QA sign-off."
+      "decided_by": "PM", "status": "confirmed",
+      "source_ref": "qa/PDT-3418/PDT-3418-scope-boundary.md; UC2-AC-01/AC-04; team sign-off 2026-07-09", "related": ["UC2-AC-01", "UC2-AC-04"],
+      "_signed_off": "2026-07-09 — approved in team sign-off (PM)."
     },
     {
       "id": "DEC-08", "type": "scope", "unit": "UC2", "date": "2026-07-09",
@@ -92,9 +92,16 @@
       "id": "DEC-10", "type": "policy", "unit": "epic", "date": "2026-07-09",
       "decision": "L3 automation context: platforms = iOS/Android/RN/Flutter/WebUIKit (desktop web = 1-step pause); stability MIXED (mobile video/recorded stable · web overlay behaviours changing · web-Live overlay net-new); Live tests carry complex/flaky external deps (SDK + broadcast + network) → assert '≈ live within tolerance', prefer mock for stream-type gating, some real-device-farm.",
       "rationale": "phase-3-1 requires platform/stability/deps/env before judging automate-vs-manual — these assumptions drive every L3 verdict. Set as sensible defaults so L3 can proceed; flagged for QA-lead confirmation.",
-      "decided_by": "QA", "status": "proposed",
-      "source_ref": "qa/PDT-3418/PDT-3418-test-design-overview.md; Schema 1 platforms", "related": ["L3", "UC2"],
-      "_open": "QA lead to confirm the automation context (esp. Live-env flakiness + web-Live net-new stability) before committing an automation suite."
+      "decided_by": "QA lead", "status": "confirmed",
+      "source_ref": "qa/PDT-3418/PDT-3418-test-design-overview.md; Schema 1 platforms; team sign-off 2026-07-09", "related": ["L3", "UC2"],
+      "_signed_off": "2026-07-09 — QA lead confirmed the automation context."
+    },
+    {
+      "id": "DEC-11", "type": "policy", "unit": "epic", "date": "2026-07-09",
+      "decision": "This repo's story JSONs are the AUTHORITATIVE source for the CONF-08 (seek on video/recorded only) and AMB-11 (skip-back to 0:00 preserves prior state) corrections. PM declined FU-5 (aligning the Jira AC wording), so the Jira<->repo divergence is ACCEPTED this round — a future Jira sync must NOT clobber these corrections.",
+      "rationale": "FU-5 asked PM to fix the Jira text; PM will not this round. Rather than leave the corrections unowned, QA holds them in-repo. qa-story-diff / future syncs must treat these ACs as intentionally divergent, not stale.",
+      "decided_by": "user", "status": "confirmed",
+      "source_ref": "user 2026-07-09; supersedes FU-5", "related": ["FU-5", "DEC-02", "DEC-03", "UC1a-AC-04", "UC2-AC-01", "UC3-AC-03"]
     }
   ]
 }

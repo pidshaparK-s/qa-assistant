@@ -44,7 +44,7 @@ Per **DEC-10**: platforms iOS / Android / RN / Flutter / WebUIKit (desktop = 1-S
 |---|---|---|---|---|---|---|---|
 | TC-UC1b-05a | BR-10 | AC-01 | F02 | S(playing) + tap-to-reveal (mobile) → state stays `playing` (reveal is NOT an implicit pause) | State Transition | P1 | no-op transition; web-mobile-Live net-new |
 | TC-UC1b-05b | BR-10 | AC-04 | F07 | S(playing) + explicit central pause tap → transition `playing → paused` (the only valid user trigger) | State Transition | P1 | iOS/Android 2-step; **web-mobile CANNOT pause Live** (platform table 68264); desktop reaches paused 1-step (04b) |
-| TC-UC1b-05c | BR-10 | AC-02 | F04 | S(playing) + overlay visible + tap outside the button → overlay hidden but state stays `playing` (dismiss is NOT an implicit pause) | State Transition | P1 | web-Live net-new; FU-2 pending → coarse point clearly outside the button |
+| TC-UC1b-05c | BR-10 | AC-02 | F04 | S(playing) + overlay visible + tap outside the button → overlay hidden but state stays `playing` (dismiss is NOT an implicit pause) | State Transition | P1 | web-Live net-new; boundary = rendered 64×64 (FU-2 resolved) |
 | TC-UC1b-05d | BR-10 | AC-03 | F05 | S(playing) + 1s auto-dismiss timer fires → overlay hidden but state stays `playing` (implicit dismiss does not toggle play/pause) | State Transition | P2 | web-Live net-new |
 | TC-UC1b-05e | BR-10 | AC-10 | F11 | Overlay/timer active → background app > 1s → foreground → no IMPLICIT play/pause toggle beyond the OS default; well-defined state, NO stale mid-countdown overlay | State Transition | P2 | OS-default (iOS 1s timer wall-clock, no bg handler; web no `visibilitychange`); Live foreground snap-to-live = UC2 (do NOT assert); real-device confirm |
 
@@ -53,7 +53,7 @@ Per **DEC-10**: platforms iOS / Android / RN / Flutter / WebUIKit (desktop = 1-S
 | TC-ID | BR-ID | ac_id | flow_id | Condition | Technique | Priority | Platform note |
 |---|---|---|---|---|---|---|---|
 | TC-UC1b-06a | BR-11 | AC-04 | F07 | S(paused) + overlay visible, advance > 1000ms with no interaction → overlay PERSISTS (no auto-dismiss); media stays paused | State Transition | P1 | paused branch = no idle timer; contrast with playing auto-dismiss (02b); web-Live net-new |
-| TC-UC1b-06b | BR-11 | AC-04 | F07 | S(paused) + tap outside the play button → overlay hidden AND media STILL paused (does NOT resume) | State Transition | P1 | tap-outside never resumes; resume-to-live = UC2 (not asserted); FU-2 coarse point |
+| TC-UC1b-06b | BR-11 | AC-04 | F07 | S(paused) + tap outside the play button → overlay hidden AND media STILL paused (does NOT resume) | State Transition | P1 | tap-outside never resumes; resume-to-live = UC2 (not asserted); FU-2 resolved (64×64 target) |
 | TC-UC1b-06c | BR-11 | AC-08 | F09 | **CONCURRENT** — dispatch a pause tap at t=1000ms (the exact instant the 1s auto-dismiss would fire) → explicit pause WINS: state `paused`, PLAY icon persists, overlay NOT swallowed by the expiring timer (dismisses only on a later tap-outside) | State Transition (concurrent) | P2 | fake-timer race, unit/component-deterministic; web-Live net-new |
 
 ### BR-15 [state] — the viewer is never left on a frozen frame with no feedback; any interruption surfaces an explicit state → State Transition
@@ -90,17 +90,17 @@ AC-06 has `br_ids: []` (QA default_state baseline) — TC derived directly from 
 | TC-UC1b-03b | Surface-invariance — fullscreen identical | Automate (when stable) | 4 (web-Live overlay net-new) | Playwright · Detox | surface-invariant ≠ platform-invariant |
 | TC-UC1b-04a | Mobile first tap reveals, no pause | Automate (when stable) | 4 (web-mobile-Live net-new) | Detox (iOS/Android) · Playwright mobile viewport | assert playback continues + pause icon; web-Live net-new |
 | TC-UC1b-05a | Reveal → stays playing | Automate (when stable) | 4 (web-Live overlay net-new) | Detox · Playwright | no-op transition |
-| TC-UC1b-05c | Tap-outside (playing) → hides, stays playing | Automate (when stable) | 4 (web-Live overlay net-new) | Playwright · Detox | coarse outside coords (FU-2) |
+| TC-UC1b-05c | Tap-outside (playing) → hides, stays playing | Automate (when stable) | 4 (web-Live overlay net-new) | Playwright · Detox | boundary = 64×64 (FU-2 resolved) |
 | TC-UC1b-05d | Auto-dismiss → stays playing | Automate (when stable) | 4 (web-Live overlay net-new) | Vitest fake timers · Playwright | implicit dismiss = no toggle |
 | TC-UC1b-06a | Paused overlay persists (>1s) | Automate (when stable) | 4 (web-Live overlay net-new) | fake timers · Playwright · Detox | paused branch — no timer |
-| TC-UC1b-06b | Paused + tap-outside → stays paused | Automate (when stable) | 4 (web-Live overlay net-new) | Playwright · Detox | no resume (UC2); FU-2 coarse point |
+| TC-UC1b-06b | Paused + tap-outside → stays paused | Automate (when stable) | 4 (web-Live overlay net-new) | Playwright · Detox | no resume (UC2); FU-2 resolved (64×64) |
 | TC-UC1b-06c | Pause races auto-dismiss timer | Automate (when stable) | 4 (net-new) · 5 (fake-timer race) | Vitest/Jest fake timers | unit/component ONLY; e2e timing flaky; web-Live net-new |
 | TC-UC1b-05e | Background/foreground (OS default) | Partial | 2 (OS backgrounding) · 4 (real-device) | Detox background/foreground + real-device confirm | web has no bg handler; Live snap-to-live = UC2 (do not assert) |
 
 ## QA must confirm
 
 - **Feature stability**
-  - **FU-2 (Design, PENDING)** — central pause/play button hit-target size/spec (AC-02). Blocks a deterministic just-inside/just-outside pause-vs-dismiss BOUNDARY TC; **TC-UC1b-05c** and **TC-UC1b-06b** use a coarse point clearly outside the visible button until it lands. Q: exact hit-target (px / dp), or the visible-button bounds?
+  - **FU-2 (Design) — RESOLVED 2026-07-09:** hit-target = **64×64px** (Figma); impl is the developer's call (may use native). **TC-UC1b-05c / 06b** now target the rendered 64×64 area (assert against rendered bounds; web-Live overlay is still net-new, so these stay "when stable"). No longer blocking.
   - **web-Live overlay is NET-NEW (DEC-10 / DEV-DELTA)** — the entire reveal-controls overlay + 1s auto-dismiss timer does not exist on web-Live today (bare `<video>`+Plyr pause/play only, `LivestreamPlayer.tsx:115-123`). All **12 `Automate (when stable)` TCs** need first-time verification once the component is built; do NOT gate CI on them until the web-Live overlay is validated. iOS/Android Live overlay already exists (1s wall-clock timer, code-verified).
   - **Web auto-dismiss 3s→1s (BR-03, DEV DELTA)** — web is currently 3000ms (`VideoPlayerControls.tsx:60-70`); spec/iOS = 1s. **TC-UC1b-02a/02b** are authored to the 1s target and will fail on web until the fix lands. Q: sprint commitment, and is the new LIVE overlay wired to the same auto-dismiss timer or its own?
   - **web-mobile cannot pause a Live stream** (platform table 68264) — **TC-UC1b-05b** (explicit pause) applies to iOS/Android only; desktop pauses via 1-step (**TC-UC1b-04b**). Confirm web-mobile pause is truly out of scope for UC1b (reveal is in scope on web-mobile; pause is not).

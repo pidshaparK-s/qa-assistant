@@ -51,10 +51,10 @@ ACs with `br_ids: []` (QA default_state baselines) still get ≥1 TC derived dir
 
 | Unit | file | BRs | BR→TC | ACs | AC→TC | TCs | Automate* | Partial | Manual |
 |---|---|---|---|---|---|---|---|---|---|
-| UC1a | PDT-3562-uc1a-test-design.md | 8 | 8/8 | 11 | 11/11 | 27 | 25 | 2 | 0 |
+| UC1a | PDT-3562-uc1a-test-design.md | 8 | 8/8 | 11 | 11/11 | 27 | 26 | 1 | 0 |
 | UC1b | PDT-3562-uc1b-test-design.md | 7 | 7/7 | 10 | 10/10 | 21 | 20 | 1 | 0 |
 | UC2  | PDT-3563-uc2-test-design.md  | 10 | 10/10 | 8 | 8/8 | 28 | 25 | 0 | 3 |
 | UC3  | PDT-3564-uc3-test-design.md  | 7 | 7/7 | 11 | 11/11 | 29 | 28 | 0 | 1 |
-| **Total** | | **32** | **32/32** | **40** | **40/40** | **105** | **98** | **3** | **4** |
+| **Total** | | **32** | **32/32** | **40** | **40/40** | **105** | **99** | **2** | **4** |
 
 BRs column = per-unit BR-instances (15 unique BRs, consolidated across units). **\*Automate** = all automate-family (plain + with-mock + when-stable). The **4 Manual** = UC2 host-end race · UC2 long-pause tolerance on real broadcast · UC2 per-platform resume on real live edge (real-device-farm) · UC3 web-skip-during-buffer (blocked on FU-3). Gate `checks/br_tc_coverage.py` → green (BR + AC coverage 100%).
