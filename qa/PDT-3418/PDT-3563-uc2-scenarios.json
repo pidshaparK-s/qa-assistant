@@ -1,0 +1,154 @@
+{
+  "_schema": "qa-scenarios-v1",
+  "_purpose": "Functional scenarios (1 success + technique-driven alternative[]) per acceptance criterion for UC2 (Live Stream Pause State). No unit tests. Executable-ready.",
+  "_status": "phase-3-3 output — 2026-07-09. Derived from PDT-3563-uc2-complete-jira-story.json (AC+BR) + PDT-3563-uc2-test-design.md (L3 conditions).",
+  "_rules_applied": {
+    "split_per_state": "None — no UC2 AC has >1 valid outcome by entry play-state (AC-03's ended-vs-recorded is a data variation, carried as an alternative, not a precondition-state split).",
+    "one_owner_per_br": "BR-01/BR-07/BR-09/BR-11 → SC-UC2-01 (the compound pause behaviour) · BR-13 → SC-UC2-02 · BR-12 → SC-UC2-03 · BR-02 → SC-UC2-05 · BR-14 → SC-UC2-07 · BR-10/BR-15 → SC-UC2-08. Dependents cite (not re-test): resume/chat/no-frozen rules are asserted once in their owner."
+  },
+
+  "ids": { "epic_id": "PDT-3418", "story_id": "PDT-3563", "uc_id": "UC2" },
+
+  "scenarios": [
+    {
+      "sc_id": "SC-UC2-01", "title": "Pause a live stream — indicator, live chat, tap-outside dismiss, no seek",
+      "ac_id": "AC-01", "precondition_state": null, "technique": "MultiCondition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: SDK room/stream state; web-Live overlay net-new (automate on web once built; iOS/Android now)",
+      "owns_br": ["BR-01", "BR-07", "BR-09", "BR-11"], "cites_br": ["BR-14"],
+      "tc_ids": ["TC-UC2-01a", "TC-UC2-03a", "TC-UC2-03b", "TC-UC2-04a", "TC-UC2-04b", "TC-UC2-06a", "TC-UC2-06b", "TC-UC2-09a"],
+      "preconditions": ["watching a live stream at the live edge (Room status = live)", "(mobile) controls overlay revealed per UC1 / (desktop) direct-tap pause available"],
+      "steps": ["Pause via the central pause button", "Assert: the central ▶ button overlay is shown as the pause indicator (no separate badge/banner)", "Assert: chat keeps receiving new messages in real time", "Tap outside the play button", "Assert: the overlay dismisses and the stream stays paused (position unchanged, no seek)"],
+      "expected": {
+        "success": "Pausing shows the central ▶ overlay as the pause indicator, chat keeps running live, and tapping outside the play button dismisses the overlay while the stream stays paused.",
+        "alternative": [
+          "The Live pause overlay shows NO ±10s seek controls (seeking is not applicable to a Live stream — BR-01).",
+          "Tapping ON the play button resumes playback (distinct from the tap-outside dismiss).",
+          "There is no separate badge/banner — the ▶ overlay is the only pause-state indicator."
+        ]
+      },
+      "platform_expected": [
+        { "platforms": ["UIKit iOS", "UIKit Android"], "note": "2-step: first tap reveals controls (no pause); tapping the central button pauses (BR-09)" },
+        { "platforms": ["WebUIKit-desktop"], "note": "1-step: a single tap pauses directly (BR-09)" }
+      ],
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC2-02", "title": "Resume returns to the current live moment (not the paused position)",
+      "ac_id": "AC-02", "precondition_state": null, "technique": "StateTransition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: live source/player; assert ≈ live within tolerance NEVER exact (CONF-07). Short-pause tolerance feel per-platform = manual (TC-UC2-08b). ASSUME-buffer-tolerance is a PM QA-confirm, not a blocker.",
+      "owns_br": ["BR-13"], "cites_br": ["BR-11", "BR-14"],
+      "tc_ids": ["TC-UC2-08a", "TC-UC2-06b"],
+      "preconditions": ["the user has paused a live stream (chat kept running during the pause)"],
+      "steps": ["Resume via the play button", "Assert: playback seeks to the current live edge (position advances to ≈ live, not the paused offset)", "Assert: the ▶ overlay dismisses", "Assert: chat is uninterrupted (no missed/replayed messages)"],
+      "expected": {
+        "success": "Resuming seeks to the current live edge (≈ live within normal buffering tolerance, never the paused position); the ▶ overlay dismisses and chat is uninterrupted.",
+        "alternative": [
+          "Playback never resumes from the previous paused offset.",
+          "The resume target is asserted as 'near live within tolerance' — a few seconds behind live is expected, not exact-live (CONF-07)."
+        ]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC2-03", "title": "Stream ends while paused — terminal state wins, no frozen frame",
+      "ac_id": "AC-03", "precondition_state": null, "technique": "StateTransition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: flip SDK room.status; the simultaneous pause + host-end race (TC-UC2-07c) is staged manually",
+      "owns_br": ["BR-12"], "cites_br": ["BR-15"],
+      "tc_ids": ["TC-UC2-07a", "TC-UC2-07b", "TC-UC2-07d", "TC-UC2-10c"],
+      "preconditions": ["the user has paused a live stream"],
+      "steps": ["Mock: flip SDK room.status live → ended during the pause", "Assert: the player leaves the paused state and shows the ended state (terminal wins)", "Assert: the viewer is not left on a frozen frame (explicit ended feedback)"],
+      "expected": {
+        "success": "When the room transitions to ended/recorded during a pause, the player leaves paused and shows the terminal state — the terminal state always wins over paused, and the viewer is never left on a frozen frame.",
+        "alternative": [
+          "Recording not yet ready → 'Livestream ended' is shown, with NO intermediate 'processing' state.",
+          "Room becomes recorded → the player shows the recorded/VOD state.",
+          "A simultaneous pause + host-end race resolves to ended (terminal wins) — staged manually (TC-UC2-07c)."
+        ]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC2-04", "title": "Default — playing at the live edge before any pause",
+      "ac_id": "AC-04", "precondition_state": null, "technique": "Presence", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: SDK Live",
+      "owns_br": [], "cites_br": ["BR-14"],
+      "tc_ids": ["TC-UC2-11", "TC-UC2-09a"],
+      "preconditions": ["a live stream (Room status = live) is playing at the live edge", "the viewer has not yet paused"],
+      "steps": ["Render the live player at the live edge without pausing", "Assert: no ▶ pause indicator is present", "Assert: the LIVE badge + viewer count render as-is; chat is live"],
+      "expected": {
+        "success": "Before any pause, no pause indicator is shown; the LIVE badge and viewer count render as-is (unaffected by this feature) and chat is live.",
+        "alternative": []
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC2-05", "title": "Mobile web has no pause control on Live",
+      "ac_id": "AC-05", "precondition_state": null, "technique": "MultiCondition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: SDK Live + mobile viewport",
+      "owns_br": ["BR-02"], "cites_br": [],
+      "tc_ids": ["TC-UC2-02a", "TC-UC2-02b", "TC-UC2-02c"],
+      "preconditions": ["a viewer on mobile web watching a Live stream"],
+      "steps": ["Render the Live player in a mobile-web viewport", "Assert: no pause control is offered (no pause affordance in the player chrome)"],
+      "expected": {
+        "success": "On mobile web, a live stream offers no pause control — pause/resume of an active Live stream is not available on web-mobile (standing platform boundary, not a bug).",
+        "alternative": [
+          "On web-desktop the pause control IS present (1-step pause).",
+          "On iOS / Android the pause control IS present (2-step reveal-then-pause)."
+        ]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC2-06", "title": "Long pause still resumes to the current live moment",
+      "ac_id": "AC-06", "precondition_state": null, "technique": "StateTransition", "priority": "P2",
+      "test_layer": "manual", "automation_note": "manual: a long real pause on a real broadcast (TC-UC2-08c) — the automatable resume-to-live core is covered by SC-UC2-02",
+      "owns_br": [], "cites_br": ["BR-13"],
+      "tc_ids": ["TC-UC2-08c"],
+      "preconditions": ["the user paused a live stream for an extended period (minutes)"],
+      "steps": ["Pause for several minutes on a real broadcast", "Resume", "Assert: playback snaps to the current live moment; a brief buffering/loading state is acceptable"],
+      "expected": {
+        "success": "After a long pause, resuming snaps to the current live moment regardless of the jump size — a brief buffering/loading state is acceptable while it catches up.",
+        "alternative": [
+          "The size of the jump does not change the guarantee — it never resumes from the paused position.",
+          "Resume lands ≈ live within tolerance (further behind after a long pause is still within the guarantee)."
+        ]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC2-07", "title": "Chat and video re-sync on resume — no replay, no skip",
+      "ac_id": "AC-07", "precondition_state": null, "technique": "StateTransition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: chat subscription; smoke-check on a real live feed at least once",
+      "owns_br": ["BR-14"], "cites_br": [],
+      "tc_ids": ["TC-UC2-09b", "TC-UC2-09c"],
+      "preconditions": ["the user paused for a while (chat kept running live throughout)"],
+      "steps": ["Capture chat message ids before resume", "Resume", "Capture chat message ids after resume", "Assert: no message is replayed (duplicate) and none is skipped (gap); chat is aligned at the live moment"],
+      "expected": {
+        "success": "On resume, chat and video are aligned at the live moment — no chat messages are replayed and none are skipped.",
+        "alternative": [
+          "Comparing message ids before vs after resume shows no duplicate (replay) and no gap (skip).",
+          "After a long paused window with continuous chat, on resume chat is already at the live moment and aligns with the video."
+        ]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC2-08", "title": "Network drops while paused — Reconnecting, stays paused, resume to live",
+      "ac_id": "AC-08", "precondition_state": null, "technique": "StateTransition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: network layer + SDK; iOS NWPathMonitor overlay-while-paused confirmed on a real device first (TC-UC2-10a)",
+      "owns_br": ["BR-10", "BR-15"], "cites_br": ["BR-13"],
+      "tc_ids": ["TC-UC2-05a", "TC-UC2-05b", "TC-UC2-10a", "TC-UC2-10b", "TC-UC2-08d"],
+      "preconditions": ["the user has paused a live stream"],
+      "steps": ["Mock: drop the network connection while paused", "Assert: a 'Reconnecting' indicator (auto-retry, no manual button) is shown — not a no-feedback frozen frame", "Mock: recover the network", "Assert: the stream stays paused (no auto-resume)", "Resume", "Assert: playback snaps to the current live edge (≈ live within tolerance)"],
+      "expected": {
+        "success": "A network drop while paused shows a 'Reconnecting' indicator (auto-retry, no manual button); the stream stays paused through drop→recover (no auto-resume); on user resume it snaps to the current live edge.",
+        "alternative": [
+          "The stream never auto-resumes on network recover — it stays paused until the user explicitly resumes (no implicit toggle).",
+          "(iOS) the 'Reconnecting' scrim shows even while paused (device network via NWPathMonitor).",
+          "(web) a plain paused-video drop shows no overlay; only SDK room.status = 'waitingReconnect' (broadcaster drop) surfaces it."
+        ]
+      },
+      "pending": null
+    }
+  ]
+}

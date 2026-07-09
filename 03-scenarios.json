@@ -1,0 +1,102 @@
+{
+  "_schema": "qa-scenarios-v1",
+  "_purpose": "Functional scenarios (1 success + technique-driven alternative[]) per acceptance criterion — the executable-ready layer between Schema 1 (spec) and test cases / automation. NO unit tests. Produced by phase-3-3-scenarios; validated by checks/scenario_coverage.py.",
+  "_status": "EXAMPLE — illustrates the schema + the two locked rules. Real output lives at qa/<epic>/PDT-XXXX-ucN-scenarios.json.",
+  "_rules": [
+    "RULE 1 — split per precondition-state: an AC with >1 valid outcome (state-dependent) becomes one scenario per state (see SC-EX-02a / SC-EX-02b), each with its own single success.",
+    "RULE 2 — one owning scenario per business rule: a BR is fully exercised once (owns_br); scenarios that only depend on it list it in cites_br and do NOT re-assert it (see cites_br: BR-STATE below)."
+  ],
+  "_derives_from": "PDT-XXXX-ucN-complete-jira-story.json (AC + BR) + PDT-XXXX-ucN-test-design.md (L3 conditions)",
+
+  "ids": { "epic_id": "PDT-XXXX", "story_id": "PDT-YYYY", "uc_id": "UCn" },
+
+  "scenarios": [
+    {
+      "sc_id": "SC-EX-01",
+      "title": "Password length boundary",
+      "ac_id": "AC-01",
+      "precondition_state": null,
+      "technique": "BVA",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "owns_br": ["BR-LEN"],
+      "cites_br": [],
+      "tc_ids": ["TC-EX-01a", "TC-EX-01b"],
+      "preconditions": ["On the sign-in screen", "Email field contains a valid address"],
+      "steps": [
+        "Navigate to /login",
+        "Enter [email] in the Email field",
+        "Enter [password] in the Password field",
+        "Assert: Sign in is accepted for a 6+ char password; rejected below 6"
+      ],
+      "expected": {
+        "success": "A password of 6 or more characters is accepted.",
+        "alternative": [
+          "A password of 5 characters (below min) is rejected with 'Your password must be 6 characters or more.'"
+        ]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-EX-02a",
+      "title": "Boundary skip-back while PLAYING preserves playback",
+      "ac_id": "AC-02",
+      "precondition_state": "playing",
+      "technique": "BVA",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "owns_br": ["BR-CLAMP"],
+      "cites_br": ["BR-STATE"],
+      "tc_ids": ["TC-EX-03a"],
+      "preconditions": ["Media playing", "position < 10s from the start"],
+      "steps": ["Skip back at 0:05 while playing", "Assert: position is 0:00 AND still playing"],
+      "expected": {
+        "success": "Position clamps to 0:00 and playback continues (prior PLAYING state preserved).",
+        "alternative": ["A skip-back at exactly 0:00 stays at 0:00 — never a negative position."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-EX-02b",
+      "title": "Boundary skip-back while PAUSED stays paused",
+      "ac_id": "AC-02",
+      "precondition_state": "paused",
+      "technique": "BVA",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "owns_br": [],
+      "cites_br": ["BR-CLAMP", "BR-STATE"],
+      "tc_ids": ["TC-EX-03b"],
+      "preconditions": ["Media paused", "position < 10s from the start"],
+      "steps": ["Skip back at 0:05 while paused", "Assert: position is 0:00 AND still paused"],
+      "expected": {
+        "success": "Position clamps to 0:00 and the media stays paused (prior PAUSED state preserved).",
+        "alternative": ["A skip-back at exactly 0:00 stays at 0:00 — never a negative position."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-EX-03",
+      "title": "Only a moderator can approve",
+      "ac_id": "AC-05",
+      "precondition_state": null,
+      "technique": "MultiCondition",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "automation_note": "with-mock: role + post status",
+      "owns_br": ["BR-PERM", "BR-STATE"],
+      "cites_br": [],
+      "tc_ids": ["TC-EX-05a", "TC-EX-05b", "TC-EX-05c"],
+      "preconditions": ["A pending post exists"],
+      "steps": ["Sign in as [role]", "Open the pending post", "Attempt Approve", "Assert: outcome per role + status"],
+      "expected": {
+        "success": "A moderator approving a pending post → status becomes published.",
+        "alternative": [
+          "A member (no permission) → Approve is hidden/blocked.",
+          "A moderator approving a non-pending post → blocked (wrong state)."
+        ]
+      },
+      "pending": null
+    }
+  ]
+}

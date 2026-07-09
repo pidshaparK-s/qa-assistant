@@ -1,0 +1,164 @@
+{
+  "_schema": "qa-scenarios-v1",
+  "_purpose": "Functional scenarios (1 success + technique-driven alternative[]) per acceptance criterion for UC1b. No unit tests. Executable-ready — feeds test cases / automation.",
+  "_status": "phase-3-3 output — 2026-07-09. Derived from PDT-3562-uc1b-complete-jira-story.json (AC+BR) + PDT-3562-uc1b-test-design.md (L3 conditions). UC1b = the 'Live' player component; the web-Live reveal-controls overlay + 1s auto-dismiss are NET-NEW (bare <video>+Plyr today) — most scenarios are 'Automate (when stable)'.",
+  "_rules_applied": {
+    "split_per_state": "No AC has >1 valid outcome by entry state → NO state splits; all 10 ACs → 1 scenario each. Desktop = 1-Step Pause (BR-09) and web-mobile-cannot-pause are PLATFORM variance → platform_expected on SC-UC1b-01/04/05, not a precondition-state split.",
+    "one_owner_per_br": "BR-01→AC-04 (SC-04) · BR-03→AC-03 (SC-03) · BR-06→AC-05 (SC-05) · BR-09→AC-01 (SC-01) · BR-10→AC-01 (SC-01) · BR-11→AC-04 (SC-04) · BR-15→AC-09 (SC-09). Each cross-cutting rule owned by the single most-direct AC; every other scenario cites (does NOT re-test). AC-01 owns BR-09+BR-10 (reveal-keeps-playing is the headline no-implicit-toggle); AC-04 owns BR-01+BR-11 (no-seek-on-Live + paused-persist)."
+  },
+
+  "ids": { "epic_id": "PDT-3418", "story_id": "PDT-3562", "uc_id": "UC1b" },
+
+  "scenarios": [
+    {
+      "sc_id": "SC-UC1b-01", "title": "First tap on a playing 'Live' player reveals controls, playback continues (mobile)",
+      "ac_id": "AC-01", "precondition_state": "playing", "technique": "EP", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "when-stable: web-Live net-new",
+      "owns_br": ["BR-09", "BR-10"], "cites_br": [],
+      "tc_ids": ["TC-UC1b-04a", "TC-UC1b-04b", "TC-UC1b-05a"],
+      "preconditions": ["a 'Live' stream (SDK room_status=live) is actively playing on a mobile surface (iOS / Android / web-on-mobile)", "the controls overlay is currently hidden"],
+      "steps": ["Tap anywhere on the player surface (first tap)", "Assert: the controls overlay appears", "Assert: playback continues — the stream does not pause (video.paused === false)", "Assert: the central button shows the PAUSE icon"],
+      "expected": {
+        "success": "On mobile, the first tap reveals the controls overlay while the Live stream keeps playing (video.paused===false) and the central button shows the pause icon — the tap does not toggle playback.",
+        "alternative": ["The first tap must NOT pause the stream — a reveal that also toggles playback is the accidental-interrupt regression this story exists to prevent.", "The overlay must actually appear — a first tap that neither reveals nor pauses (a no-op) is a failure."]
+      },
+      "platform_expected": [
+        { "platforms": ["WebUIKit-desktop"], "note": "Desktop = direct 1-Step Pause (BR-09): the first click PAUSES (video.paused===true) and shows the PLAY icon — the mobile reveal branch is not taken (TC-UC1b-04b)" }
+      ],
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC1b-02", "title": "Tap outside the button (playing) dismisses the overlay, playback continues",
+      "ac_id": "AC-02", "precondition_state": "playing", "technique": "StateTransition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "when-stable: web-Live net-new",
+      "owns_br": [], "cites_br": ["BR-10", "BR-11"],
+      "tc_ids": ["TC-UC1b-05c"],
+      "preconditions": ["the controls overlay is visible over a playing 'Live' stream", "the central pause/play button's rendered hit-target is 64x64px (FU-2 resolved)"],
+      "steps": ["Tap the player surface outside the central button's 64x64px tap target", "Assert: the overlay dismisses", "Assert: playback continues — state stays playing (video.paused === false)"],
+      "expected": {
+        "success": "Tapping outside the 64x64px central button dismisses the overlay while the Live stream keeps playing — the dismiss is not an implicit pause.",
+        "alternative": ["A tap-outside that transitions playing → paused is a failure — dismissing the overlay must never pause the stream (BR-10)."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC1b-03", "title": "No action for 1s (playing) auto-dismisses the overlay, playback continues",
+      "ac_id": "AC-03", "precondition_state": "playing", "technique": "BVA", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "when-stable: web-Live net-new; web 3s->1s auto-dismiss regression guard",
+      "owns_br": ["BR-03"], "cites_br": ["BR-10", "BR-11"],
+      "tc_ids": ["TC-UC1b-02a", "TC-UC1b-02b", "TC-UC1b-05d"],
+      "preconditions": ["the controls overlay is visible over a playing 'Live' stream", "no further user interaction occurs"],
+      "steps": ["Advance time to 999ms with no interaction; Assert: the overlay is STILL visible", "Advance time to 1000ms; Assert: the overlay auto-dismisses", "Assert: playback continues throughout — state stays playing"],
+      "expected": {
+        "success": "After exactly 1s (1000ms) of no interaction while playing, the overlay auto-dismisses and playback continues; at 999ms it is still visible.",
+        "alternative": ["At 999ms (just before the 1s boundary) the overlay must still be visible — dismissing before 1s is a boundary failure.", "The overlay must dismiss at 1000ms, not 3000ms — web currently uses a 3s timer (VideoPlayerControls.tsx:60-70); any dismiss later than 1s fails the regression guard."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC1b-04", "title": "Pause a 'Live' stream: play icon persists, NO seek controls, tap-outside stays paused",
+      "ac_id": "AC-04", "precondition_state": "playing", "technique": "MultiCondition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: SDK stream=Live",
+      "owns_br": ["BR-01", "BR-11"], "cites_br": ["BR-10"],
+      "tc_ids": ["TC-UC1b-01a", "TC-UC1b-01b", "TC-UC1b-01c", "TC-UC1b-05b", "TC-UC1b-06a", "TC-UC1b-06b"],
+      "preconditions": ["a 'Live' stream (mock SDK stream type = Live) is playing with the controls overlay visible", "the central button's rendered hit-target is 64x64px (FU-2 resolved)"],
+      "steps": ["Tap the central pause button", "Assert: playback pauses (video.paused === true)", "Assert: the icon switches pause->play and the PLAY icon remains visible", "Assert: NEITHER the -10s NOR the +10s skip button is present in the view/DOM (a Live stream has no seek — BR-01)", "Advance >1000ms with no interaction; Assert: the overlay PERSISTS (the paused branch has no idle auto-dismiss)", "Tap outside the 64x64px central button; Assert: the overlay dismisses AND the stream stays paused (does not resume)"],
+      "expected": {
+        "success": "On a Live stream the central pause tap pauses playback and the play icon persists; the ±10s seek buttons are never shown; while paused the overlay persists past 1s; a tap-outside dismisses it and the stream stays paused (resume-to-live is UC2).",
+        "alternative": ["Contrast: on a recorded / video stream the ±10s skip buttons ARE present — proving the seek gate is stream-type driven, not always-off (TC-UC1b-01c).", "The paused overlay must NOT auto-dismiss on the 1s idle timer — a paused overlay that vanishes after 1s is a BR-11 failure.", "A tap-outside while paused must never resume the stream — resume is out of scope here (UC2)."]
+      },
+      "platform_expected": [
+        { "platforms": ["WebUIKit-desktop"], "note": "reaches the paused state via a 1-step pause (BR-09, TC-UC1b-04b) — there is no reveal-then-pause step" },
+        { "platforms": ["WebUIKit-mobile"], "note": "cannot pause a Live stream (platform table 68264) — reveal is in scope on web-mobile, pause is not; the pause assertions apply to iOS/Android" }
+      ],
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC1b-05", "title": "Reveal / dismiss / auto-dismiss / pause behave identically across all in-scope surfaces",
+      "ac_id": "AC-05", "precondition_state": null, "technique": "EP", "priority": "P2",
+      "test_layer": "e2e", "automation_note": "when-stable: web-Live net-new",
+      "owns_br": ["BR-06"], "cites_br": ["BR-01", "BR-03", "BR-09", "BR-10", "BR-11"],
+      "tc_ids": ["TC-UC1b-03a", "TC-UC1b-03b"],
+      "preconditions": ["a 'Live' stream renders on an in-scope surface (parameterize: inline feed, then fullscreen / gallery)", "the platform is held fixed while the surface varies"],
+      "steps": ["For surface = inline feed: run reveal (F02), tap-outside dismiss (F04), 1s auto-dismiss (F05), pause (F07); record the outcomes", "For surface = fullscreen / gallery: run the same set; record the outcomes", "Assert: the outcomes are IDENTICAL across the two surfaces"],
+      "expected": {
+        "success": "The reveal / tap-outside-dismiss / 1s auto-dismiss / pause behaviours produce identical outcomes on the inline-feed and fullscreen/gallery surfaces (surface-invariant).",
+        "alternative": ["Any surface producing a DIFFERENT reveal, dismiss, auto-dismiss, or pause outcome than another in-scope surface is a surface-invariance break (BR-06 violation)."]
+      },
+      "platform_expected": [
+        { "platforms": ["WebUIKit-desktop"], "note": "surface-invariant != platform-invariant: desktop still differs (1-Step Pause, BR-09) — that is expected platform variance, not a BR-06 break" }
+      ],
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC1b-06", "title": "Default baseline — no controls overlay before the first tap",
+      "ac_id": "AC-06", "precondition_state": null, "technique": "Presence", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: SDK room_status=live",
+      "owns_br": [], "cites_br": [],
+      "tc_ids": ["TC-UC1b-08"],
+      "preconditions": ["SDK room_status = live and the post first renders", "no tap has occurred yet"],
+      "steps": ["Render the actively-playing Live post without any tap", "Assert: no controls overlay element is present in the view hierarchy / DOM", "Assert: the live video surface, the standing LIVE badge, and the viewer count are visible"],
+      "expected": {
+        "success": "On first render of an actively-playing Live post with no tap, no controls overlay is present — only the live video surface, the standing LIVE badge, and the viewer count are visible (baseline S0).",
+        "alternative": ["The controls overlay must NOT be present before any tap — an overlay rendered pre-interaction is a baseline-state failure."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC1b-07", "title": "Idle countdown restarts on every control interaction",
+      "ac_id": "AC-07", "precondition_state": "playing", "technique": "EP", "priority": "P2",
+      "test_layer": "e2e", "automation_note": "when-stable: web-Live net-new",
+      "owns_br": [], "cites_br": ["BR-03"],
+      "tc_ids": ["TC-UC1b-02c"],
+      "preconditions": ["the controls overlay is visible over a playing 'Live' stream", "the 1s idle countdown is running"],
+      "steps": ["Interact with an overlay control at 800ms (before the 1s timeout)", "Assert: the countdown restarts — the overlay is still visible at 1000ms after the original reveal", "Take no further action; Assert: the overlay auto-dismisses 1000ms after the LAST interaction"],
+      "expected": {
+        "success": "A control interaction at 800ms restarts the 1s countdown — the overlay stays visible past the original 1000ms and auto-dismisses only 1000ms after the last interaction.",
+        "alternative": ["If the overlay dismisses 1000ms after the FIRST reveal (ignoring the later interaction) the countdown-reset failed — the timer must restart on every control interaction."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC1b-08", "title": "Pause tap races the auto-dismiss timer — explicit pause wins",
+      "ac_id": "AC-08", "precondition_state": "playing", "technique": "StateTransition", "priority": "P2",
+      "test_layer": "e2e", "automation_note": "when-stable: web-Live net-new; fake-timer race, component-level (real-time e2e timing is flaky)",
+      "owns_br": [], "cites_br": ["BR-10", "BR-11"],
+      "tc_ids": ["TC-UC1b-06c"],
+      "preconditions": ["the controls overlay is visible over a playing 'Live' stream", "the 1s idle auto-dismiss timer is about to fire (t≈1000ms)"],
+      "steps": ["Dispatch a central pause-button tap at t=1000ms — the exact instant the auto-dismiss would fire (fake-timer race)", "Assert: the explicit pause WINS — state becomes paused (video.paused === true)", "Assert: the PLAY icon is shown and persists (not swallowed by the expiring timer)", "Assert: the overlay dismisses only on a subsequent tap-outside, not from the fired timer"],
+      "expected": {
+        "success": "When the pause tap lands at the exact instant the 1s auto-dismiss fires, the explicit pause wins: state becomes paused, the play icon persists, and the overlay is not swallowed by the expiring timer — it dismisses only on a later tap-outside.",
+        "alternative": ["The expiring timer must not swallow the pause — a race where the overlay auto-dismisses and the paused / play-icon state is lost (or the stream stays playing) is the failure mode."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC1b-09", "title": "Tap during buffering surfaces the real state — no false 'playing' icon",
+      "ac_id": "AC-09", "precondition_state": null, "technique": "StateTransition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: SDK buffering / route stall + throttle",
+      "owns_br": ["BR-15"], "cites_br": [],
+      "tc_ids": ["TC-UC1b-07a", "TC-UC1b-07b"],
+      "preconditions": ["a 'Live' stream is buffering (not yet playing) — SDK state = buffering (mock), or forced via route stall + network throttle"],
+      "steps": ["Tap the player surface while buffering", "Assert: the controls overlay appears", "Assert: the central button reflects the REAL (buffering) state — NOT a false 'playing' pause-icon", "Assert: no crash and no frozen overlay"],
+      "expected": {
+        "success": "Tapping the player while the Live stream is buffering reveals the overlay with the central button reflecting the real buffering state — never a false 'playing' pause-icon — with no crash and no frozen overlay.",
+        "alternative": ["[AI-INFERRED] Mid-play stall (was playing, then the network stalls): an explicit buffering / 'Reconnecting' state must surface — the viewer is never left on a silent frozen frame (BR-15). Extends AC-09 initial-buffer to a mid-play stall per BR-15 'any interruption' (web gate isLoading && isPoorConnection && isLive; iOS scrim+spinner); paused-reconnect is UC2.", "The central button must never show a false 'playing' pause-icon while the stream is buffering — the state must reflect reality."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC1b-10", "title": "App backgrounded during an active overlay/timer reaches a well-defined state (OS default)",
+      "ac_id": "AC-10", "precondition_state": null, "technique": "StateTransition", "priority": "P2",
+      "test_layer": "e2e", "automation_note": "when-stable: web-Live net-new; OS-default bg/fg — Detox bg/fg + real-device confirm (web has no visibilitychange handler); Live snap-to-live = UC2 (not asserted)",
+      "owns_br": [], "cites_br": ["BR-10"],
+      "tc_ids": ["TC-UC1b-05e"],
+      "preconditions": ["the controls overlay is visible with the idle timer active over a playing 'Live' stream", "the app is then backgrounded for >1s"],
+      "steps": ["Background the app for >1s, then return it to the foreground", "Assert: the player / overlay reach a well-defined state via the OS default (Option 1) — no stale mid-countdown overlay", "Assert: no implicit play/pause toggle beyond the OS default"],
+      "expected": {
+        "success": "Backgrounding the app for >1s while the overlay/timer is active and returning to foreground yields a well-defined state via the OS default — no stale mid-countdown overlay and no implicit play/pause toggle beyond the OS default.",
+        "alternative": ["A stale mid-countdown overlay left on screen after foreground, or an implicit play/pause toggle beyond the OS default, is the failure mode.", "Live foreground snap-to-live is UC2's behaviour — observed here, never asserted."]
+      },
+      "pending": null
+    }
+  ]
+}

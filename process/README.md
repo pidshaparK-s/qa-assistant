@@ -90,6 +90,7 @@ Process เป็นเจ้าของ artifact store; skill read/write เ�
 | **Schema-1 Integrity** (L2) | จบ STEP6 emit Schema 1 | br_ids→def ครบ (no DANGLING_BR) · ทุก BR ถูก AC อ้าง (no DEAD_BR) · ไม่มี dup ac_id/br_id | exit 1 → หยุด แก้ก่อน commit |
 | **Schema-1↔2 Traceability** (L2) | หลัง build Schema 2 | ทุก ac_id ถูก flow ครอบ · ไม่มี ac/br ผี (PHANTOM) · step actor ประกาศใน `actors{}` ครบ | exit 1 → หยุด แก้ก่อน commit |
 | **Decision Ledger** (R2, L2) | ทุก judgment call · ก่อน autonomous run | ทุก split/priority/scope/pending ถูก log + settled (confirmed / resolved-by-code) | manual: open = advisory · autonomous: open human = HALT |
+| **Scenario Coverage** (L3.5) | หลัง phase-3-3 | ทุก AC → ≥1 scenario · ทุก BR → owns_br 1 ครั้ง (test ครั้งเดียว, กัน over-test) · success + technique-driven alternative[] | exit 1 → หยุด แก้ก่อน |
 
 **Coverage+Content คือหัวใจ:** นับจำนวนอย่างเดียวไม่พอ — UC2 (PDT-3563) มี 3 AC เท่าเดิมแต่ AC-01/02 ถูกเขียนใหม่ 2026-07-06;
 ถ้าเช็คแค่ "3/3" จะ false-pass analysis เก่า. Gate จึงผูก `ac_id` + **content fingerprint**.
@@ -102,6 +103,7 @@ Process เป็นเจ้าของ artifact store; skill read/write เ�
 | `checks/schema_trace.py qa/<epic>` | L2 | Schema 1↔2: ac coverage, phantom ac/br, undeclared actor |
 | `checks/decision_ledger.py qa/<epic> [--autonomous]` | L2 | judgment ledger well-formed; `--autonomous` → open human decision = HALT |
 | `checks/br_tc_coverage.py qa/<epic>` | L3 | `*-test-design.md` ครอบทุก BR + AC ของ Schema 1 (BR→TC coverage) |
+| `checks/scenario_coverage.py qa/<epic>` | L3.5 | `*-scenarios.json`: ทุก AC → ≥1 scenario · ทุก BR → owns_br 1 ครั้ง · success + alternative[] · no phantom ref |
 
 > ทั้ง 3 เป็น stdlib-only, deterministic, no network — run มือก่อน handoff/commit. schema1_integrity + schema_trace codify script ที่จับ error จริงตอนรัน PDT-3418 (ก่อนหน้านี้เป็น ad-hoc ที่ไม่ได้ commit)
 

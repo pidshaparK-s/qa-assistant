@@ -1,0 +1,182 @@
+{
+  "_schema": "qa-scenarios-v1",
+  "_purpose": "Functional scenarios (1 success + technique-driven alternative[]) per acceptance criterion for UC3. No unit tests. Executable-ready — feeds test cases / automation.",
+  "_status": "phase-3-3 output — 2026-07-09. Derived from PDT-3564-uc3-complete-jira-story.json (AC+BR) + PDT-3564-uc3-test-design.md (L3 conditions).",
+  "_rules_applied": {
+    "split_per_state": "AC-03 has two valid outcomes (skip-back to 0:00 preserves prior play state) → SC-UC3-03a (playing) + SC-UC3-03b (paused).",
+    "one_owner_per_br": "BR-01→AC-06 · BR-04→AC-01 · BR-05→AC-03 · BR-08→AC-07 · BR-10→AC-05 · BR-12→AC-04 · BR-15→AC-10. Every other scenario cites (not re-tests) the rules it depends on. BR-05 owned once (start-clamp); AC-04 end-clamp / AC-08 mid-burst assert their own behaviour while citing BR-05 — no redundant re-test."
+  },
+
+  "ids": { "epic_id": "PDT-3418", "story_id": "PDT-3564", "uc_id": "UC3" },
+
+  "scenarios": [
+    {
+      "sc_id": "SC-UC3-01", "title": "Skip back moves playback exactly 10s (playing)",
+      "ac_id": "AC-01", "precondition_state": "playing", "technique": "BVA", "priority": "P1",
+      "test_layer": "e2e",
+      "owns_br": ["BR-04"], "cites_br": ["BR-10"],
+      "tc_ids": ["TC-UC3-02a", "TC-UC3-05a"],
+      "preconditions": ["a video / recorded LS is playing", "the controls overlay is visible", "position ≥ 10s from the start (e.g. 1:00)"],
+      "steps": ["Tap the skip-back (−10s) button", "Assert: position moves to exactly 0:50 (−10s)", "Assert: playback continues (state stays playing)"],
+      "expected": {
+        "success": "Playback jumps back exactly 10 seconds (1:00 → 0:50) and continues playing.",
+        "alternative": ["The skip moves by exactly 10s — not 9 or 11 (off-by-one guard)."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-02", "title": "Skip forward moves playback exactly 10s (playing)",
+      "ac_id": "AC-02", "precondition_state": "playing", "technique": "BVA", "priority": "P1",
+      "test_layer": "e2e",
+      "owns_br": [], "cites_br": ["BR-04", "BR-10"],
+      "tc_ids": ["TC-UC3-02b", "TC-UC3-05a"],
+      "preconditions": ["a video / recorded LS is playing", "the controls overlay is visible", "position ≥ 10s from the end (e.g. 1:00)"],
+      "steps": ["Tap the skip-forward (+10s) button", "Assert: position moves to exactly 1:10 (+10s)", "Assert: playback continues (state stays playing)"],
+      "expected": {
+        "success": "Playback jumps forward exactly 10 seconds (1:00 → 1:10) and continues playing.",
+        "alternative": ["The skip moves by exactly 10s — not 9 or 11 (off-by-one guard)."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-03a", "title": "Boundary skip-back to 0:00 while PLAYING preserves playback",
+      "ac_id": "AC-03", "precondition_state": "playing", "technique": "BVA", "priority": "P1",
+      "test_layer": "e2e",
+      "owns_br": ["BR-05"], "cites_br": ["BR-10"],
+      "tc_ids": ["TC-UC3-03a", "TC-UC3-03c", "TC-UC3-05c"],
+      "preconditions": ["a video / recorded LS is playing", "position < 10s from the start (e.g. 0:05)"],
+      "steps": ["Tap skip-back at 0:05 while playing", "Assert: position clamps to 0:00 (never negative)", "Assert: playback continues from 0:00 (state stays playing)"],
+      "expected": {
+        "success": "Position clamps to 0:00 and playback continues (prior PLAYING state preserved — a boundary skip-back does NOT force a pause).",
+        "alternative": ["A skip-back at exactly 0:00 stays at 0:00 — the position never resolves to a negative value."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-03b", "title": "Boundary skip-back to 0:00 while PAUSED stays paused",
+      "ac_id": "AC-03", "precondition_state": "paused", "technique": "BVA", "priority": "P1",
+      "test_layer": "e2e",
+      "owns_br": [], "cites_br": ["BR-05", "BR-10"],
+      "tc_ids": ["TC-UC3-03b", "TC-UC3-05d"],
+      "preconditions": ["a video / recorded LS is paused", "position < 10s from the start (e.g. 0:05)"],
+      "steps": ["Tap skip-back at 0:05 while paused", "Assert: position clamps to 0:00 (never negative)", "Assert: media stays paused (state unchanged)"],
+      "expected": {
+        "success": "Position clamps to 0:00 and the media stays paused (prior PAUSED state preserved — a boundary skip-back does NOT force a play).",
+        "alternative": ["A skip-back at exactly 0:00 stays at 0:00 — the position never resolves to a negative value."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-04", "title": "Boundary skip-forward past the end enters the end state",
+      "ac_id": "AC-04", "precondition_state": null, "technique": "StateTransition", "priority": "P1",
+      "test_layer": "e2e",
+      "owns_br": ["BR-12"], "cites_br": ["BR-05"],
+      "tc_ids": ["TC-UC3-03d", "TC-UC3-06a", "TC-UC3-06c"],
+      "preconditions": ["a video / recorded LS (known length, e.g. 2:00)", "position within 10s of the end (e.g. 1:55)"],
+      "steps": ["Tap skip-forward at 1:55", "Assert: position clamps to the final frame (2:00)", "Assert: the player is in the end state (paused at the final frame)"],
+      "expected": {
+        "success": "Playback jumps to the final frame and enters the end state (paused at the final frame).",
+        "alternative": ["It does not loop back to 0:00.", "It does not throw an error."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-05", "title": "Skip while paused updates position without resuming",
+      "ac_id": "AC-05", "precondition_state": "paused", "technique": "StateTransition", "priority": "P1",
+      "test_layer": "e2e",
+      "owns_br": ["BR-10"], "cites_br": ["BR-04"],
+      "tc_ids": ["TC-UC3-05b"],
+      "preconditions": ["the video is paused", "the controls overlay is visible"],
+      "steps": ["Tap either skip button while paused", "Assert: position updates by ±10s", "Assert: media stays paused"],
+      "expected": {
+        "success": "The position updates by ±10s and the video remains paused.",
+        "alternative": ["Skip never triggers an implicit paused → playing transition (no auto-resume)."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-06", "title": "Live stream shows no in-app skip buttons",
+      "ac_id": "AC-06", "precondition_state": null, "technique": "MultiCondition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: SDK stream type",
+      "owns_br": ["BR-01"], "cites_br": [],
+      "tc_ids": ["TC-UC3-01a", "TC-UC3-01b", "TC-UC3-01c"],
+      "preconditions": ["the controls overlay is visible"],
+      "steps": ["Mock: SDK stream type = Live", "Reveal the overlay", "Assert: the −10s / +10s buttons are NOT rendered"],
+      "expected": {
+        "success": "On an active Live stream the ±10s skip buttons are not shown (seeking not applicable in-app).",
+        "alternative": ["On a recorded LS the ±10s skip buttons ARE shown.", "On a video the ±10s skip buttons ARE shown."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-07", "title": "Rapid taps accumulate; icon shows the per-tap value",
+      "ac_id": "AC-07", "precondition_state": "playing", "technique": "BVA", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "when-stable: web debounce→accumulate fix pending; mobile now",
+      "owns_br": ["BR-08"], "cites_br": ["BR-04", "BR-10"],
+      "tc_ids": ["TC-UC3-04a", "TC-UC3-04b", "TC-UC3-04c"],
+      "preconditions": ["a video / recorded LS is playing", "the controls overlay is visible"],
+      "steps": ["Tap skip-forward 3× quickly at 1:00", "Assert: net position is 1:30 (each tap adds 10s — they accumulate)", "Assert: the skip icon shows '+10' on every tap"],
+      "expected": {
+        "success": "Three quick +10 taps accumulate to 1:30, and the icon shows the per-tap value (+10) each time.",
+        "alternative": ["Three quick −10 taps accumulate to −30s.", "The icon never shows the accumulated total (never '+30')."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-08", "title": "Rapid taps near a boundary clamp mid-burst",
+      "ac_id": "AC-08", "precondition_state": null, "technique": "BVA", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "when-stable: web accumulate fix pending; mobile now",
+      "owns_br": [], "cites_br": ["BR-05", "BR-08"],
+      "tc_ids": ["TC-UC3-03f", "TC-UC3-03g"],
+      "preconditions": ["a video / recorded LS", "position near the start or end"],
+      "steps": ["Tap skip-back 3× quickly starting at 0:15", "Assert: position goes 0:05 then clamps to 0:00 mid-burst (never negative)"],
+      "expected": {
+        "success": "During a rapid burst near the start, taps accumulate until one would cross 0:00 — that tap clamps to 0:00, never negative, even mid-burst.",
+        "alternative": ["A rapid burst near the end stops at the final frame mid-burst and never loops back to 0:00."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-09", "title": "No skip buttons before the overlay is revealed",
+      "ac_id": "AC-09", "precondition_state": null, "technique": "Presence", "priority": "P2",
+      "test_layer": "e2e",
+      "owns_br": [], "cites_br": [],
+      "tc_ids": ["TC-UC3-08a", "TC-UC3-08b"],
+      "preconditions": ["a video / recorded LS is loaded", "the UC1a controls overlay has not yet been revealed"],
+      "steps": ["Load the player without tapping", "Assert: no skip buttons are visible"],
+      "expected": {
+        "success": "No skip buttons are visible until the controls overlay is revealed (they appear only as part of UC1a's overlay).",
+        "alternative": ["After revealing the overlay (UC1a) the skip buttons appear (transition guard)."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-10", "title": "Skip while buffering (mobile) seeks and rebuffers",
+      "ac_id": "AC-10", "precondition_state": null, "technique": "StateTransition", "priority": "P1",
+      "test_layer": "e2e", "automation_note": "with-mock: network throttle",
+      "owns_br": ["BR-15"], "cites_br": [],
+      "tc_ids": ["TC-UC3-07a"],
+      "preconditions": ["mobile", "the video is buffering at the current position"],
+      "steps": ["Mock: throttle the network to force buffering", "Tap a skip button", "Assert: the player seeks to the target and rebuffers there (explicit loading), then resumes — no stuck spinner, no crash"],
+      "expected": {
+        "success": "On mobile, tapping a skip button while buffering seeks to the target and rebuffers there — surfacing loading feedback, never a silent frozen frame.",
+        "alternative": ["The viewer is never left on a frozen frame with no feedback."]
+      },
+      "pending": null
+    },
+    {
+      "sc_id": "SC-UC3-11", "title": "Skip while buffering (web) — behaviour unconfirmed",
+      "ac_id": "AC-11", "precondition_state": null, "technique": "StateTransition", "priority": "P2",
+      "test_layer": "manual", "automation_note": "blocked: FU-3",
+      "owns_br": [], "cites_br": ["BR-15"],
+      "tc_ids": ["TC-UC3-07b", "TC-UC3-07c"],
+      "preconditions": ["web", "the video is buffering at the current position"],
+      "steps": ["Force buffering on web", "Assert: the 'Reconnecting' UI is shown and manual scrub/scroll remains available", "Tap a ±10s skip button", "Observe and record the outcome (do NOT assert until FU-3 closes)"],
+      "expected": {
+        "success": "The web player surfaces the 'Reconnecting' UI and keeps manual scrub/scroll available — the viewer is never left on a silent frozen frame (BR-15).",
+        "alternative": ["The exact ±10s-skip result mid-buffer on web is UNCONFIRMED — observed and recorded, not asserted, until FU-3 closes."]
+      },
+      "pending": { "fu": "FU-3", "note": "observe/record only; do not assert the skip-tap result until Web Engineering confirms (FU-3)." }
+    }
+  ]
+}
