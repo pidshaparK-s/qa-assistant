@@ -1,0 +1,600 @@
+{
+  "_schema": "qa-automation-plan-v1",
+  "_purpose": "Automation disposition for every EC — automate (wait for automated) vs manual (cannot automated) — with phase-3-1 criteria + spec-keying target. Produced by phase-3-5; validated by checks/automation_plan_coverage.py.",
+  "_status": "UC1a — AT plan. Automate EC target the mobile harness (social-plus-mobile-native-sampleapp-webdriverio); specs not yet written (at_status='wait for automated').",
+  "_rule": "at_status 'cannot automated' <-> status Manual; 'wait for automated'/'automated' <-> Automate. blocker=live-broadcast MUST be Manual. Automate target.tag == '@'+ec_id (bijection).",
+  "ids": {
+    "epic_id": "PDT-3418",
+    "story_id": "PDT-3562",
+    "uc_id": "UC1a"
+  },
+  "target_repo": "social-plus-mobile-native-sampleapp-webdriverio",
+  "summary": {
+    "total": 31,
+    "automate": 28,
+    "manual": 3,
+    "blockers": {
+      "live-broadcast": 2,
+      "observe-only": 1
+    }
+  },
+  "plan": [
+    {
+      "ec_id": "EC-UC1a-001",
+      "sc_id": "SC-UC1a-01",
+      "ac_id": "AC-01",
+      "path": "success",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-001"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-002",
+      "sc_id": "SC-UC1a-01",
+      "ac_id": "AC-01",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-002"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-003",
+      "sc_id": "SC-UC1a-01",
+      "ac_id": "AC-01",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-003"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-004",
+      "sc_id": "SC-UC1a-02",
+      "ac_id": "AC-02",
+      "path": "success",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-004"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-005",
+      "sc_id": "SC-UC1a-02",
+      "ac_id": "AC-02",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-005"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-006",
+      "sc_id": "SC-UC1a-02",
+      "ac_id": "AC-02",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-006"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-007",
+      "sc_id": "SC-UC1a-03",
+      "ac_id": "AC-03",
+      "path": "success",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-007"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-008",
+      "sc_id": "SC-UC1a-03",
+      "ac_id": "AC-03",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-008"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-009",
+      "sc_id": "SC-UC1a-03",
+      "ac_id": "AC-03",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-009"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-010",
+      "sc_id": "SC-UC1a-04",
+      "ac_id": "AC-04",
+      "path": "success",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-010"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-011",
+      "sc_id": "SC-UC1a-04",
+      "ac_id": "AC-04",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "cannot automated",
+      "status": "Manual",
+      "blocker": "live-broadcast",
+      "criteria": "criteria 5",
+      "reason": "Requires an active RTMP live broadcast + live-edge / real-time timing; no way to start or join a live stream deterministically on the harness (flaky / blocked). [phase-3-1 criteria 5]",
+      "tool": "—",
+      "target": null
+    },
+    {
+      "ec_id": "EC-UC1a-012",
+      "sc_id": "SC-UC1a-04",
+      "ac_id": "AC-04",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-012"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-013",
+      "sc_id": "SC-UC1a-04",
+      "ac_id": "AC-04",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-013"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-014",
+      "sc_id": "SC-UC1a-05",
+      "ac_id": "AC-05",
+      "path": "success",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-014"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-015",
+      "sc_id": "SC-UC1a-05",
+      "ac_id": "AC-05",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "cannot automated",
+      "status": "Manual",
+      "blocker": "live-broadcast",
+      "criteria": "criteria 5",
+      "reason": "Requires an active RTMP live broadcast + live-edge / real-time timing; no way to start or join a live stream deterministically on the harness (flaky / blocked). [phase-3-1 criteria 5]",
+      "tool": "—",
+      "target": null
+    },
+    {
+      "ec_id": "EC-UC1a-016",
+      "sc_id": "SC-UC1a-05",
+      "ac_id": "AC-05",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "cannot automated",
+      "status": "Manual",
+      "blocker": "observe-only",
+      "criteria": "criteria 1/6",
+      "reason": "No assertable oracle — observe / record only (open assumption or explicit 'do NOT assert' pending a follow-up). [phase-3-1 criteria 1/6]",
+      "tool": "—",
+      "target": null
+    },
+    {
+      "ec_id": "EC-UC1a-017",
+      "sc_id": "SC-UC1a-06",
+      "ac_id": "AC-06",
+      "path": "success",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-017"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-018",
+      "sc_id": "SC-UC1a-06",
+      "ac_id": "AC-06",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-018"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-019",
+      "sc_id": "SC-UC1a-07",
+      "ac_id": "AC-07",
+      "path": "success",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-019"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-020",
+      "sc_id": "SC-UC1a-07",
+      "ac_id": "AC-07",
+      "path": "alternative",
+      "priority": "P1",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-020"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-021",
+      "sc_id": "SC-UC1a-08",
+      "ac_id": "AC-08",
+      "path": "success",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-021"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-022",
+      "sc_id": "SC-UC1a-08",
+      "ac_id": "AC-08",
+      "path": "alternative",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-022"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-023",
+      "sc_id": "SC-UC1a-09",
+      "ac_id": "AC-09",
+      "path": "success",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-023"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-024",
+      "sc_id": "SC-UC1a-09",
+      "ac_id": "AC-09",
+      "path": "alternative",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-024"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-025",
+      "sc_id": "SC-UC1a-10",
+      "ac_id": "AC-10",
+      "path": "success",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-025"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-026",
+      "sc_id": "SC-UC1a-10",
+      "ac_id": "AC-10",
+      "path": "alternative",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-026"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-027",
+      "sc_id": "SC-UC1a-10",
+      "ac_id": "AC-10",
+      "path": "alternative",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-027"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-028",
+      "sc_id": "SC-UC1a-11a",
+      "ac_id": "AC-11",
+      "path": "success",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-028"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-029",
+      "sc_id": "SC-UC1a-11a",
+      "ac_id": "AC-11",
+      "path": "alternative",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-029"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-030",
+      "sc_id": "SC-UC1a-11b",
+      "ac_id": "AC-11",
+      "path": "success",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-030"
+      }
+    },
+    {
+      "ec_id": "EC-UC1a-031",
+      "sc_id": "SC-UC1a-11b",
+      "ac_id": "AC-11",
+      "path": "alternative",
+      "priority": "P2",
+      "test_layer": "e2e",
+      "at_status": "wait for automated",
+      "status": "Automate",
+      "blocker": null,
+      "criteria": null,
+      "reason": "Deterministic recorded-video / VOD interaction — the state is seedable via SDK and assertable via UI (position, overlay, control presence, icon); automatable on the mobile harness. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": {
+        "repo": "social-plus-mobile-native-sampleapp-webdriverio",
+        "spec": "tests/tap-to-pause/uc1a-recorded-reveal-controls.spec.ts",
+        "tag": "@EC-UC1a-031"
+      }
+    }
+  ]
+}

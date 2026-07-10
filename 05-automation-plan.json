@@ -1,0 +1,41 @@
+{
+  "_schema": "qa-automation-plan-v1",
+  "_purpose": "Automation disposition for every EC — automate (wait for automated) vs manual (cannot automated). Applies phase-3-1 automation judgment to each executable case + keys the automatable ones to a target spec. Produced by phase-3-5-automation-plan; validated by checks/automation_plan_coverage.py.",
+  "_status": "EXAMPLE — dispositions the EC in 04-test-cases.json. Real output: qa/<epic>/PDT-XXXX-ucN-automation-plan.json.",
+  "_id_note": "One plan entry per EC (bijection with the test-cases file). No new ids — plan entries reuse ec_id. Chain: AC → SC → EC → (this) automation disposition.",
+  "_rule": "at_status 'cannot automated' <-> status 'Manual'; 'wait for automated' | 'automated' <-> status 'Automate'. Every Manual entry needs a blocker + reason. Every Automate entry needs a target whose tag == '@'+ec_id (spec-keying / bijection). blocker='live-broadcast' MUST be Manual.",
+
+  "ids": { "epic_id": "PDT-XXXX", "story_id": "PDT-YYYY", "uc_id": "UCn" },
+  "target_repo": "social-plus-mobile-native-sampleapp-webdriverio",
+  "summary": { "total": 3, "automate": 2, "manual": 1, "blockers": { "live-broadcast": 1 } },
+
+  "plan": [
+    {
+      "ec_id": "EC-EX-001",
+      "sc_id": "SC-EX-01", "ac_id": "AC-01", "path": "success", "priority": "P1", "test_layer": "e2e",
+      "at_status": "wait for automated", "status": "Automate",
+      "blocker": null, "criteria": null,
+      "reason": "Deterministic form interaction — input is controllable and the expected result (accept / reject text) is assertable. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": { "repo": "social-plus-mobile-native-sampleapp-webdriverio", "spec": "tests/sign-in/password-min-length.spec.ts", "tag": "@EC-EX-001" }
+    },
+    {
+      "ec_id": "EC-EX-003",
+      "sc_id": "SC-EX-03", "ac_id": "AC-05", "path": "success", "priority": "P1", "test_layer": "e2e",
+      "at_status": "wait for automated", "status": "Automate",
+      "blocker": null, "criteria": null,
+      "reason": "Role + post state are seedable via SDK; the post-status transition is assertable. [phase-3-1: passes all criteria]",
+      "tool": "WebdriverIO + Appium (iOS + Android)",
+      "target": { "repo": "social-plus-mobile-native-sampleapp-webdriverio", "spec": "tests/moderation/approve-pending-post.spec.ts", "tag": "@EC-EX-003" }
+    },
+    {
+      "ec_id": "EC-EX-777",
+      "sc_id": "SC-EX-09", "ac_id": "AC-12", "path": "alternative", "priority": "P2", "test_layer": "manual",
+      "at_status": "cannot automated", "status": "Manual",
+      "blocker": "live-broadcast", "criteria": "criteria 5",
+      "reason": "ILLUSTRATIVE — a case that needs an active live broadcast: no way to start/join a real live stream deterministically on the harness (flaky / blocked). [phase-3-1 criteria 5]",
+      "tool": "—",
+      "target": null
+    }
+  ]
+}

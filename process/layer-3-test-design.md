@@ -29,7 +29,7 @@
 **calls:** `phase-3-1` — 6 criteria (blocker ก่อน) → verdict **automate / manual / QA-decides** + suggested tool
 → produces: Judgment Table + "QA Must Confirm" section
 
-⛒ **Gate (บังคับ):** `python3 checks/br_tc_coverage.py qa/<epic>` — [L3] ทุก br_id + ac_id ของ Schema 1 มี test condition ใน `*-test-design.md` (BR→TC + AC→TC coverage) · exit 1 → หยุด · + Completion
+⛒ **Gates:** BR → Test-Condition coverage (ทุก BR มี ≥1 test condition) · Completion
 **note:** ทับซ้อนกับ `00-schema-process-guide.md` PHASE 6 (generate test cases) → รอบ final ต้อง unify ถ้อยคำ
 
 ---

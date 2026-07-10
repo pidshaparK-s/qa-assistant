@@ -41,7 +41,7 @@ def collect(epic: str, glob: str, needle: str):
     found = {}
     for base in (REPO / "qa" / epic, REPO / "output"):
         if base.is_dir():
-            for f in sorted(base.glob(glob)):
+            for f in sorted(base.rglob(glob)):  # recurse into per-UC subfolders
                 if f.name.startswith(".") or needle not in f.name:
                     continue
                 found[f.resolve()] = f

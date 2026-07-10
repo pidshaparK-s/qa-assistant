@@ -1,0 +1,715 @@
+"Folder","Test Title","Pre-condition","Steps","Expected","Priority","Test Data","AT Status","QA Responsibility"
+"PDT-3418/UC1a","[EC-UC1a-001] [Video player] Verify first tap reveals controls without toggling playback (mobile, playing)","- a video / recorded LS is playing on a mobile surface (iOS)
+- the controls overlay is hidden
+- currentTime is advancing (position 0:30)","1. Tap anywhere on the player surface (first tap) at position 0:30
+2. Assert: the controls overlay is visible
+3. Assert: playback continues — currentTime keeps advancing past 0:30 and video.paused is false
+4. Assert: the central button icon is PAUSE","On mobile, the first tap on a playing video/recorded LS reveals the controls overlay while playback continues uninterrupted (currentTime keeps advancing, video.paused===false) and the central button shows the PAUSE icon — the tap does not toggle playback.","P1","surface: community feed
+platform: mobile (iOS)
+viewport: 390x844
+play_state: playing
+position: 0:30
+overlay: hidden","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-002] [Video player] Verify first tap never pauses the media (mobile accidental-interrupt guard)","- a video / recorded LS is playing on a mobile surface (iOS)
+- the controls overlay is hidden
+- position 0:30","1. Tap anywhere on the player surface (first tap) at position 0:30
+2. Assert: video.paused is false — currentTime keeps advancing, the tap did NOT pause
+3. Assert: the central button icon is PAUSE, not PLAY (a PLAY icon would be the desktop 1-Step-Pause class)","On mobile, a first tap that PAUSES the media (currentTime stops / play icon shows) is the wrong class — that is the desktop 1-Step-Pause behaviour (BR-09); on mobile a reveal that toggles playback is the accidental-interrupt regression this story exists to prevent (BR-10).","P1","surface: community feed
+platform: mobile (iOS)
+viewport: 390x844
+play_state: playing
+position: 0:30
+overlay: hidden","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-003] [Video player] Verify first tap is never a no-op (overlay must appear)","- a video / recorded LS is playing on a mobile surface (iOS)
+- the controls overlay is hidden
+- position 0:30","1. Tap anywhere on the player surface (first tap) at position 0:30
+2. Assert: the controls overlay is visible — the tap was not swallowed as a no-op
+3. Assert: playback also did not pause (video.paused is false)","The overlay must actually appear — a first tap that neither reveals the controls nor pauses (a no-op) is a failure.","P1","surface: community feed
+platform: mobile (iOS)
+viewport: 390x844
+play_state: playing
+position: 0:30
+overlay: hidden","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-004] [Video player] Verify tap outside the central button dismisses the overlay and playback continues","- the controls overlay is visible over a playing video / recorded LS
+- the central button's rendered hit-target is 64x64px (FU-2 resolved)","1. Tap the player surface OUTSIDE the central button's 64x64px tap target
+2. Assert: the overlay is dismissed (no longer visible)
+3. Assert: video.paused is false — playback continues uninterrupted, state stays playing","Tapping outside the 64x64px central button dismisses the overlay while playback continues uninterrupted (state stays playing) — the dismiss is not an implicit pause.","P1","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: visible
+hit_target: 64x64px
+tap_location: outside the central button","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-005] [Video player] Verify a tap just inside the 64x64px central button pauses instead of dismissing (boundary)","- the controls overlay is visible over a playing video / recorded LS
+- the central button's rendered hit-target is 64x64px (FU-2 resolved)","1. Tap just INSIDE the rendered 64x64px central button
+2. Assert: video.paused becomes true (state transitions playing -> paused) — this is a pause, not a dismiss
+3. Assert: the overlay is NOT dismissed by this tap","A tap just INSIDE the rendered 64x64px central button pauses (playing -> paused) instead of dismissing — the pause-vs-dismiss boundary (FU-2 resolved: 64x64px; assert against the rendered target, which may be native).","P1","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: visible
+hit_target: 64x64px
+tap_location: just inside the central button","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-006] [Video player] Verify tap-outside never implicitly pauses the media","- the controls overlay is visible over a playing video / recorded LS
+- the central button's rendered hit-target is 64x64px (FU-2 resolved)","1. Tap the player surface OUTSIDE the 64x64px central button
+2. Assert: video.paused stays false — the tap-outside did NOT transition playing -> paused","A tap-outside that transitions playing -> paused is a failure — dismissing the overlay must never implicitly pause the media (BR-10).","P1","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: visible
+hit_target: 64x64px
+tap_location: outside the central button","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-007] [Video player] Verify overlay auto-dismisses after 1s of no action (playing)","- the controls overlay is visible over a playing video / recorded LS
+- no further user interaction occurs","1. Reveal the overlay while playing, then take no action
+2. Advance the idle timer to 900ms; Assert: the overlay is still visible
+3. Advance the idle timer to 1000ms; Assert: the overlay is auto-dismissed
+4. Assert: playback continues throughout — currentTime is still advancing","After exactly 1s (1000ms) of no interaction while playing, the overlay auto-dismisses and playback continues (currentTime still advancing); at 900ms it is still visible.","P1","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: visible
+idle_timer_ms: 1000
+clock: fake-timers / Playwright clock","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-008] [Video player] Verify overlay still visible at 900ms (never dismisses before 1s)","- the controls overlay is visible over a playing video / recorded LS
+- no further user interaction occurs","1. Reveal the overlay while playing, take no action
+2. Advance the idle timer to 900ms
+3. Assert: the overlay is still visible at 900ms (not dismissed before the 1s bound)","At 900ms (just below the 1s bound) the overlay must still be visible — dismissing before 1s is a boundary failure.","P1","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: visible
+elapsed_ms: 900
+clock: fake-timers / Playwright clock","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-009] [Video player] Verify overlay dismisses at 1000ms not 3000ms (web 3s->1s regression guard)","- the controls overlay is visible over a playing video / recorded LS
+- no further user interaction occurs","1. Reveal the overlay while playing, take no action
+2. Advance the idle timer to 1000ms
+3. Assert: the overlay is dismissed at 1000ms — not held until 3000ms (VideoPlayerControls.tsx:60-70)","The overlay must auto-dismiss at 1000ms, not 3000ms — web currently uses a 3s timer (VideoPlayerControls.tsx:60-70); any dismiss later than 1s fails the regression guard (iOS is already 1s).","P1","surface: community feed
+platform: web
+play_state: playing
+overlay: visible
+idle_timer_ms: 1000
+web_legacy_timer_ms: 3000
+clock: fake-timers / Playwright clock","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-010] [Video player] Verify pause shows play icon + seek controls, paused overlay persists, tap-outside stays paused","- a video / recorded LS is playing with the controls overlay visible
+- the central button's rendered hit-target is 64x64px (FU-2 resolved)","1. Tap the central pause button
+2. Assert: video.paused is true — paused at the current position
+3. Assert: the icon switched pause -> play and the PLAY icon remains visible
+4. Assert: BOTH the -10s AND the +10s skip buttons remain visible (video/recorded component — BR-01)
+5. Advance >1000ms (to 1500ms) with no interaction; Assert: the overlay persists (the paused branch has no idle auto-dismiss)
+6. Tap outside the 64x64px central button; Assert: the overlay is dismissed AND video.paused is still true (the media did not resume)","On a playing video/recorded LS the central pause tap pauses playback at the current position and the play icon persists; the +/-10s seek controls remain visible; while paused the overlay persists past 1s (no idle auto-dismiss); a tap-outside dismisses the overlay and the media stays paused.","P1","surface: community feed
+platform: mobile (iOS)
+stream_type: video
+play_state: playing -> paused
+overlay: visible
+hit_target: 64x64px
+elapsed_ms: 1500","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-011] [Video player] Verify an active Live stream shows no +/-10s seek controls (contrast)","- an active Live stream is playing with the controls overlay visible
+- SDK stream type mocked = Live","1. Mock: SDK stream type = Live
+2. Reveal the overlay and tap the central pause button
+3. Assert: neither the -10s nor the +10s skip button is rendered (seek is gated to video/recorded)","Contrast: on an active Live stream the +/-10s seek controls are NOT shown — proving the seek gate is stream-type driven; seek exists only on video/recorded (BR-01, TC-UC1a-01c).","P1","surface: community feed
+platform: mobile (iOS)
+stream_type: Live
+play_state: playing -> paused
+overlay: visible","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1a","[EC-UC1a-012] [Video player] Verify a paused overlay never auto-dismisses on the 1s idle timer","- a video / recorded LS is paused with the controls overlay (play icon) visible
+- no further user interaction occurs","1. Pause the media so the overlay shows the PLAY icon
+2. Advance >1000ms (to 1500ms) with no interaction
+3. Assert: the overlay still persists — the paused branch has no idle timeout (does not auto-dismiss at 1s)","A paused overlay must NOT auto-dismiss on the 1s idle timer — the paused branch has no idle timeout, so it persists until a tap-outside (BR-11).","P1","surface: community feed
+platform: mobile (iOS)
+stream_type: video
+play_state: paused
+overlay: visible
+elapsed_ms: 1500
+clock: fake-timers / Playwright clock","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-013] [Video player] Verify tap-outside while paused never resumes playback","- a video / recorded LS is paused with the controls overlay visible
+- the central button's rendered hit-target is 64x64px (FU-2 resolved)","1. With the media paused and the overlay visible, tap outside the 64x64px central button
+2. Assert: the overlay is dismissed
+3. Assert: video.paused is still true — the media did not resume (the dismiss is not an implicit play)","A tap-outside while paused must never resume playback — the dismiss is not an implicit play; the media stays paused (BR-10).","P1","surface: community feed
+platform: mobile (iOS)
+stream_type: video
+play_state: paused
+overlay: visible
+hit_target: 64x64px
+tap_location: outside the central button","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-014] [Video player] Verify tap play resumes a paused video from the exact position (0:42)","- a video is paused at a known position (t=42s) on a known-length local fixture
+- the central play button is displayed","1. With the video paused at 0:42, tap the central play button
+2. Assert: playback resumes from currentTime === 0:42 (not 0:00, not the live edge)
+3. Assert: the icon switched play -> pause","Tapping the central play button on a paused video resumes playback from the exact paused position (t=42s -> resumes at 42s, not 0 and not the live edge); the icon switches play -> pause.","P1","surface: community feed
+platform: mobile (iOS)
+stream_type: video
+play_state: paused
+position: 0:42
+duration: 3:00","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-015] [Video player] Verify resume on a Live stream jumps to the live edge (not the paused position)","- a Live stream is paused at t=42s
+- SDK stream type mocked = Live","1. Mock: SDK stream type = Live, paused at 0:42
+2. Tap the central play button
+3. Assert: playback resumes at the current live edge (approx. live within the CONF-07 tolerance), NOT 0:42","On a Live stream, resume goes to the current live edge (approx. live within tolerance), NOT the exact paused position — a media-type contrast (BR-13; cross-ref UC2 CONF-07 tolerance).","P1","surface: community feed
+platform: mobile (iOS)
+stream_type: Live
+play_state: paused
+position: 0:42
+tolerance: UC2 CONF-07","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1a","[EC-UC1a-016] [Video player] Observe recorded-LS resume position (ASSUME-recorded-resume — do NOT assert)","- a recorded LS is paused at t=42s
+- SDK stream type mocked = recorded LS","1. Mock: SDK stream type = recorded LS, paused at 0:42
+2. Tap the central play button
+3. Observe and record the resume position (screenshot + notes): does it resume at 0:42 like video, or snap to the live edge?","OBSERVE/RECORD ONLY — recorded LS is assumed to resume from the exact paused position (0:42) like video, but this is unconfirmed; do NOT assert until Engineering closes ASSUME-recorded-resume (TC-UC1a-07b). Record whether recorded LS resumes at 0:42 or snaps to the live edge.","P1","surface: community feed
+platform: mobile (iOS)
+stream_type: recorded LS
+play_state: paused
+position: 0:42","cannot automated","QA (manual — observe-only)"
+"PDT-3418/UC1a","[EC-UC1a-017] [Video player] Verify reveal / dismiss / pause / resume behaviour is identical across all 6 in-scope surfaces","- a video / recorded LS renders on an in-scope surface
+- the platform (form factor) is held fixed while the surface varies","1. For each of the 6 surfaces {global feed, user feed, community feed, event-discussion feed, media gallery, fullscreen}: perform reveal, tap-outside dismiss, 1s auto-dismiss, pause, resume; record the outcomes
+2. Assert: on every surface the outcomes are identical — the overlay reveals and playback continues the same way (surface-invariant)","The reveal / tap-outside-dismiss / 1s auto-dismiss / pause / resume behaviours produce identical outcomes across all 6 in-scope surfaces {global, user, community, event-discussion feed, media gallery, fullscreen} (surface-invariant).","P1","surfaces: global feed, user feed, community feed, event-discussion feed, media gallery, fullscreen
+platform: mobile (iOS, held fixed)
+play_state: playing","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-018] [Video player] Verify no in-scope surface diverges from another (surface-invariance break)","- a video / recorded LS renders on an in-scope surface
+- the platform (form factor) is held fixed while the surface varies","1. Run the reveal / dismiss / auto-dismiss / pause / resume flow on all 6 in-scope surfaces with the platform held fixed
+2. Compare the outcomes pairwise across surfaces
+3. Assert: no surface produces a different outcome than another in-scope surface (any divergence is a BR-06 surface-invariance break)","Any in-scope surface producing a DIFFERENT reveal / dismiss / auto-dismiss / pause / resume outcome than another in-scope surface is a surface-invariance break (BR-06 violation).","P1","surfaces: global feed, user feed, community feed, event-discussion feed, media gallery, fullscreen
+platform: mobile (iOS, held fixed)
+play_state: playing","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-019] [Video player] Verify no controls overlay before the first tap (default state)","- a video / recorded LS is actively playing on an in-scope surface
+- the post has just rendered
+- no tap has occurred yet","1. Render the actively-playing post without any tap
+2. Assert: no controls overlay element exists in the view hierarchy / DOM
+3. Assert: only the media surface is visible","On first render of an actively-playing video/recorded LS on any in-scope surface, with no tap yet, no controls overlay element exists in the view hierarchy / DOM — only the media surface is visible (baseline default state).","P1","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: not yet revealed
+taps: 0","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-020] [Video player] Verify the overlay is never present pre-interaction (baseline default-state guard)","- a video / recorded LS is actively playing on an in-scope surface
+- no tap has occurred yet","1. Render the actively-playing post with no tap
+2. Assert: no controls-overlay element is present in the view hierarchy / DOM before any tap","The controls overlay must NOT be present before any tap — an overlay element rendered pre-interaction is a baseline default-state failure.","P1","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: not yet revealed
+taps: 0","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-021] [Video player] Verify a control interaction resets the 1s idle countdown","- the controls overlay is visible over a playing video / recorded LS
+- the 1s idle countdown is running","1. With the overlay visible over playing media and the 1s countdown running, interact with the scrubber at 800ms
+2. Assert: the countdown restarts — the overlay is still visible past the original 1000ms
+3. Take no further action; Assert: the overlay auto-dismisses 1000ms after the LAST interaction
+4. Assert: playback continues throughout","A control interaction at 800ms restarts the 1s idle countdown — the overlay stays visible through the interaction and auto-dismisses only 1000ms after the LAST interaction; playback continues throughout.","P2","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: visible
+control: scrubber
+interaction_at_ms: 800
+idle_timer_ms: 1000
+clock: fake-timers / Playwright clock","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-022] [Video player] Verify the countdown never ignores a later interaction (must not dismiss on first reveal)","- the controls overlay is visible over a playing video / recorded LS
+- the 1s idle countdown is running","1. Reveal the overlay, then interact with a control (scrubber) at 800ms
+2. Advance the clock to 1000ms after the FIRST reveal
+3. Assert: the overlay is still visible — the timer restarted on the interaction and did NOT dismiss 1000ms after the first reveal","If the overlay dismisses 1000ms after the FIRST reveal — ignoring the later interaction — the countdown-reset failed; the timer must restart on every control interaction, so repeated interactions each less than 1s apart never dismiss the overlay while the user is still interacting (TC-UC1a-02d).","P2","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: visible
+control: scrubber
+interaction_at_ms: 800
+idle_timer_ms: 1000
+clock: fake-timers / Playwright clock","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-023] [Video player] Verify pause tap wins the race against the auto-dismiss timer","- the controls overlay is visible over a playing video / recorded LS
+- the 1s idle auto-dismiss timer is about to fire (t approx 999ms)","1. Dispatch a central pause-button tap at ~999ms — the instant the auto-dismiss would fire (fake-timer race)
+2. Assert: the explicit pause WINS — video.paused becomes true
+3. Assert: the PLAY icon is shown and persists (not swallowed by the expiring timer)
+4. Assert: the overlay dismisses only on a subsequent tap-outside, not from the fired timer","When the central pause tap lands at ~999ms as the 1s auto-dismiss is about to fire, the explicit pause wins: the media pauses, the play icon shows and persists (not swallowed by the expiring timer), and the overlay dismisses only on a subsequent tap-outside.","P2","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: visible
+pause_tap_at_ms: 999
+idle_timer_ms: 1000
+timing: fake-timer race","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-024] [Video player] Verify the expiring 1s timer never swallows the pause","- the controls overlay is visible over a playing video / recorded LS
+- the 1s idle auto-dismiss timer is about to fire (t approx 999ms)","1. Dispatch the central pause tap at ~999ms as the 1s timer fires (fake-timer race)
+2. Assert: the overlay does NOT auto-dismiss discarding the pause — the paused / play-icon state is retained (video.paused is true) and the media does not stay playing","The expiring 1s timer must not swallow the pause — a race where the overlay auto-dismisses and the paused / play-icon state is lost (or the media stays playing) is the failure mode; a PLAYING overlay would have dismissed on the timer, but once paused the overlay persists (dismisses only via tap-outside).","P2","surface: community feed
+platform: mobile (iOS)
+play_state: playing
+overlay: visible
+pause_tap_at_ms: 999
+idle_timer_ms: 1000
+timing: fake-timer race","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-025] [Video player] Verify tap during buffering reveals the real state, never a false playing icon","- the media is buffering (not yet playing)
+- buffering is forced via network throttle / route delay or a state mock","1. Force buffering via network throttle / route delay, then tap the player surface
+2. Assert: the controls overlay is visible
+3. Assert: the central button reflects the REAL state (loading/paused) — NOT a false 'playing' pause-icon
+4. Assert: no crash and no frozen overlay
+5. Release the throttle; Assert: once playback starts the icon updates to the playing state","Tapping the player surface while buffering reveals the overlay with the central button reflecting the real state (loading/paused) — never a false 'playing' pause-icon — with no crash and no frozen overlay; once playback starts the icon updates to the playing state.","P2","surface: community feed
+platform: mobile (iOS)
+play_state: buffering
+buffering_source: network throttle / route delay","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-026] [Video player] Verify a mid-playback stall surfaces a loading state (never a silent frozen frame)","- the media was playing, then the network stalls mid-playback
+- the stall is injected via network manipulation (mock preferred — flake risk)","1. Start playback, then inject a mid-playback network stall (mock preferred — flake risk)
+2. Assert: an explicit loading/stall state is surfaced — the viewer is not left on a silent frozen frame (BR-15)","[AI-INFERRED] A mid-playback stall (was playing, then the network stalls) must surface an explicit loading/stall state — the viewer is never left on a silent frozen frame (BR-15). Extends AC-10's initial-buffer case to a mid-play stall per BR-15 'any interruption' (TC-UC1a-08c); inject via network manipulation — flake risk, mock preferred.","P2","surface: community feed
+platform: mobile (iOS)
+play_state: playing -> stalled
+buffering_source: mid-play network stall (mock preferred)","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-027] [Video player] Verify the central button never shows a false playing icon while buffering","- the media is buffering (not yet playing)
+- buffering is forced via network throttle / route delay or a state mock","1. Force buffering, then tap the player surface
+2. Assert: the central button never shows a 'playing' pause-icon while buffering — it reflects the real (loading/paused) state","The central button must never show a false 'playing' pause-icon while the media is buffering — it must reflect the real (loading/paused) state.","P2","surface: community feed
+platform: mobile (iOS)
+play_state: buffering
+buffering_source: network throttle / route delay","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-028] [Video player] Verify backgrounding while playing OS-pauses and dismisses the playing overlay on foreground","- iOS
+- the controls overlay is visible while the media is PLAYING
+- the app is backgrounded
+- wall-clock time > 1s passes while backgrounded","1. Background the app with a playing overlay visible
+2. Wait > 1s (wall clock)
+3. Return the app to the foreground
+4. Assert: the OS paused the media on background and does NOT auto-resume (video.paused is true)
+5. Assert: the playing overlay is dismissed (its wall-clock 1s idle timer elapsed while backgrounded)
+6. Assert: no stale mid-countdown overlay is shown","On returning to the foreground after backgrounding while PLAYING, the OS-paused media does not auto-resume and the playing overlay is dismissed (its wall-clock 1s idle timer elapsed while backgrounded); there is no stale mid-countdown overlay.","P2","surface: community feed
+platform: iOS
+play_state: playing
+overlay: visible
+background_wait: > 1s (wall clock)","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-029] [Video player] Verify the media never silently auto-resumes on foreground (playing branch)","- iOS
+- the controls overlay was visible while the media was PLAYING
+- the app was backgrounded > 1s","1. Background while playing, wait > 1s, return the app to the foreground
+2. Assert: video.paused stays true — no silent auto-resume (the OS pause is terminal, BR-10)
+3. Assert: no stale mid-countdown overlay is left frozen on screen","The media must not silently auto-resume on foreground — the OS pause is a terminal action, not an implicit app toggle (BR-10); and no stale mid-countdown overlay may be left frozen on screen.","P2","surface: community feed
+platform: iOS
+play_state: playing
+overlay: visible
+background_wait: > 1s (wall clock)","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-030] [Video player] Verify backgrounding while paused keeps it paused and persists the paused overlay on foreground","- iOS
+- the controls overlay is visible while the media is PAUSED
+- the app is backgrounded
+- the user then returns the app to the foreground","1. Background the app with a paused overlay visible
+2. Return the app to the foreground
+3. Assert: the media stays paused (video.paused is true; no auto-resume)
+4. Assert: the paused overlay persists (no idle timer to elapse)
+5. Assert: no stale mid-countdown overlay is shown","On returning to the foreground after backgrounding while PAUSED, the media stays paused (no auto-resume) and the paused overlay persists (the paused branch has no idle timer to elapse); there is no stale mid-countdown overlay.","P2","surface: community feed
+platform: iOS
+play_state: paused
+overlay: visible","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1a","[EC-UC1a-031] [Video player] Verify the paused overlay never vanishes and never auto-resumes on foreground (paused branch)","- iOS
+- the controls overlay was visible while the media was PAUSED
+- the app was backgrounded and then foregrounded","1. Background while paused, return the app to the foreground
+2. Assert: video.paused stays true — no auto-resume
+3. Assert: the paused overlay is still present (did not vanish) and no stale mid-countdown overlay is shown","The media must not auto-resume and the paused overlay must not vanish on foreground — the paused branch has no idle timer and the OS pause is terminal (BR-11 + BR-10); no stale mid-countdown overlay.","P2","surface: community feed
+platform: iOS
+play_state: paused
+overlay: visible","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1b","[EC-UC1b-001] [Live player] Verify first tap on a playing Live stream reveals controls without pausing (mobile)","- a 'Live' stream is playing on a mobile surface
+- the controls overlay is hidden","1. Play a Live stream on mobile with the overlay hidden
+2. Tap anywhere on the player surface
+3. Assert: the controls overlay appears
+4. Assert: video.paused === false (still playing)
+5. Assert: the central button shows the pause icon","On mobile, the first tap reveals the controls overlay while the Live stream keeps playing (video.paused===false) and the central button shows the pause icon — the tap does not toggle playback.","P1","surface: mobile
+play_state: playing
+tap: first","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-002] [Live player] Verify first tap never pauses the Live stream (accidental-interrupt guard)","- a 'Live' stream is playing on mobile
+- overlay hidden","1. Play a Live stream on mobile
+2. Tap the player surface once
+3. Assert: playback state stays playing (no pause)","The first tap must NOT pause the stream — a reveal that also toggles playback is the accidental-interrupt regression this story exists to prevent.","P1","surface: mobile
+play_state: playing
+tap: first","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-003] [Live player] Verify first tap actually reveals the overlay (no-op is a failure)","- a 'Live' stream is playing on mobile
+- overlay hidden","1. Play a Live stream on mobile
+2. Tap the player surface once
+3. Assert: the controls overlay is now visible","The overlay must actually appear — a first tap that neither reveals nor pauses (a no-op) is a failure.","P1","surface: mobile
+play_state: playing
+tap: first","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-004] [Live player] Verify tap-outside the button dismisses the overlay and keeps playing","- the controls overlay is visible
+- the 'Live' stream is playing","1. With the overlay visible and playing, tap outside the 64x64px central button
+2. Assert: the overlay dismisses
+3. Assert: playback continues (still playing)","Tapping outside the 64x64px central button dismisses the overlay while the Live stream keeps playing — the dismiss is not an implicit pause.","P1","play_state: playing
+tap_target: outside the 64x64px central button","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-005] [Live player] Verify tap-outside never pauses the stream","- overlay visible
+- 'Live' stream playing","1. Tap outside the central button
+2. Assert: playback state does NOT change to paused","A tap-outside that transitions playing → paused is a failure — dismissing the overlay must never pause the stream (BR-10).","P1","play_state: playing
+tap_target: outside button","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-006] [Live player] Verify the overlay auto-dismisses after 1s of no interaction while playing","- the controls overlay is visible
+- the 'Live' stream is playing","1. Reveal the overlay while playing
+2. Wait 999ms — assert: overlay still visible
+3. Wait to 1000ms with no interaction
+4. Assert: the overlay auto-dismisses and playback continues","After exactly 1s (1000ms) of no interaction while playing, the overlay auto-dismisses and playback continues; at 999ms it is still visible.","P1","play_state: playing
+idle_ms: 1000","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-007] [Live player] Verify the overlay is still visible at 999ms (lower boundary)","- overlay visible
+- playing","1. Reveal the overlay
+2. Wait 999ms with no interaction
+3. Assert: the overlay is still visible","At 999ms (just before the 1s boundary) the overlay must still be visible — dismissing before 1s is a boundary failure.","P1","play_state: playing
+idle_ms: 999","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-008] [Live player] Verify the overlay dismisses at 1000ms, not 3000ms (web 3s→1s regression guard)","- overlay visible
+- playing
+- web","1. Reveal the overlay on web
+2. Wait past 1000ms with no interaction
+3. Assert: the overlay has dismissed by 1000ms (NOT still visible until 3000ms)","The overlay must dismiss at 1000ms, not 3000ms — web currently uses a 3s timer (VideoPlayerControls.tsx:60-70); any dismiss later than 1s fails the regression guard.","P1","play_state: playing
+idle_ms: 1000
+legacy_ms: 3000","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-009] [Live player] Verify pause on a Live stream — play icon persists, no seek, overlay persists, tap-outside stays paused","- a 'Live' stream is playing
+- the controls overlay is visible","1. Tap the central pause button
+2. Assert: playback pauses and the play icon persists
+3. Assert: no ±10s seek buttons are shown
+4. Wait >1s — assert: the paused overlay persists
+5. Tap outside the button — assert: overlay dismisses and stream stays paused","On a Live stream the central pause tap pauses playback and the play icon persists; the ±10s seek buttons are never shown; while paused the overlay persists past 1s; a tap-outside dismisses it and the stream stays paused (resume-to-live is UC2).","P1","stream_type: Live
+play_state: playing","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-010] [Live player] Verify a recorded/video stream DOES show the ±10s buttons (contrast)","- the controls overlay is visible","1. Mock: SDK stream type = recorded / video
+2. Reveal the overlay
+3. Assert: the ±10s skip buttons ARE present","Contrast: on a recorded / video stream the ±10s skip buttons ARE present — proving the seek gate is stream-type driven, not always-off (TC-UC1b-01c).","P2","stream_type: recorded","wait for automated","QA (manual until automated)"
+"PDT-3418/UC1b","[EC-UC1b-011] [Live player] Verify the paused overlay does NOT auto-dismiss on the 1s idle timer","- a 'Live' stream is paused
+- overlay visible","1. Pause the Live stream
+2. Wait >1s with no interaction
+3. Assert: the paused overlay is still visible (did NOT auto-dismiss)","The paused overlay must NOT auto-dismiss on the 1s idle timer — a paused overlay that vanishes after 1s is a BR-11 failure.","P1","stream_type: Live
+play_state: paused
+idle_ms: 1000","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-012] [Live player] Verify tap-outside while paused never resumes the stream","- a 'Live' stream is paused
+- overlay visible","1. With the Live stream paused, tap outside the central button
+2. Assert: the overlay dismisses AND the stream stays paused (no resume)","A tap-outside while paused must never resume the stream — resume is out of scope here (UC2).","P1","stream_type: Live
+play_state: paused
+tap_target: outside button","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-013] [Live player] Verify reveal/dismiss/auto-dismiss/pause are identical across surfaces","- a 'Live' stream renders on an in-scope surface","1. Run reveal, tap-outside-dismiss, 1s auto-dismiss, and pause on the inline-feed surface
+2. Repeat on the fullscreen/gallery surface
+3. Assert: the outcomes are identical across both surfaces","The reveal / tap-outside-dismiss / 1s auto-dismiss / pause behaviours produce identical outcomes on the inline-feed and fullscreen/gallery surfaces (surface-invariant).","P2","surfaces: inline-feed, fullscreen/gallery","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-014] [Live player] Verify a per-surface behaviour difference is a surface-invariance break","- a 'Live' stream renders on ≥2 in-scope surfaces","1. Compare reveal/dismiss/auto-dismiss/pause outcomes across surfaces
+2. Assert: no surface produces a different outcome","Any surface producing a DIFFERENT reveal, dismiss, auto-dismiss, or pause outcome than another in-scope surface is a surface-invariance break (BR-06 violation).","P2","surfaces: inline-feed, fullscreen/gallery","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-015] [Live player] Verify baseline — no overlay before any tap, LIVE badge + viewer count visible","- an actively-playing 'Live' post
+- no tap has occurred","1. Render an actively-playing Live post without tapping
+2. Assert: no controls overlay is present
+3. Assert: the live video surface, the LIVE badge, and the viewer count are visible","On first render of an actively-playing Live post with no tap, no controls overlay is present — only the live video surface, the standing LIVE badge, and the viewer count are visible (baseline S0).","P1","stream_type: Live
+room_status: live
+tap: none","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-016] [Live player] Verify no overlay is rendered before any interaction","- an actively-playing 'Live' post
+- no tap","1. Render the Live post without tapping
+2. Assert: the controls overlay is absent from the DOM/tree","The controls overlay must NOT be present before any tap — an overlay rendered pre-interaction is a baseline-state failure.","P1","stream_type: Live
+tap: none","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-017] [Live player] Verify a control interaction restarts the 1s auto-dismiss countdown","- the controls overlay is visible
+- the 'Live' stream is playing","1. Reveal the overlay
+2. Interact with a control at 800ms
+3. Assert: the overlay is still visible past the original 1000ms
+4. Assert: it auto-dismisses only 1000ms after the interaction","A control interaction at 800ms restarts the 1s countdown — the overlay stays visible past the original 1000ms and auto-dismisses only 1000ms after the last interaction.","P2","play_state: playing
+interaction_at_ms: 800","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-018] [Live player] Verify the countdown does not ignore a later interaction","- overlay visible
+- playing
+- an interaction occurred after the reveal","1. Reveal the overlay, interact at 800ms
+2. Assert: the overlay does NOT dismiss at 1000ms-after-reveal (the timer restarted on the interaction)","If the overlay dismisses 1000ms after the FIRST reveal (ignoring the later interaction) the countdown-reset failed — the timer must restart on every control interaction.","P2","play_state: playing
+interaction_at_ms: 800","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-019] [Live player] Verify a pause tap at the auto-dismiss instant — pause wins","- overlay visible
+- playing
+- the 1s idle timer is about to fire","1. Let the 1s idle timer reach the firing instant
+2. Tap the central pause button at that exact instant
+3. Assert: state becomes paused, the play icon persists, and the overlay is not swallowed by the expiring timer
+4. Assert: the overlay dismisses only on a later tap-outside","When the pause tap lands at the exact instant the 1s auto-dismiss fires, the explicit pause wins: state becomes paused, the play icon persists, and the overlay is not swallowed by the expiring timer — it dismisses only on a later tap-outside.","P2","play_state: playing
+race: pause tap at t=1000ms","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-020] [Live player] Verify the expiring timer does not swallow the pause","- overlay visible
+- playing
+- timer about to fire","1. Fire the pause tap at the auto-dismiss instant
+2. Assert: the overlay does not auto-dismiss losing the paused/play-icon state, and the stream does not stay playing","The expiring timer must not swallow the pause — a race where the overlay auto-dismisses and the paused / play-icon state is lost (or the stream stays playing) is the failure mode.","P2","play_state: playing
+race: pause tap at t=1000ms","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-021] [Live player] Verify tap during buffering reveals the overlay with the real state (no false play icon)","- the 'Live' stream is buffering (not yet playing)","1. Force the Live stream into a buffering state
+2. Tap the player surface
+3. Assert: the overlay appears with the central button reflecting the real buffering state (not a false 'playing' pause-icon)
+4. Assert: no crash and no frozen overlay","Tapping the player while the Live stream is buffering reveals the overlay with the central button reflecting the real buffering state — never a false 'playing' pause-icon — with no crash and no frozen overlay.","P1","player_state: buffering","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-022] [Live player] Verify a mid-play stall surfaces an explicit buffering/Reconnecting state [AI-INFERRED]","- the 'Live' stream was playing, then the network stalls","1. Play the Live stream, then stall the network mid-play
+2. Assert: an explicit buffering / 'Reconnecting' state surfaces (never a silent frozen frame)","[AI-INFERRED] Mid-play stall: an explicit buffering / 'Reconnecting' state must surface — the viewer is never left on a silent frozen frame (BR-15). (paused-reconnect is UC2.)","P1","player_state: playing → stalled","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-023] [Live player] Verify the central button never shows a false 'playing' icon while buffering","- the 'Live' stream is buffering","1. Force buffering
+2. Reveal the overlay
+3. Assert: the central button reflects the buffering/loading state, never a 'playing' pause-icon","The central button must never show a false 'playing' pause-icon while the stream is buffering — the state must reflect reality.","P1","player_state: buffering","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-024] [Live player] Verify backgrounding during an active overlay/timer resolves to the OS-default state","- the controls overlay is visible
+- the app is backgrounded for >1s","1. Reveal the overlay/timer, then background the app for >1s
+2. Return to foreground
+3. Assert: a well-defined state via the OS default — no stale mid-countdown overlay, no implicit play/pause toggle beyond the OS default","Backgrounding the app for >1s while the overlay/timer is active and returning to foreground yields a well-defined state via the OS default — no stale mid-countdown overlay and no implicit play/pause toggle beyond the OS default.","P2","background_ms: 2000","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-025] [Live player] Verify no stale overlay or implicit toggle after foreground","- overlay active
+- app backgrounded then foregrounded","1. Background with the overlay active, then foreground
+2. Assert: no stale mid-countdown overlay remains and no implicit play/pause toggle beyond the OS default occurred","A stale mid-countdown overlay left on screen after foreground, or an implicit play/pause toggle beyond the OS default, is the failure mode.","P2","background_ms: 2000","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC1b","[EC-UC1b-026] [Live player] Observe Live foreground snap-to-live (UC2 behaviour — do NOT assert)","- a 'Live' stream
+- app backgrounded then foregrounded","1. Background then foreground a Live stream
+2. Observe whether playback snaps toward the live edge
+3. Record the observation — do NOT assert (this is UC2's behaviour)","OBSERVE/RECORD ONLY — Live foreground snap-to-live is UC2's behaviour; observed here, never asserted.","P2","background_ms: 2000
+scope_note: UC2","cannot automated","QA (manual — observe-only)"
+"PDT-3418/UC2","[EC-UC2-001] [Live player] Verify pausing shows the ▶ overlay, keeps chat live, and tap-outside dismisses without seeking (paused at live edge)","- watching a live stream at the live edge (room.status = live)
+- (mobile) controls overlay revealed per UC1 / (desktop) direct-tap pause available","1. Watch a live stream at the live edge (room.status = live) with the controls overlay revealed
+2. Pause via the central pause button
+3. Assert: the central ▶ button overlay is shown as the pause indicator (no separate badge/banner)
+4. Assert: chat keeps receiving new messages in real time
+5. Tap outside the play button
+6. Assert: the overlay dismisses and the stream stays paused (position unchanged, no seek)","Pausing shows the central ▶ overlay as the pause indicator, chat keeps running live, and tapping outside the play button dismisses the overlay while the stream stays paused.","P1","room_status: live
+position: live edge
+play_state: playing → paused
+chat: receiving live messages","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-002] [Live player] Verify the pause overlay shows no ±10s seek controls (Live stream)","- watching a live stream at the live edge (room.status = live)","1. Pause a live stream (room.status = live) at the live edge
+2. Assert: the pause overlay shows NO ±10s seek controls","The Live pause overlay shows NO ±10s seek controls (seeking is not applicable to a Live stream — BR-01).","P1","room_status: live
+stream_type: Live
+play_state: paused","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-003] [Live player] Verify tapping ON the play button resumes playback (not the tap-outside dismiss)","- a paused live stream with the ▶ overlay visible (room.status = live)","1. Pause a live stream and reveal the ▶ overlay
+2. Tap ON the play button
+3. Assert: playback resumes (distinct from the tap-outside dismiss)","Tapping ON the play button resumes playback (distinct from the tap-outside dismiss).","P1","room_status: live
+play_state: paused
+gesture: tap ON play button","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-004] [Live player] Verify the ▶ overlay is the only pause indicator (no separate badge/banner)","- a paused live stream (room.status = live)","1. Pause a live stream at the live edge
+2. Assert: no separate badge/banner is rendered — the ▶ overlay is the only pause-state indicator","There is no separate badge/banner — the ▶ overlay is the only pause-state indicator.","P1","room_status: live
+play_state: paused
+badge_banner: none expected","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-005] [Live player] Verify resume seeks to ≈ the live edge within tolerance, dismisses the overlay, and keeps chat uninterrupted (paused live stream)","- the user has paused a live stream (chat kept running during the pause)","1. Pause a live stream at the live edge (chat kept running during the pause, paused ~0:30 behind live)
+2. Resume via the play button
+3. Assert: playback seeks to ≈ the current live edge within tolerance (a few seconds behind live is OK) — NOT exact-live and NOT the paused offset
+4. Assert: the ▶ overlay dismisses
+5. Assert: chat is uninterrupted (no missed/replayed messages)","Resuming seeks to the current live edge (≈ live within normal buffering tolerance, never the paused position); the ▶ overlay dismisses and chat is uninterrupted.","P1","room_status: live
+play_state: paused → playing
+paused_offset: ~0:30 behind live
+resume_target: ≈ live within tolerance","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-006] [Live player] Verify resume never returns to the previous paused offset (paused live stream)","- the user has paused a live stream (chat kept running during the pause)","1. Pause a live stream so the paused offset is ~0:30 behind live
+2. Resume via the play button
+3. Assert: playback does NOT resume from the previous paused offset","Playback never resumes from the previous paused offset.","P1","room_status: live
+paused_offset: ~0:30 behind live
+play_state: paused → playing","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-007] [Live player] Verify the resume target is near-live within tolerance, not exact-live (CONF-07)","- the user has paused a live stream (chat kept running during the pause)","1. Pause then resume a live stream
+2. Assert: the resume target is near live within tolerance — a few seconds behind live is expected, NOT exact-live (CONF-07)","The resume target is asserted as 'near live within tolerance' — a few seconds behind live is expected, not exact-live (CONF-07).","P1","room_status: live
+resume_target: ≈ live within tolerance
+tolerance: a few seconds behind live
+exact_live: False","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-008] [Live player] Verify a room ending during a pause leaves paused for the ended state with no frozen frame (terminal wins)","- the user has paused a live stream (room.status = live)","1. Pause a live stream (room.status = live)
+2. Mock: flip SDK room.status live → ended during the pause
+3. Assert: the player leaves the paused state and shows the ended state (terminal wins)
+4. Assert: the viewer is not left on a frozen frame (explicit ended feedback)","When the room transitions to ended/recorded during a pause, the player leaves paused and shows the terminal state — the terminal state always wins over paused, and the viewer is never left on a frozen frame.","P1","room_status: live → ended
+play_state: paused
+trigger: SDK room.status flip during pause","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-009] [Live player] Verify a not-yet-ready recording shows 'Livestream ended' with no processing state (recording not ready)","- the user has paused a live stream","1. Pause a live stream, then flip room.status to ended with the recording not yet ready
+2. Assert: 'Livestream ended' is shown, with NO intermediate 'processing' state","Recording not yet ready → 'Livestream ended' is shown, with NO intermediate 'processing' state.","P1","room_status: live → ended
+recording_status: not ready
+play_state: paused","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-010] [Live player] Verify a room that becomes recorded shows the recorded/VOD state (room recorded)","- the user has paused a live stream","1. Pause a live stream, then flip room.status to recorded
+2. Assert: the player shows the recorded/VOD state","Room becomes recorded → the player shows the recorded/VOD state.","P1","room_status: live → recorded
+play_state: paused","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-011] [Live player] Verify a simultaneous pause + host-end race resolves to ended (terminal wins, staged manually)","- watching a live stream (room.status = live)","1. Stage a simultaneous pause + host-end (host ends the room at the same instant the user pauses)
+2. Assert: the race resolves to the ended state (terminal wins over paused)","A simultaneous pause + host-end race resolves to ended (terminal wins) — staged manually (TC-UC2-07c).","P1","room_status: live → ended
+play_state: pausing
+race: pause + host-end at the same instant
+staging: manual (TC-UC2-07c)","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-012] [Live player] Verify the default live-edge state shows no pause indicator with LIVE badge, viewer count, and live chat intact (before any pause)","- a live stream (room.status = live) is playing at the live edge
+- the viewer has not yet paused","1. Render the live player at the live edge (room.status = live) without pausing
+2. Assert: no ▶ pause indicator is present
+3. Assert: the LIVE badge + viewer count render as-is; chat is live","Before any pause, no pause indicator is shown; the LIVE badge and viewer count render as-is (unaffected by this feature) and chat is live.","P1","room_status: live
+position: live edge
+play_state: playing
+paused: False","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-013] [Live player] Verify mobile web offers no pause control on a Live stream (web-mobile)","- a viewer on mobile web watching a Live stream (room.status = live)","1. Render the Live player in a mobile-web viewport (room.status = live)
+2. Assert: no pause control is offered (no pause affordance in the player chrome)","On mobile web, a live stream offers no pause control — pause/resume of an active Live stream is not available on web-mobile (standing platform boundary, not a bug).","P1","room_status: live
+viewport: web-mobile
+pause_control: absent","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-014] [Live player] Verify web-desktop presents the pause control (web-desktop, 1-step pause)","- a viewer on web-desktop watching a Live stream (room.status = live)","1. Render the Live player in a web-desktop viewport
+2. Assert: the pause control IS present (single-tap 1-step pause)","On web-desktop the pause control IS present (1-step pause).","P1","room_status: live
+viewport: web-desktop
+pause_control: present
+pause_steps: 1-step","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-015] [Live player] Verify iOS / Android present the pause control (2-step reveal-then-pause)","- a viewer on iOS / Android (UIKit) watching a Live stream (room.status = live)","1. Open the Live player on iOS / Android (UIKit)
+2. Tap once to reveal controls, then tap the central button to pause
+3. Assert: the pause control IS present (2-step reveal-then-pause)","On iOS / Android the pause control IS present (2-step reveal-then-pause).","P1","room_status: live
+platform: iOS / Android (UIKit)
+pause_control: present
+pause_steps: 2-step reveal-then-pause","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-016] [Live player] Verify a multi-minute pause still resumes to ≈ the live moment within tolerance (long pause)","- the user paused a live stream for an extended period (minutes)","1. Pause for several minutes on a real broadcast (room.status = live)
+2. Resume via the play button
+3. Assert: playback snaps to ≈ the current live moment within tolerance (NOT the paused position, NOT exact-live); a brief buffering/loading state is acceptable","After a long pause, resuming snaps to the current live moment regardless of the jump size — a brief buffering/loading state is acceptable while it catches up.","P2","room_status: live
+pause_duration: several minutes
+play_state: paused → playing
+resume_target: ≈ live within tolerance","cannot automated","QA (manual — wallclock-duration)"
+"PDT-3418/UC2","[EC-UC2-017] [Live player] Verify jump size does not change the resume-to-live guarantee (long pause, large jump)","- the user paused a live stream for an extended period (minutes)","1. Pause for a long period so the jump back to live is large, then resume
+2. Assert: the size of the jump does not change the guarantee — playback never resumes from the paused position","The size of the jump does not change the guarantee — it never resumes from the paused position.","P2","room_status: live
+pause_duration: several minutes (large jump)
+play_state: paused → playing","cannot automated","QA (manual — wallclock-duration)"
+"PDT-3418/UC2","[EC-UC2-018] [Live player] Verify a long-pause resume lands ≈ live within tolerance (further behind still within guarantee)","- the user paused a live stream for an extended period (minutes)","1. Pause for several minutes, then resume
+2. Assert: resume lands ≈ live within tolerance — being further behind live after a long pause is still within the guarantee (NOT exact-live)","Resume lands ≈ live within tolerance (further behind after a long pause is still within the guarantee).","P2","room_status: live
+pause_duration: several minutes
+resume_target: ≈ live within tolerance
+exact_live: False","cannot automated","QA (manual — wallclock-duration)"
+"PDT-3418/UC2","[EC-UC2-019] [Live player] Verify chat and video re-align at the live moment on resume with no replay and no skip (resume after pause)","- the user paused for a while (chat kept running live throughout)","1. Pause for a while with chat running live throughout
+2. Capture chat message ids before resume (e.g. last id = msg_140)
+3. Resume via the play button
+4. Capture chat message ids after resume
+5. Assert: no message is replayed (duplicate) and none is skipped (gap); chat is aligned at the live moment","On resume, chat and video are aligned at the live moment — no chat messages are replayed and none are skipped.","P1","room_status: live
+play_state: paused → playing
+chat_ids_before: [msg_101 … msg_140]
+chat_ids_after: [msg_141 …] (no duplicate, no gap)","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-020] [Live player] Verify before-vs-after message ids show no duplicate and no gap on resume (message id diff)","- the user paused for a while (chat kept running live throughout)","1. Capture chat message ids before resume and after resume
+2. Compare the before vs after id sets
+3. Assert: no duplicate id (replay) and no missing id (gap)","Comparing message ids before vs after resume shows no duplicate (replay) and no gap (skip).","P1","room_status: live
+chat_ids_before: […, msg_140]
+chat_ids_after: [msg_141, …]
+expected_diff: no duplicate id, no missing id","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-021] [Live player] Verify after a long paused window chat is already at the live moment on resume (long pause, continuous chat)","- the user paused for a long window (chat kept running live continuously)","1. Pause for a long window while chat keeps running continuously
+2. Resume via the play button
+3. Assert: on resume chat is already at the live moment and aligns with the video (no backlog replay)","After a long paused window with continuous chat, on resume chat is already at the live moment and aligns with the video.","P1","room_status: live
+pause_duration: long (continuous chat)
+chat_alignment: at live moment on resume
+backlog_replay: False","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-022] [Live player] Verify a network drop while paused shows Reconnecting, stays paused through recover, and resumes to ≈ live (network drop/recover)","- the user has paused a live stream (room.status = live)","1. Pause a live stream (room.status = live)
+2. Mock: drop the network connection while paused
+3. Assert: a 'Reconnecting' indicator (auto-retry, no manual button) is shown — not a no-feedback frozen frame
+4. Mock: recover the network
+5. Assert: the stream stays paused (no auto-resume)
+6. Resume via the play button
+7. Assert: playback snaps to ≈ the current live edge within tolerance (NOT exact-live, NOT the paused offset)","A network drop while paused shows a 'Reconnecting' indicator (auto-retry, no manual button); the stream stays paused through drop→recover (no auto-resume); on user resume it snaps to the current live edge.","P1","room_status: live
+play_state: paused
+network: drop → recover
+reconnecting_indicator: auto-retry, no manual button
+resume_target: ≈ live within tolerance","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-023] [Live player] Verify the stream never auto-resumes on network recover (stays paused until explicit resume)","- the user has paused a live stream (room.status = live)","1. Pause a live stream, drop the network, then recover the network
+2. Assert: the stream stays paused — it never auto-resumes on recover (no implicit toggle) until the user explicitly resumes","The stream never auto-resumes on network recover — it stays paused until the user explicitly resumes (no implicit toggle).","P1","room_status: live
+play_state: paused
+network: drop → recover
+auto_resume: False","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-024] [Live player] Verify iOS shows the Reconnecting scrim even while paused (iOS NWPathMonitor)","- a viewer on iOS has paused a live stream (room.status = live)","1. On iOS, pause a live stream, then drop the device network (NWPathMonitor)
+2. Assert: the 'Reconnecting' scrim shows even while paused","(iOS) the 'Reconnecting' scrim shows even while paused (device network via NWPathMonitor).","P1","room_status: live
+platform: iOS
+play_state: paused
+network: device drop via NWPathMonitor","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC2","[EC-UC2-025] [Live player] Verify web shows no overlay on a plain paused-video drop, only on broadcaster waitingReconnect (web)","- a viewer on web has paused a live stream (room.status = live)","1. On web, pause a live stream and drop the local paused-video network
+2. Assert: a plain paused-video drop shows no overlay
+3. Mock: set SDK room.status = 'waitingReconnect' (broadcaster drop)
+4. Assert: only the broadcaster-drop 'waitingReconnect' surfaces the reconnecting overlay","(web) a plain paused-video drop shows no overlay; only SDK room.status = 'waitingReconnect' (broadcaster drop) surfaces it.","P1","room_status: live → waitingReconnect
+platform: web
+play_state: paused
+network: plain paused-video drop","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC3","[EC-UC3-001] [Video player] Verify skip-back at 1:00 while playing jumps to 0:50 and continues","- a video / recorded LS is playing
+- the controls overlay is visible
+- position = 1:00","1. Play the video to 1:00 with the overlay visible
+2. Tap the skip-back (−10s) button
+3. Assert: position is exactly 0:50
+4. Assert: playback continues (state = playing)","Playback jumps back exactly 10 seconds (1:00 → 0:50) and continues playing.","P1","position: 1:00
+play_state: playing
+direction: back","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-002] [Video player] Verify skip-back moves exactly 10s (not 9 or 11)","- a video / recorded LS is playing
+- position = 0:30","1. Play to 0:30
+2. Tap skip-back
+3. Assert: position is exactly 0:20 — not 0:19 or 0:21","The skip moves by exactly 10s — not 9 or 11 (off-by-one guard).","P1","position: 0:30
+play_state: playing
+direction: back","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-003] [Video player] Verify skip-forward at 1:00 while playing jumps to 1:10 and continues","- a video / recorded LS is playing
+- the controls overlay is visible
+- position = 1:00 (≥10s from end)","1. Play the video to 1:00
+2. Tap the skip-forward (+10s) button
+3. Assert: position is exactly 1:10
+4. Assert: playback continues (state = playing)","Playback jumps forward exactly 10 seconds (1:00 → 1:10) and continues playing.","P1","position: 1:00
+play_state: playing
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-004] [Video player] Verify skip-forward moves exactly 10s (not 9 or 11)","- a video / recorded LS is playing
+- position = 0:30","1. Play to 0:30
+2. Tap skip-forward
+3. Assert: position is exactly 0:40 — not 0:39 or 0:41","The skip moves by exactly 10s — not 9 or 11 (off-by-one guard).","P1","position: 0:30
+play_state: playing
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-005] [Video player] Verify skip-back at 0:05 while playing clamps to 0:00 and continues","- a video / recorded LS is playing
+- position = 0:05 (<10s from start)","1. Play the video to 0:05
+2. Tap skip-back
+3. Assert: position clamps to 0:00 (never negative)
+4. Assert: playback continues from 0:00 (state = playing)","Position clamps to 0:00 and playback continues (prior PLAYING state preserved — not force-paused).","P1","position: 0:05
+play_state: playing
+direction: back","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-006] [Video player] Verify skip-back at exactly 0:00 stays at 0:00","- a video / recorded LS is playing
+- position = 0:00","1. Position the video at 0:00 while playing
+2. Tap skip-back
+3. Assert: position stays 0:00 (never a negative value)","A skip-back at exactly 0:00 stays at 0:00 — the position never resolves to a negative value.","P1","position: 0:00
+play_state: playing
+direction: back","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-007] [Video player] Verify skip-back at 0:05 while paused clamps to 0:00 and stays paused","- a video / recorded LS is paused
+- position = 0:05 (<10s from start)","1. Pause the video at 0:05
+2. Tap skip-back
+3. Assert: position clamps to 0:00 (never negative)
+4. Assert: media stays paused (state = paused)","Position clamps to 0:00 and the media stays paused (prior PAUSED state preserved — not force-played).","P1","position: 0:05
+play_state: paused
+direction: back","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-008] [Video player] Verify paused skip-back at exactly 0:00 stays at 0:00","- a video / recorded LS is paused
+- position = 0:00","1. Pause the video at 0:00
+2. Tap skip-back
+3. Assert: position stays 0:00 (never a negative value)","A skip-back at exactly 0:00 stays at 0:00 — the position never resolves to a negative value.","P1","position: 0:00
+play_state: paused
+direction: back","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-009] [Video player] Verify skip-forward near the end lands on the final frame in the end state","- a 2:00 video is playing
+- position = 1:55 (within 10s of the end)","1. Play a 2:00 video to 1:55
+2. Tap skip-forward
+3. Assert: position clamps to the final frame (2:00)
+4. Assert: the player is in the end state (paused at the final frame)","Playback jumps to the final frame and enters the end state (paused at the final frame).","P1","duration: 2:00
+position: 1:55
+play_state: playing
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-010] [Video player] Verify skip-forward past the end does not loop to 0:00","- a 2:00 video
+- position = 1:55","1. Play to 1:55
+2. Tap skip-forward
+3. Assert: position does NOT wrap to 0:00","It does not loop back to 0:00.","P1","duration: 2:00
+position: 1:55
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-011] [Video player] Verify skip-forward past the end throws no error","- a 2:00 video
+- position = 1:55","1. Play to 1:55
+2. Tap skip-forward
+3. Assert: no error / crash is raised","It does not throw an error.","P1","duration: 2:00
+position: 1:55
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-012] [Video player] Verify skip while paused updates position and stays paused","- the video is paused
+- the controls overlay is visible
+- position = 1:00","1. Pause the video at 1:00
+2. Tap skip-forward
+3. Assert: position updates to 1:10
+4. Assert: media stays paused","The position updates by ±10s and the video remains paused.","P1","position: 1:00
+play_state: paused
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-013] [Video player] Verify skip while paused never auto-resumes playback","- the video is paused
+- position = 1:00","1. Pause the video
+2. Tap skip-back
+3. Assert: state is still paused (no implicit paused → playing transition)","Skip never triggers an implicit paused → playing transition (no auto-resume).","P1","position: 1:00
+play_state: paused
+direction: back","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-014] [Live player] Verify a Live stream shows no in-app skip buttons","- the controls overlay is visible","1. Mock: SDK stream type = Live
+2. Reveal the overlay
+3. Assert: the −10s / +10s buttons are NOT rendered","On an active Live stream the ±10s skip buttons are not shown (seeking not applicable in-app).","P1","stream_type: Live","cannot automated","QA (manual — live-broadcast)"
+"PDT-3418/UC3","[EC-UC3-015] [Video player] Verify a recorded LS shows the skip buttons (contrast)","- the controls overlay is visible","1. Mock: SDK stream type = recorded LS
+2. Reveal the overlay
+3. Assert: the ±10s skip buttons ARE rendered","On a recorded LS the ±10s skip buttons ARE shown.","P2","stream_type: recorded","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-016] [Video player] Verify a video shows the skip buttons (contrast)","- the controls overlay is visible","1. Mock: SDK stream type = video
+2. Reveal the overlay
+3. Assert: the ±10s skip buttons ARE rendered","On a video the ±10s skip buttons ARE shown.","P2","stream_type: video","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-017] [Video player] Verify three quick +10 taps accumulate to 1:30 with a +10 icon each tap","- a video / recorded LS is playing
+- position = 1:00","1. Play to 1:00
+2. Tap skip-forward 3× quickly
+3. Assert: net position is 1:30 (each tap adds 10s)
+4. Assert: the skip icon shows '+10' on every tap","Three quick +10 taps accumulate to 1:30, and the icon shows the per-tap value (+10) each time.","P1","position: 1:00
+taps: 3
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-018] [Video player] Verify three quick −10 taps accumulate to −30s","- a video / recorded LS is playing
+- position = 1:00","1. Play to 1:00
+2. Tap skip-back 3× quickly
+3. Assert: net position is 0:30 (−30s accumulated)","Three quick −10 taps accumulate to −30s.","P1","position: 1:00
+taps: 3
+direction: back","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-019] [Video player] Verify the skip icon never shows the accumulated total","- a video / recorded LS is playing
+- position = 1:00","1. Play to 1:00
+2. Tap skip-forward 3× quickly
+3. Assert: the icon text is '+10' on every tap and never '+30'","The icon never shows the accumulated total (never '+30').","P1","position: 1:00
+taps: 3
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-020] [Video player] Verify a rapid skip-back burst near the start clamps to 0:00 mid-burst","- a video / recorded LS
+- position = 0:15","1. Position at 0:15
+2. Tap skip-back 3× quickly
+3. Assert: position goes 0:05 then clamps to 0:00 mid-burst (never negative)","During a rapid burst near the start, taps accumulate until one would cross 0:00 — that tap clamps to 0:00, never negative, even mid-burst.","P1","position: 0:15
+taps: 3
+direction: back","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-021] [Video player] Verify a rapid skip-forward burst near the end stops at the final frame","- a 2:00 video
+- position = 1:45","1. Position a 2:00 video at 1:45
+2. Tap skip-forward 3× quickly
+3. Assert: position stops at the final frame (2:00) mid-burst and never loops back to 0:00","A rapid burst near the end stops at the final frame mid-burst and never loops back to 0:00.","P1","duration: 2:00
+position: 1:45
+taps: 3
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-022] [Video player] Verify no skip buttons before the overlay is revealed","- a video / recorded LS is loaded
+- the UC1a controls overlay has not been revealed","1. Load the video player without tapping
+2. Assert: no skip buttons are visible","No skip buttons are visible until the controls overlay is revealed.","P2","overlay: hidden","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-023] [Video player] Verify skip buttons appear after the overlay is revealed","- a video / recorded LS is loaded
+- overlay hidden","1. Load the video player
+2. Tap to reveal the controls overlay (UC1a)
+3. Assert: the skip buttons now appear","After revealing the overlay (UC1a) the skip buttons appear (transition guard).","P2","overlay: revealed via UC1a","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-024] [Video player] Verify skip while buffering on mobile seeks and rebuffers at the target","- mobile
+- the video is buffering at the current position","1. Mock: throttle the network to force buffering
+2. Tap a skip button
+3. Assert: the player seeks to the target and rebuffers there (loading shown), then resumes — no stuck spinner, no crash","On mobile, tapping a skip button while buffering seeks to the target and rebuffers there — surfacing loading feedback, never a silent frozen frame.","P1","platform: mobile
+player_state: buffering
+direction: forward","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-025] [Video player] Verify a buffering skip never leaves a frozen frame without feedback","- mobile
+- the video is buffering","1. Force buffering on mobile
+2. Tap a skip button
+3. Assert: an explicit loading state is shown throughout (never a silent frozen frame)","The viewer is never left on a frozen frame with no feedback.","P1","platform: mobile
+player_state: buffering","wait for automated","QA (manual until automated)"
+"PDT-3418/UC3","[EC-UC3-026] [Video player] Verify web buffering shows Reconnecting UI and keeps manual scrub available","- web
+- the video is buffering at the current position","1. Force buffering on web
+2. Assert: the 'Reconnecting' UI is shown
+3. Assert: manual scrub/scroll remains available (no silent frozen frame)","The web player surfaces the 'Reconnecting' UI and keeps manual scrub/scroll available — the viewer is never left on a silent frozen frame (BR-15).","P2","platform: web
+player_state: buffering","cannot automated","QA (manual — web-platform-timing)"
+"PDT-3418/UC3","[EC-UC3-027] [Video player] Observe the ±10s skip result mid-buffer on web (do NOT assert — FU-3)","- web
+- the video is buffering","1. Force buffering on web
+2. Tap a ±10s skip button
+3. Observe and record the outcome (screenshot + notes)","OBSERVE/RECORD ONLY — the exact ±10s-skip result mid-buffer on web is unconfirmed; do NOT assert until Web Engineering closes FU-3.","P2","platform: web
+player_state: buffering
+gesture: ±10s skip tap","cannot automated","QA (manual — observe-only)"

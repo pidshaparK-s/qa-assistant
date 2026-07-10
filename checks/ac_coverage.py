@@ -65,8 +65,11 @@ def build_manifest(stories_dir: Path):
 
 
 def find_analysis(qa_dir: Path, story_key: str):
-    hits = [p for p in qa_dir.glob(f"{story_key}*.md")]
-    return hits[0] if hits else None
+    # rglob: analysis .md may live in a per-UC subfolder (qa/<epic>/uc*/)
+    hits = sorted(qa_dir.rglob(f"{story_key}*.md"))
+    # prefer a file explicitly named *analysis* over sibling .md (test-design, etc.)
+    analysis = [p for p in hits if "analysis" in p.name]
+    return (analysis or hits or [None])[0]
 
 
 def main() -> int:

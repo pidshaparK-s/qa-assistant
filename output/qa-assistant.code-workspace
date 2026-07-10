@@ -8,6 +8,21 @@
 		},
 		{
 			"path": "../../Amity-Social-Cloud-UIKit-Web"
+		},
+		{
+			"path": "../../AmityUIKitIOS"
+		},
+		{
+			"path": "../../Amity-Social-Cloud-UIKit-Android"
+		},
+		{
+			"path": "../../social-plus-uikit-web-sampleapp-playwright"
+		},
+		{
+			"path": "../../social-plus-mobile-native-sampleapp-webdriverio"
+		},
+		{
+			"path": "../../sc-console-playwright"
 		}
 	],
 	"settings": {}
