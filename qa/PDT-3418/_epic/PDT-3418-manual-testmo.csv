@@ -1,0 +1,192 @@
+ID,Key,Name,Folder Path,Description,Preconditions,Steps,Expected Results,Priority,AC Covered,QA Responsibility
+,,[ Reveal controls ] Verify first tap reveals the controls overlay without toggling playback,UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Observe the player before tapping
+2. Tap the center of the screen once","- Before the first tap, no controls overlay is shown
+- The first tap reveals the controls overlay
+- Playback is unaffected — the video keeps playing
+- The first tap is not a no-op and does not pause",P1,"UC1a AC-01, UC1a AC-07",Fai
+,,[ Dismiss overlay ] Verify tapping outside the button dismisses the overlay without pausing,UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Reveal the controls overlay
+2. Tap outside the center button (empty area)","- The controls overlay dismisses
+- The video keeps playing
+- Tapping outside never pauses the video",P2,UC1a AC-02,Fai
+,,[ Auto-dismiss ] Verify the overlay auto-dismisses about 1 second after the last interaction,UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Reveal the controls overlay
+2. Do not touch anything and wait","- The overlay auto-dismisses after about 1 second
+- The overlay does not linger for 3 seconds",P2,UC1a AC-03,Fai
+,,[ Pause ] Verify the center button pauses a recorded video and shows the seek controls,UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Reveal the controls overlay
+2. Tap the center [ play/pause button ]","- The video pauses
+- A [ play icon ] is shown
+- The [ ±10s seek buttons ] are present (recorded content)
+- The paused overlay persists",P1,"UC1a AC-02, UC1a AC-04, UC1b AC-04",Fai
+,,[ Paused state ] Verify the paused overlay persists and tapping outside does not resume,UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Pause the video
+2. Wait about 2 seconds without touching
+3. Tap outside the button","- The paused overlay does not auto-dismiss on the 1s idle timer
+- Tapping outside while paused does not resume playback
+- The video stays paused",P3,UC1a AC-04,Fai
+,,[ Resume ] Verify resuming continues from the exact paused position,UC1a Reveal & pause (recorded video / LS),"Recorded-LS resume position is an open assumption — observe, do not fail the case on it","- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Note the timecode where the video is paused
+2. Tap the [ play button ] to resume","- Playback resumes from the same position
+- The video does not restart from the beginning",P2,UC1a AC-05,Fai
+,,[ Auto-dismiss ] Verify a control interaction resets the 1 second auto-dismiss countdown,UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Reveal the overlay
+2. Wait about half a second, then tap a control once","- The interaction restarts the ~1s countdown
+- The overlay stays visible because there was interaction",P3,UC1a AC-08,Fai
+,,[ Race ] Verify a pause tap wins against the auto-dismiss timer,UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Reveal the overlay
+2. Tap pause exactly as the overlay is about to dismiss","- The pause registers
+- The expiring timer does not swallow the pause",P4,UC1a AC-09,Fai
+,,[ Buffering ] Verify tapping during buffering shows the real loading state,UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The network can be throttled to force buffering","1. Throttle the network or seek to an unloaded point to force buffering
+2. Tap the screen during buffering","- A real loading / buffering state is shown
+- The center button does not show a false [ play icon ]",P3,UC1a AC-10,Fai
+,,[ Backgrounding ] Verify backgrounding pauses playback and does not auto-resume,UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. While playing, send the app to the background
+2. Return to the foreground
+3. Repeat while the video is paused","- Backgrounding while playing pauses via the OS and dismisses the overlay
+- Returning to the foreground does not auto-resume
+- Backgrounding while paused keeps it paused",P4,UC1a AC-11,Fai
+,,"[ Surface parity ] Verify reveal, dismiss, pause and resume behave the same on every surface",UC1a Reveal & pause (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Repeat reveal / dismiss / pause / resume on each surface (feed player, fullscreen)","- Behaviour is identical on every surface
+- No surface diverges",P4,UC1a AC-06,Fai
+,,[ Skip ] Verify the ±10s buttons skip about 10 seconds while playing,UC3 Skip ±10s (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Play to 1:00
+2. Tap the [ −10s button ]
+3. Return to 1:00 and tap the [ +10s button ]","- −10s jumps to about 0:50
+- +10s jumps to about 1:10
+- Each skip moves about 10 seconds",P2,"UC3 AC-01, UC3 AC-02",Fai
+,,[ Skip boundary ] Verify skip-back near the start clamps to 0:00,UC3 Skip ±10s (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Go to about 0:05 and tap [ −10s ]
+2. Go to 0:00 and tap [ −10s ]
+3. Repeat while paused","- Skip-back near the start clamps to 0:00
+- At 0:00 it stays at 0:00
+- The clamp behaves the same while paused",P2,UC3 AC-03,Fai
+,,[ Skip boundary ] Verify skip-forward at the end stops on the final frame without looping,UC3 Skip ±10s (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Play near the end
+2. Tap [ +10s ] past the end","- Playback lands on the final frame
+- It does not loop back to 0:00
+- No error is thrown",P3,UC3 AC-04,Fai
+,,[ Skip while paused ] Verify skipping while paused updates the position and stays paused,UC3 Skip ±10s (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. Pause the video
+2. Tap [ +10s ] / [ −10s ]","- The position moves
+- The video stays paused
+- It does not auto-resume",P3,UC3 AC-05,Fai
+,,[ Skip controls ] Verify the skip buttons appear only after the overlay is revealed,UC3 Skip ±10s (recorded video / LS),,- A recorded video and a recorded live stream (VOD) are available on the target device,"1. Open a [ recorded LS ] and a [ recorded video ]
+2. Check before revealing the overlay, then after","- Recorded LS and recorded video show the skip buttons
+- Before the overlay is revealed there are no skip buttons
+- After revealing the overlay the skip buttons appear",P3,"UC3 AC-06, UC3 AC-09",Fai
+,,[ Rapid skip ] Verify rapid repeated skips accumulate correctly,UC3 Skip ±10s (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The controls overlay is hidden
+- The video is playing","1. At 1:00 tap [ +10s ] quickly three times
+2. Tap [ −10s ] quickly three times
+3. Burst near the start and near the end","- Three +10s taps reach about 1:30
+- Three −10s taps move about −30 seconds
+- The skip icon does not display the accumulated total
+- A burst near the start clamps at 0:00 and near the end stops at the end",P3,"UC3 AC-07, UC3 AC-08",Fai
+,,[ Buffering ] Verify skipping while buffering on mobile seeks and rebuffers,UC3 Skip ±10s (recorded video / LS),,"- A recorded video or recorded live stream (VOD) is open on the target device
+- The network can be throttled to force buffering","1. Force buffering
+2. Tap [ +10s ] / [ −10s ]","- The player seeks and rebuffers
+- No frozen frame is left without an indicator",P3,UC3 AC-10,Fai
+,,[ Buffering ] Verify web buffering shows the reconnecting UI and keeps manual scrub,UC3 Skip ±10s (recorded video / LS),"±10s result mid-buffer on web is an open follow-up (FU-3) — observe, do not assert","- A recorded video or recorded live stream (VOD) is open on the target device
+- The network can be throttled to force buffering","1. On web, force buffering
+2. Tap [ +10s ] / [ −10s ]","- Web shows a [ Reconnecting ] UI
+- Manual scrub stays available",P3,UC3 AC-11,Fai
+,,[ Reveal controls ] Verify first tap on a live stream reveals controls without pausing,UC1b Reveal & pause (live),,- A live stream is broadcasting and open on the target device,"1. Open a live stream that is broadcasting
+2. Observe before tapping ([ LIVE badge ] + viewer count present)
+3. Tap the center once","- Before the first tap, no controls overlay is shown
+- The first tap reveals the controls overlay
+- The live stream keeps playing (no pause, not a no-op)",P2,"UC1b AC-01, UC1b AC-06",Fai
+,,[ Dismiss overlay ] Verify tapping outside dismisses the live overlay without pausing,UC1b Reveal & pause (live),,- A live stream is broadcasting and open on the target device,"1. With the overlay shown on live
+2. Tap outside the button","- The overlay dismisses
+- The live stream keeps playing
+- Tapping outside does not pause",P3,UC1b AC-02,Fai
+,,[ Auto-dismiss ] Verify the live overlay auto-dismisses about 1 second after the last interaction,UC1b Reveal & pause (live),,- A live stream is broadcasting and open on the target device,"1. Reveal the overlay on live
+2. Do not touch and wait","- The overlay dismisses after about 1 second
+- It does not linger for 3 seconds",P3,UC1b AC-03,Fai
+,,[ Pause ] Verify pausing a live stream shows no seek controls and the overlay persists,UC1b Reveal & pause (live),,- A live stream is broadcasting and open on the target device,"1. Tap pause on live
+2. Observe the overlay and buttons
+3. Tap outside the button while paused","- A [ play icon ] persists
+- No [ ±10s seek buttons ] are shown (live content)
+- The paused overlay does not auto-dismiss
+- Tapping outside keeps it paused",P2,UC1b AC-04,Fai
+,,"[ Surface parity ] Verify live reveal, dismiss, auto-dismiss and pause behave the same on every surface",UC1b Reveal & pause (live),,- A live stream is broadcasting and open on the target device,1. Repeat reveal / dismiss / auto-dismiss / pause on each live surface,- Behaviour is identical on every surface,P4,UC1b AC-05,Fai
+,,[ Race ] Verify a pause tap wins against the auto-dismiss timer on live,UC1b Reveal & pause (live),,- A live stream is broadcasting and open on the target device,"1. Reveal the overlay on live
+2. Tap a control to restart the countdown
+3. Tap pause as the overlay is about to dismiss","- The countdown restarts on interaction
+- A pause tap at the dismiss instant wins
+- The expiring timer does not swallow the pause",P4,"UC1b AC-07, UC1b AC-08",Fai
+,,[ Buffering ] Verify live buffering shows the real state and no false play icon,UC1b Reveal & pause (live),,"- A live stream is broadcasting on the target device
+- The network can be throttled to force buffering","1. Force live buffering, then tap the screen
+2. Let a mid-play stall happen","- Tapping during buffering shows the real state
+- A stall surfaces a buffering / [ Reconnecting ] state
+- The center button never shows a false [ play icon ]",P3,UC1b AC-09,Fai
+,,[ Backgrounding ] Verify backgrounding a live stream resolves to the OS-default state,UC1b Reveal & pause (live),,- A live stream is broadcasting and open on the target device,"1. Background the app while the overlay / timer is active
+2. Return to the foreground","- It resolves to the OS-default state
+- No stale overlay or false toggle remains
+- Foreground snap-to-live is observed only (do not assert)",P4,UC1b AC-10,Fai
+,,[ Pause ] Verify pausing a live stream shows the play overlay and keeps chat live,UC2 Pause & resume live,,- A live stream with active chat is broadcasting on the target device,"1. Watch live at the live edge
+2. Observe the default (no pause indicator, [ LIVE badge ], viewer count, chat)
+3. Tap pause
+4. Tap the [ play button ] to resume (not tap-outside)","- Pausing shows the [ ▶ overlay ]
+- Chat stays live while paused
+- No [ ±10s seek ] is shown
+- The ▶ overlay is the only pause indicator
+- Tapping the play button resumes",P1,"UC2 AC-01, UC2 AC-04",Fai
+,,[ Resume ] Verify resuming a paused live stream seeks to about the live edge,UC2 Pause & resume live,,- A live stream is broadcasting and open on the target device,"1. Pause live and hold for a moment
+2. Tap resume","- Resume jumps to about the live edge (within tolerance)
+- It does not return to the paused offset and is not exact-live
+- The overlay dismisses and chat stays continuous",P1,UC2 AC-02,Fai
+,,[ Pause control ] Verify the pause control matches each platform,UC2 Pause & resume live,,- A live stream is broadcasting and open on the target device,"1. Open a live stream on each platform
+2. Look for the pause control","- mobile-web shows no pause control
+- web-desktop offers a 1-step pause
+- iOS and Android use a 2-step pause (reveal then pause)",P2,UC2 AC-05,Fai
+,,[ Stream end ] Verify ending the room during a pause resolves to the ended state,UC2 Pause & resume live,,"- A live stream is broadcasting on the target device
+- A host / second device can end the room","1. Pause live, then have the host end the room
+2. Try: recording not ready / room becomes recorded / pause and end at the same time","- Ending the room while paused enters the ended state with no frozen frame
+- A not-ready recording shows 'Livestream ended' with no processing state
+- A recorded room shows the recorded / VOD state
+- A simultaneous pause + end resolves to ended (terminal wins)",P3,UC2 AC-03,Fai
+,,[ Chat sync ] Verify chat and video realign at the live moment on resume,UC2 Pause & resume live,,- A live stream with active chat is broadcasting on the target device,"1. Keep chat messages flowing during the pause
+2. Resume and watch chat
+3. Note message ids before and after","- Chat and video realign at the live moment with no replay and no skip
+- Message ids show no duplicate and no gap
+- After a long paused window chat is already at the live moment",P2,UC2 AC-07,Fai
+,,[ Network ] Verify a network drop while paused stays paused and does not auto-resume,UC2 Pause & resume live,,"- A live stream is broadcasting on the target device
+- The device network can be toggled on/off","1. Pause live
+2. Cut the network, wait, then restore it","- A drop while paused shows [ Reconnecting ] and stays paused through recovery
+- On recovery it resumes to about the live edge
+- It never auto-resumes when the network returns
+- iOS shows a Reconnecting scrim even while paused; web shows the overlay only on broadcaster waitingReconnect",P3,UC2 AC-08,Fai
+,,[ Long pause ] Verify a multi-minute pause still resumes to about the live edge,UC2 Pause & resume live,,"- A live stream is broadcasting on the target device
+- The test needs several minutes of real elapsed time","1. Pause live for several minutes (try different jump sizes)
+2. Resume","- After many minutes it still resumes to about the live edge within tolerance
+- The jump size does not change the guarantee
+- Being further behind still lands within the guarantee",P4,UC2 AC-06,Fai
+,,[ Live vs recorded ] Verify live has no seek or skip controls unlike recorded,UC2 Pause & resume live,,- Both a live stream (broadcasting) and a recorded video are available on the target device,"1. On live, check the seek / skip buttons
+2. Pause and resume on live and compare the position","- Live shows no [ ±10s seek buttons ] (unlike recorded)
+- Resume on live goes to the live edge, not the paused position
+- Live shows no in-app skip buttons",P3,"UC1a AC-04, UC1a AC-05, UC3 AC-06",Fai
+,,[ Skip controls ] Verify a clip shows no ±10s skip buttons,Edge cases (content type & surface),"Edge case (review 2026-07-12) — clip is a distinct content type, not in the UC1a–3 EC set (no EC backing)",- A clip (short-form vertical video) is open on a mobile device (clips are not supported on web),"1. Open a [ clip ]
+2. Reveal the player controls","- A clip shows no [ ±10s skip buttons ] (a clip is not a seekable video / VOD)
+- Neither skip-forward nor skip-back is present",P3,,Fai
+,,"[ Surface parity ] Verify a Live stream behaves identically whether created in Newsfeed, Community, or Event",Edge cases (content type & surface),Edge case (review 2026-07-12) — the 3 LS-live creation surfaces (Newsfeed/Community/Event) are not in the EC set (no EC backing),"- A Live stream can be created / opened from Newsfeed, from a Community, and from an Event","1. Open a Live stream created in [ Newsfeed ] — reveal, pause, resume
+2. Repeat on a Live stream created in a [ Community ]
+3. Repeat on a Live stream created in an [ Event ]","- Reveal, pause and resume behave identically across Newsfeed, Community, and Event
+- The live player works regardless of where the stream was created
+- No surface-specific difference in pause / resume-to-live",P3,,Fai

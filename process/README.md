@@ -18,7 +18,7 @@ Process **เรียกใช้ (call)** skill ที่ `.claude/skills/` �
 |---|---|---|---|
 | **L1 · BA Requirement Analysis** | `layer-1-ba-requirement-analysis.md` (full) | phase-1-1 … 1-4 | enriched AC + Clarification Register + readiness |
 | **L2 · QA Story Authoring** | `layer-2-qa-story-authoring.md` (draft) | phase-2-1 … 2-6 | Schema 1 (`01-complete-jira-story.json`) → Schema 2 (`02-user-flow.json`) |
-| **L3 · Test Design** | `layer-3-test-design.md` (draft) | phase-3-1, 3-2 | test conditions/cases + automation judgment |
+| **L3 · Test Design** | `layer-3-test-design.md` (draft) | phase-3-1 … 3-6 | test conditions → scenarios → cases → automation plan (3-5) + manual run sheet (3-6) |
 
 Entry points (trigger phrases) ยังอยู่ที่ `.claude/skills/run-analysis/` ซึ่งตอนนี้เป็น **thin dispatcher** ชี้มาที่ doc เหล่านี้.
 
@@ -93,6 +93,7 @@ Process เป็นเจ้าของ artifact store; skill read/write เ�
 | **Scenario Coverage** (L3.5) | หลัง phase-3-3 | ทุก AC → ≥1 scenario · ทุก BR → owns_br 1 ครั้ง (test ครั้งเดียว, กัน over-test) · success + technique-driven alternative[] | exit 1 → หยุด แก้ก่อน |
 | **Test-Case Coverage** (L3.5) | หลัง phase-3-4 | ต่อ scenario: ≥1 success EC + **เป๊ะ N** alternative EC (เกิน=over-test, ขาด=gap) · steps/test_data/expected ไม่ว่าง | exit 1 → หยุด แก้ก่อน |
 | **Automation-Plan Coverage** (L3.6) | หลัง phase-3-5 | ทุก EC มี disposition (bijection, ไม่มีตก) · at_status↔status consistent · Manual มี blocker+reason · Automate มี target (tag=`@`+ec_id) · `live-broadcast`⟹Manual | exit 1 → หยุด แก้ก่อน |
+| **Manual-Case Coverage** (L3.7) | หลัง phase-3-6 | team spec (`*-manual-spec.json`): ยุบ EC แล้วทุก EC ∈ ≥1 `covers[]` (ไม่มีตก) · no phantom · case มี name/steps/expectedResults · priority ∈ P1–P4 · name `[ Category ] Verify …` | exit 1 → หยุด แก้ก่อน |
 
 **Coverage+Content คือหัวใจ:** นับจำนวนอย่างเดียวไม่พอ — UC2 (PDT-3563) มี 3 AC เท่าเดิมแต่ AC-01/02 ถูกเขียนใหม่ 2026-07-06;
 ถ้าเช็คแค่ "3/3" จะ false-pass analysis เก่า. Gate จึงผูก `ac_id` + **content fingerprint**.
@@ -108,6 +109,7 @@ Process เป็นเจ้าของ artifact store; skill read/write เ�
 | `checks/scenario_coverage.py qa/<epic>` | L3.5 | `*-scenarios.json`: ทุก AC → ≥1 scenario · ทุก BR → owns_br 1 ครั้ง · success + alternative[] · no phantom ref |
 | `checks/test_case_coverage.py qa/<epic>` | L3.5 | `*-test-cases.json`: ต่อ SC มี ≥1 success EC + **เป๊ะ N** alternative EC (N=len(alternative[])) · alt_index ครบ · ref resolve |
 | `checks/automation_plan_coverage.py qa/<epic>` | L3.6 | `*-automation-plan.json`: ทุก EC มี disposition (bijection) · at_status↔status · Manual→blocker+reason · Automate→target tag=`@`+ec_id · `live-broadcast`⟹Manual |
+| `checks/manual_runsheet_coverage.py qa/<epic>` | L3.7 | `*-manual-spec.json` (team convention): ทุก EC ∈ ≥1 cases[].covers[] (ยุบแล้วไม่ตก) · no phantom · priority P1–P4 · name `[ Category ] Verify …` · `acs[]` ตรง AC ที่ derive จาก covers (AC_MISMATCH) |
 
 > ทั้ง 3 เป็น stdlib-only, deterministic, no network — run มือก่อน handoff/commit. schema1_integrity + schema_trace codify script ที่จับ error จริงตอนรัน PDT-3418 (ก่อนหน้านี้เป็น ad-hoc ที่ไม่ได้ commit)
 
