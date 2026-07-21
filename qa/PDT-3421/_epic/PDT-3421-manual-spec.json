@@ -1,6 +1,6 @@
 {
   "_schema": "qa-manual-spec-v1",
-  "_note": "sc-console-playwright manual-test-case convention. Combined suite for Event-Creation Notifications: Tray (PDT-3421 UC1 / PDT-3675, 5 AC) + Push (PDT-3420 UC1 console / PDT-3676, 3 AC + UC2 member / PDT-3677, 5 AC) = 13 AC. Direct-to-manual (no formal EC pipeline this pass), so covers[] is empty (manual-only) and acs[] carries the coverage guarantee — every one of the 13 AC appears in >=1 case. Console section expanded 3->8 from user's manual list (incl. message-template editor beyond PDT-3676 AC). Known bugs (BUG-B1/B2/C/D/E) are folded in as must-catch expectedResults.",
+  "_note": "sc-console-playwright manual-test-case convention. Combined suite for Event-Creation Notifications: Tray (PDT-3421 UC1 / PDT-3675, 5 AC) + Push (PDT-3420 UC1 console / PDT-3676, 3 AC + UC2 member / PDT-3677, 5 AC) = 13 AC. Direct-to-manual (no formal EC pipeline this pass), so covers[] is empty (manual-only) and acs[] carries the coverage guarantee — every one of the 13 AC appears in >=1 case. Console section expanded 3->8 from user's manual list (incl. message-template editor beyond PDT-3676 AC). Known bugs (BUG-B1/B2/C/D/E) are folded in as must-catch expectedResults. [ Backfill & old format ] REMOVED 2026-07-21: superseded by DEC-07 (release-date cutoff, user decision) — old events are excluded from this feature entirely, making the scenario untestable as an ongoing regression case once the cutoff ships.",
   "featureSlug": "pdt-3421-3420-event-noti-tray-push",
   "suiteTopLevel": "25 Sep 26 - Event Creation Notifications (Tray + Push)",
   "sources": {
@@ -249,6 +249,32 @@
       "covers": []
     },
     {
+      "name": "[ Block after notify ] Verify blocking after a notification was delivered blocks the recipient's access on tap",
+      "folderPath": "Tray · Audience & privacy",
+      "description": "TR-CL-29 Scenario A / DEC-08 (new scope, blocking extended to events, bidirectional). Different timing than [ Exclusions ], which covers a block made BEFORE the event is created.",
+      "preconditions": "User A and User B are not blocked\nUser A creates an event in a shared community and User B receives the event-created tray item\nUser A then blocks User B (or User B blocks User A)",
+      "configurations": [
+        "iOS",
+        "Android",
+        "web-desktop",
+        "mobile-web"
+      ],
+      "steps": [
+        "As User B, open the Notification Tray",
+        "Tap the event's tray item that was received before the block"
+      ],
+      "expectedResults": [
+        "User B lands on a no-access state, even though the notification was delivered before the block existed"
+      ],
+      "priority": "P2",
+      "acs": [
+        "Tray AC-04",
+        "Tray AC-05"
+      ],
+      "qaResponsibility": "Fai",
+      "covers": []
+    },
+    {
       "name": "[ Late join ] Verify a user who joins a private community after an event is created does not receive that event's notification",
       "folderPath": "Tray · Audience & privacy",
       "description": "TR-CL-23 — private community gives no retroactive backfill to a user who joins after the event was created.",
@@ -357,6 +383,58 @@
       "covers": []
     },
     {
+      "name": "[ Left community ] Verify a former member tapping the event notification after leaving sees it as no longer available",
+      "folderPath": "Tray · Navigation",
+      "description": "TR-CL-27. Same nav-guard family as [ Privacy change ], triggered by the member leaving rather than a privacy flip.",
+      "preconditions": "A member of a PRIVATE community received an event-created tray item\nThat member then leaves the private community",
+      "configurations": [
+        "iOS",
+        "Android",
+        "web-desktop",
+        "mobile-web"
+      ],
+      "steps": [
+        "As the former member, open the Notification Tray or the original notification",
+        "Tap the event's tray item"
+      ],
+      "expectedResults": [
+        "The event shows as no longer available",
+        "The former member is not let into the private community's event"
+      ],
+      "priority": "P3",
+      "acs": [
+        "Tray AC-05"
+      ],
+      "qaResponsibility": "Fai",
+      "covers": []
+    },
+    {
+      "name": "[ Event ended ] Verify tapping a notification for an ended event opens Event Detail with no RSVP button",
+      "folderPath": "Tray · Navigation",
+      "description": "TR-CL-28. Contrast with [ Deleted event ]: an ended event still exists and opens normally, it just no longer offers RSVP — it does NOT show an 'unavailable' state.",
+      "preconditions": "An event-created tray item exists for an event whose scheduled time has already passed (the event has ended)",
+      "configurations": [
+        "iOS",
+        "Android",
+        "web-desktop",
+        "mobile-web"
+      ],
+      "steps": [
+        "Tap the event's tray item"
+      ],
+      "expectedResults": [
+        "The Event Detail page opens (not an 'unavailable' state)",
+        "The page shows an ended state",
+        "No RSVP button is shown"
+      ],
+      "priority": "P2",
+      "acs": [
+        "Tray AC-01"
+      ],
+      "qaResponsibility": "Fai",
+      "covers": []
+    },
+    {
       "name": "[ No grouping ] Verify each event creation produces its own distinct tray item",
       "folderPath": "Tray · Lifecycle",
       "description": "TR-CL-04 — no grouping, even for multiple events from the same community.",
@@ -431,32 +509,6 @@
         "It is not frozen to the values at creation time (live re-fetch, not a snapshot)"
       ],
       "priority": "P3",
-      "acs": [
-        "Tray AC-01"
-      ],
-      "qaResponsibility": "Fai",
-      "covers": []
-    },
-    {
-      "name": "[ Backfill & old format ] Verify pre-existing items get the new copy at read and network broadcast is forward-only",
-      "folderPath": "Tray · Lifecycle",
-      "description": "TR-CL-13 — copy generated at read time; network-broadcast scope is forward-only (old items stay community-scoped).",
-      "preconditions": "A tray item created before this release (old 'You've been invited' copy)",
-      "configurations": [
-        "iOS",
-        "Android",
-        "web-desktop",
-        "mobile-web"
-      ],
-      "steps": [
-        "Open the tray containing a pre-release event item",
-        "Check whether old public-community items are re-broadcast network-wide retroactively"
-      ],
-      "expectedResults": [
-        "Old items render with the NEW copy (text generated at read time)",
-        "Network broadcast is forward-only — old items stay community-scoped and are not re-broadcast to the network"
-      ],
-      "priority": "P4",
       "acs": [
         "Tray AC-01"
       ],
@@ -810,6 +862,31 @@
       "acs": [
         "PushMember AC-02"
       ],
+      "qaResponsibility": "Fai",
+      "covers": []
+    },
+    {
+      "name": "[ Block hides event in Hub ] Verify blocked users don't see each other's events in the Event Hub",
+      "folderPath": "Event Hub · Visibility",
+      "description": "TR-CL-29 Scenario C / DEC-08 (new scope). Cross-surface check: validates the same block rule Jack is adding, on the Event Hub / Event tab listing rather than the notification tray.",
+      "preconditions": "User A and User B are both members of the same community\nUser A and User B have a block relationship (either direction)",
+      "configurations": [
+        "iOS",
+        "Android",
+        "web-desktop",
+        "mobile-web"
+      ],
+      "steps": [
+        "As User A, create an event in the shared community",
+        "As User B, open the Event tab / Event Hub for that community",
+        "As User A, open the Event tab / Event Hub and look for any event User B created"
+      ],
+      "expectedResults": [
+        "User B does not see User A's event in the Event tab / Event Hub",
+        "User A does not see User B's events either — hidden from each other both ways"
+      ],
+      "priority": "P3",
+      "acs": [],
       "qaResponsibility": "Fai",
       "covers": []
     }

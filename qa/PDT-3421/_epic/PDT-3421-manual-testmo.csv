@@ -59,6 +59,10 @@ ID,Key,Name,Folder Path,Description,Preconditions,Steps,Expected Results,Priorit
 - A user banned AFTER receiving no longer sees the item on next read (hidden at read; node not deleted)
 - Un-banning / re-joining within retention restores visibility
 - If the recipient and creator have a block relationship (either direction), the item is suppressed",P3,"iOS, Android, web-desktop, mobile-web","Tray AC-04, Tray AC-05",Fai
+,,[ Block after notify ] Verify blocking after a notification was delivered blocks the recipient's access on tap,Tray · Audience & privacy,"TR-CL-29 Scenario A / DEC-08 (new scope, blocking extended to events, bidirectional). Different timing than [ Exclusions ], which covers a block made BEFORE the event is created.","- User A and User B are not blocked
+- User A creates an event in a shared community and User B receives the event-created tray item
+- User A then blocks User B (or User B blocks User A)","1. As User B, open the Notification Tray
+2. Tap the event's tray item that was received before the block","- User B lands on a no-access state, even though the notification was delivered before the block existed",P2,"iOS, Android, web-desktop, mobile-web","Tray AC-04, Tray AC-05",Fai
 ,,[ Late join ] Verify a user who joins a private community after an event is created does not receive that event's notification,Tray · Audience & privacy,TR-CL-23 — private community gives no retroactive backfill to a user who joins after the event was created.,"- A PRIVATE community already has an event, and its event-created tray item was delivered to the members who were in the community at that time
 - A separate test user is NOT yet a member of that community","1. Have the test user join the private community (after the event was created)
 2. Open that user's Notification Tray","- The newly joined user does NOT receive the earlier event's tray item
@@ -76,6 +80,13 @@ ID,Key,Name,Folder Path,Description,Preconditions,Steps,Expected Results,Priorit
 - A Go-back / dismiss path is available
 - Known risk (BUG-C, Android): a deleted event must NOT say 'This community is private' — that wrong message must FAIL
 - Known risk (BUG-E, web): the unavailable screen must not flash before the content finishes loading",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ Left community ] Verify a former member tapping the event notification after leaving sees it as no longer available,Tray · Navigation,"TR-CL-27. Same nav-guard family as [ Privacy change ], triggered by the member leaving rather than a privacy flip.","- A member of a PRIVATE community received an event-created tray item
+- That member then leaves the private community","1. As the former member, open the Notification Tray or the original notification
+2. Tap the event's tray item","- The event shows as no longer available
+- The former member is not let into the private community's event",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-05,Fai
+,,[ Event ended ] Verify tapping a notification for an ended event opens Event Detail with no RSVP button,Tray · Navigation,"TR-CL-28. Contrast with [ Deleted event ]: an ended event still exists and opens normally, it just no longer offers RSVP — it does NOT show an 'unavailable' state.",- An event-created tray item exists for an event whose scheduled time has already passed (the event has ended),1. Tap the event's tray item,"- The Event Detail page opens (not an 'unavailable' state)
+- The page shows an ended state
+- No RSVP button is shown",P2,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
 ,,[ No grouping ] Verify each event creation produces its own distinct tray item,Tray · Lifecycle,"TR-CL-04 — no grouping, even for multiple events from the same community.",- One community that will host multiple events,"1. Create 3 events in the same community
 2. Open the tray","- Each event appears as its OWN separate tray item
 - Items are NOT grouped or collapsed even when they come from the same community",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
@@ -88,9 +99,6 @@ ID,Key,Name,Folder Path,Description,Preconditions,Steps,Expected Results,Priorit
 2. Wait for the cache TTL to expire
 3. Re-open the tray item","- The tray item reflects the UPDATED event details (name / time / type)
 - It is not frozen to the values at creation time (live re-fetch, not a snapshot)",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
-,,[ Backfill & old format ] Verify pre-existing items get the new copy at read and network broadcast is forward-only,Tray · Lifecycle,TR-CL-13 — copy generated at read time; network-broadcast scope is forward-only (old items stay community-scoped).,- A tray item created before this release (old 'You've been invited' copy),"1. Open the tray containing a pre-release event item
-2. Check whether old public-community items are re-broadcast network-wide retroactively","- Old items render with the NEW copy (text generated at read time)
-- Network broadcast is forward-only — old items stay community-scoped and are not re-broadcast to the network",P4,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
 ,,[ Console toggle ] Verify the event-creation push toggle is present and correctly labelled,Push · Console configuration,PDT-3676 AC-01. Toggle = event-activate-switch (field isPushNotifiable) under the 'Event-related events' section.,"- The signed-in account is a network admin with Admin Console access
 - Push notifications are enabled for the network","1. Open Admin Console → Settings → Push notifications
 2. Open the Community tab / 'Event-related events' section","- A section titled 'Event-related events' is present
@@ -173,3 +181,8 @@ ID,Key,Name,Folder Path,Description,Preconditions,Steps,Expected Results,Priorit
 2. Tap the push","- A graceful 'This event is no longer available' state is shown (event getById returns 404)
 - No error or blank screen
 - Known risk (BUG-C, Android): must NOT show 'This community is private' for a deleted event",P4,"iOS, Android",PushMember AC-02,Fai
+,,[ Block hides event in Hub ] Verify blocked users don't see each other's events in the Event Hub,Event Hub · Visibility,"TR-CL-29 Scenario C / DEC-08 (new scope). Cross-surface check: validates the same block rule Jack is adding, on the Event Hub / Event tab listing rather than the notification tray.","- User A and User B are both members of the same community
+- User A and User B have a block relationship (either direction)","1. As User A, create an event in the shared community
+2. As User B, open the Event tab / Event Hub for that community
+3. As User A, open the Event tab / Event Hub and look for any event User B created","- User B does not see User A's event in the Event tab / Event Hub
+- User A does not see User B's events either — hidden from each other both ways",P3,"iOS, Android, web-desktop, mobile-web",,Fai
