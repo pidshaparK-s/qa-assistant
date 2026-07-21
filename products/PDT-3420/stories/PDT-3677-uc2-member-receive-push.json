@@ -1,0 +1,122 @@
+{
+  "key": "PDT-3677",
+  "epic": "PDT-3420",
+  "summary": "UC2: Member receives push notification and navigates to RSVP",
+  "type": "Story",
+  "status": "Deployed to Staging",
+  "priority": "Medium",
+  "url": "https://socialplus.atlassian.net/browse/PDT-3677",
+  "synced_from_jira": "2026-07-16",
+  "platforms": {
+    "core_api": { "key": "PDT-3677", "status": "Deployed to Staging" },
+    "ios": { "key": "PDT-3677", "status": "Deployed to Staging", "note": "OS push received + tap-nav on device" },
+    "android": { "key": "PDT-3677", "status": "Deployed to Staging", "note": "OS push received + tap-nav on device" }
+  },
+  "user_story": "As a network or community member, I want to tap an event push notification and land directly on the RSVP page, so I can commit to attending in one action.",
+  "preconditions": [
+    "User has push notifications enabled on their device",
+    "Admin has triggered an event creation push for an audience that includes this user"
+  ],
+  "entry_points": [
+    "A. Push notification tapped on mobile device"
+  ],
+  "push_payload": {
+    "_source": "Tanat Tangun dev note (PDT-3677 comment 2026-07-10) — route off data payload, no path/deeplink string sent",
+    "eventName": "event.created  (discriminator)",
+    "eventId": "event public id — use to open the RSVP page",
+    "communityId": "community public id — community avatar/icon client-rendered from this",
+    "eventTitle": "event title",
+    "eventType": "\"In-person\" | \"Virtual\" | \"\"  (chip label; \"\" if type unknown)",
+    "eventStartTime": "ISO-8601 instant, e.g. 2026-07-10T13:00:00.000Z — for client-side re-localization",
+    "eventTimezone": "IANA name, e.g. \"Asia/Kathmandu\" — present ONLY if the event has one",
+    "userId": "creator public id"
+  },
+  "os_notification_text": {
+    "_note": "server-rendered plain text",
+    "title": "{CommunityName} has event {EventName}",
+    "body": "{EventType} {EventStartDate} · {EventStartTime}  → e.g. \"In-person 10 Jul 2026 · 6:45 PM\"",
+    "_qa_flag": "server renders time → must honor EVENT timezone (PM: follow event tz, TR-CL-05). BUG-B2: push reads rawData.timezone (top-level) but tz stored at metadata.timezone → risks UTC. Verify displayed push time = event tz, not UTC/device."
+  },
+  "notes": [
+    "Virtual events → EXACTLY ONE push. Auto-created Room's go-live push is suppressed for event-linked rooms; no client-side dedup needed.",
+    "Disabled push (toggle off, master off, or OS-level opt-out) does NOT affect the in-app tray — tray items still appear. Push and tray are independent.",
+    "Deleted event: opening a deleted event (GET events/{eventId}) returns 404 → render \"This event is no longer available\", not error/blank. NOTE: shared tray nav — Android currently shows \"This community is private\" for deleted (BUG-C) → verify on push tap too.",
+    "Additive only — no breaking changes to existing endpoints (new push type + new data fields)."
+  ],
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01",
+      "group": "Push tap navigation",
+      "scenario": "Tap navigates to event RSVP page",
+      "given": [
+        "A user receives an event creation push notification"
+      ],
+      "when": "They tap the notification",
+      "then": [
+        "They are navigated to that event's RSVP page (= event detail page where RSVP is visible)"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-02",
+      "group": "Deleted event handling",
+      "scenario": "Event deleted before user taps push",
+      "given": [
+        "An event creation push was sent",
+        "The event is deleted (isDeleted = true) before the user taps"
+      ],
+      "when": "The user taps the push notification",
+      "then": [
+        "They see \"This event is no longer available\"",
+        "They are NOT shown an error or blank screen",
+        "(QA: GET events/{eventId} returns 404 → maps to the unavailable message; watch Android BUG-C conflation)"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-03",
+      "group": "Device/OS suppression",
+      "scenario": "Push suppressed by device-level notification settings",
+      "given": [
+        "A user has disabled push notifications at the device or OS level"
+      ],
+      "when": "An event creation push is triggered for their audience segment",
+      "then": [
+        "They do NOT receive the push",
+        "They still receive the in-app tray notification per existing behavior"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-04",
+      "group": "Virtual event dedup",
+      "scenario": "Virtual event — no duplicate push from auto-generated Room",
+      "given": [
+        "An event is a virtual event (Room auto-generated on creation)"
+      ],
+      "when": "The admin sends the event creation push",
+      "then": [
+        "Only ONE push notification is delivered to each eligible user",
+        "The Room/livestream-creation push notification is suppressed",
+        "(Per existing rule: SDD RSVP to Events & Event Reminders, UC4)"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-05",
+      "group": "Push content & icon",
+      "scenario": "Push notification content and icon",
+      "given": [
+        "An event creation push is sent"
+      ],
+      "when": "The push is displayed on the device",
+      "then": [
+        "The push title reads \"{{CommunityName}} has event {{EventName}}\"",
+        "The push body shows an event type chip (\"In-person\" or \"Virtual\") followed by the event start date and start time",
+        "The notification icon displays the community avatar",
+        "(QA: start time rendered in EVENT timezone per TR-CL-05; watch BUG-B2 UTC)"
+      ],
+      "clarifications_needed": []
+    }
+  ]
+}

@@ -11,6 +11,7 @@ description: 'ใช้ skill นี้หลังจากเขียน Happ
 - **Consumes:** Happy-path AC (จาก 1-3) + State Machine (จาก 1-1)
 - **Produces:** Edge/Error AC + priority (high/medium/low) + clarification questions (→ Register)
 - **Called by:** process Layer 1 · STEP2 (Specify) — หลัง 1-3 ต่อ ac_id
+- **Cross-check:** `qa/_shared/platform-behavior-registry.json` — ถ้า feature area นี้เคยเจอ platform divergence มาก่อน (web-desktop/mobile-app/mobile-web ต่างกัน) ต้องเขียน edge case แยกต่อ platform ไม่ใช่รวมเป็นข้อเดียว แม้ PM จะบอกว่า "behavior เดิม"
 
 > Skill นี้เป็น pure capability — ลำดับ/gate อยู่ที่ `process/layer-1-ba-requirement-analysis.md`
 

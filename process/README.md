@@ -76,6 +76,14 @@ Process เป็นเจ้าของ artifact store; skill read/write เ�
 | **Clarification Register** | L1 ทุก step (append) | `qa/<epic>/PDT-XXXX-clarifications-for-pm-design.md` (+ optional `1_clarifications.json`) |
 | **Schema 1 / Schema 2** | L2 | `output/PDT-XXXX-complete-jira-story.json` / `-user-flow.json` |
 
+**Cross-epic (ไม่ผูก STEP/epic เดียว):**
+
+| Artifact | ผลิตเมื่อไหร่ | ที่เก็บ |
+|---|---|---|
+| **Platform Behavior Registry** | ทุกครั้งที่ QA ยืนยัน platform behavior ต่างกันจริง (ไม่ใช่ bug ชั่วคราว) — ไม่ว่ากำลังทำ epic ไหนอยู่ | `qa/_shared/platform-behavior-registry.json` (+ rendered `PLATFORM-BEHAVIOR-REGISTRY.md`) |
+
+R3 บังคับ log เข้า registry นี้; epic ใหม่ที่แตะ feature area เดิม **อ่านก่อนสมมติว่า behavior เหมือนกันข้าม platform** — ดู `qa/PDT-3418/_epic/platform-behavior-notes.md` เป็นตัวอย่าง narrative ที่ยาวกว่า (epic-specific) ที่ registry ดึง standing facts ออกมา
+
 ---
 
 ## Gate catalog (นิยามกลาง ใช้ซ้ำทุก layer)
@@ -110,6 +118,7 @@ Process เป็นเจ้าของ artifact store; skill read/write เ�
 | `checks/test_case_coverage.py qa/<epic>` | L3.5 | `*-test-cases.json`: ต่อ SC มี ≥1 success EC + **เป๊ะ N** alternative EC (N=len(alternative[])) · alt_index ครบ · ref resolve |
 | `checks/automation_plan_coverage.py qa/<epic>` | L3.6 | `*-automation-plan.json`: ทุก EC มี disposition (bijection) · at_status↔status · Manual→blocker+reason · Automate→target tag=`@`+ec_id · `live-broadcast`⟹Manual |
 | `checks/manual_runsheet_coverage.py qa/<epic>` | L3.7 | `*-manual-spec.json` (team convention): ทุก EC ∈ ≥1 cases[].covers[] (ยุบแล้วไม่ตก) · no phantom · priority P1–P4 · name `[ Category ] Verify …` · `acs[]` ตรง AC ที่ derive จาก covers (AC_MISMATCH) |
+| `checks/platform_registry_integrity.py` | cross-epic (ไม่รับ arg) | `qa/_shared/platform-behavior-registry.json`: no dup id · platforms{} ≥2 ค่าที่ต่างกันจริง (NOT_DIVERGENT) · enum · no phantom epic ref |
 
 > ทั้ง 3 เป็น stdlib-only, deterministic, no network — run มือก่อน handoff/commit. schema1_integrity + schema_trace codify script ที่จับ error จริงตอนรัน PDT-3418 (ก่อนหน้านี้เป็น ad-hoc ที่ไม่ได้ commit)
 

@@ -1,0 +1,58 @@
+{
+  "_schema": "platform-behavior-registry-v1",
+  "_purpose": "Cross-epic registry of CONFIRMED platform/form-factor behaviour divergences (iOS vs Android vs web-desktop vs mobile-web) for the Social+ product. PM does not spec these — 'same behaviour as before' is often false across platforms. QA discovers and maintains this. Consult BEFORE assuming uniform behaviour for any feature_area listed here; every new epic touching that area inherits the known split.",
+  "_rule": "Only STANDING platform truths belong here (interaction-model / OS-capability / SDK-support differences) — NOT in-flight bugs or dev deltas being fixed for a specific epic (those go stale the moment they're fixed; keep them in that epic's own notes instead). An entry needs >=2 platforms with genuinely different behaviour text, real evidence, and an id.",
+  "entries": [
+    {
+      "id": "PB-001",
+      "feature_area": "Video / Live player — tap interaction model",
+      "summary": "First tap on a PLAYING player: mobile reveals controls without pausing (2-step to pause); web-desktop pauses directly on first tap (1-step).",
+      "platforms": {
+        "ios": "2-step: tap reveals the controls overlay (playback continues); tap the center button to pause",
+        "android": "2-step: same as iOS",
+        "web-desktop": "1-step: tap pauses directly, no intermediate reveal",
+        "mobile-web": "2-step: behaves like the mobile app, not like web-desktop"
+      },
+      "divergence_type": "interaction-steps",
+      "evidence": "PM platform table (comment 68264) + code-verified 2026-07-08 against Amity-Social-Cloud-UIKit-Web + AmityUIKitIOS (see qa/PDT-3418/_epic/platform-behavior-notes.md PV-1)",
+      "pm_position": "PM described this as 'no behaviour change, only a small UI design change (button size)' — did not flag the interaction-step difference; QA-maintained",
+      "first_confirmed": { "epic": "PDT-3418", "date": "2026-07-08" },
+      "also_seen_in": [],
+      "status": "confirmed"
+    },
+    {
+      "id": "PB-002",
+      "feature_area": "Live player — pause control availability",
+      "summary": "mobile-web cannot pause a Live stream at all; iOS, Android, and web-desktop all can.",
+      "platforms": {
+        "ios": "2-step pause available (reveal then tap)",
+        "android": "2-step pause available (reveal then tap)",
+        "web-desktop": "1-step pause available",
+        "mobile-web": "No pause control is shown — cannot pause a Live stream"
+      },
+      "divergence_type": "not-supported",
+      "evidence": "PM platform table (comment 68264); confirmed in PDT-3418 manual test pass (MC-B11 / EC-UC2-013..015)",
+      "pm_position": "Not called out by PM — surfaced by QA while writing per-platform test cases",
+      "first_confirmed": { "epic": "PDT-3418", "date": "2026-07-08" },
+      "also_seen_in": [],
+      "status": "confirmed"
+    },
+    {
+      "id": "PB-003",
+      "feature_area": "Live player — network-drop reconnect indicator",
+      "summary": "The 'Reconnecting' indicator is driven by a DIFFERENT signal per platform, so it appears at different times: iOS ties it to the device's own network monitor (shows even while the viewer has the stream paused); web ties it to the broadcaster/SDK room status (generally does NOT show for a plain viewer-side pause, only when the broadcaster itself drops).",
+      "platforms": {
+        "ios": "Full-screen scrim + spinner, driven by NWPathMonitor (device network) — shows while paused too, since it's about the viewer's own connectivity",
+        "android": "Not yet code-verified — assume parity with iOS until checked (OS-level network monitor pattern is typical)",
+        "web-desktop": "LivestreamOverlay Reconnecting spinner, gated on SDK room.status==='waitingReconnect' (broadcaster-side) — generally NOT shown for a viewer-side pause",
+        "mobile-web": "Same mechanism as web-desktop (shared web player)"
+      },
+      "divergence_type": "timing",
+      "evidence": "Code-verified 2026-07-08: LiveStreamViewerView.swift:244-272 + NetworkMonitor.swift:11-28 (iOS) vs LivestreamOverlay.tsx:57-66 + LivestreamPlayer.tsx:128 (web) — see qa/PDT-3418/_epic/platform-behavior-notes.md",
+      "pm_position": "Not specced by PM at this level of detail — QA had to read source to resolve UC2 E-04 / AC-08",
+      "first_confirmed": { "epic": "PDT-3418", "date": "2026-07-08" },
+      "also_seen_in": [],
+      "status": "confirmed"
+    }
+  ]
+}

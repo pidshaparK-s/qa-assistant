@@ -1,28 +1,44 @@
 {
 	"folders": [
 		{
+			"name": "qa-assistant",
 			"path": ".."
 		},
 		{
-			"path": "../../admin-on-the-go"
-		},
-		{
+			"name": "Amity-Social-Cloud-UIKit-Web",
 			"path": "../../Amity-Social-Cloud-UIKit-Web"
 		},
 		{
+			"name": "AmityUIKitIOS",
 			"path": "../../AmityUIKitIOS"
 		},
 		{
+			"name": "Amity-Social-Cloud-UIKit-Android",
 			"path": "../../Amity-Social-Cloud-UIKit-Android"
 		},
 		{
+			"name": "social-plus-core",
+			"path": "../../social-plus-core"
+		},
+		{
+			"name": "asc-console-web",
+			"path": "../../asc-console-web"
+		},
+		{
+			"name": "social-plus-uikit-web-sampleapp-playwright",
 			"path": "../../social-plus-uikit-web-sampleapp-playwright"
 		},
 		{
+			"name": "social-plus-mobile-native-sampleapp-webdriverio",
 			"path": "../../social-plus-mobile-native-sampleapp-webdriverio"
 		},
 		{
+			"name": "sc-console-playwright",
 			"path": "../../sc-console-playwright"
+		},
+		{
+			"name": "admin-on-the-go",
+			"path": "../../admin-on-the-go"
 		}
 	],
 	"settings": {}

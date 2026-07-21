@@ -5,7 +5,7 @@ Testmo CSV exporter — team convention (sc-console-playwright manual-test-facto
 Reads a qa-manual-spec-v1 spec.json and emits the SAME Testmo CSV that their
 generator.ts produces:
   columns: ID, Key, Name, Folder Path, Description, Preconditions, Steps,
-           Expected Results, Priority, AC Covered, QA Responsibility
+           Expected Results, Priority, Configurations, AC Covered, QA Responsibility
   - ID / Key left blank (Testmo assigns on import)
   - Steps numbered "1. …\n2. …"; Preconditions + Expected Results as "- " bullets
   - QA Responsibility from case.qaResponsibility (default "Fai")
@@ -13,8 +13,10 @@ generator.ts produces:
   (Variant of sc-console generator.ts: adds QA Responsibility + bulleted pre/expected;
    Folder Path is section-only — pick the suite folder at Testmo import time.)
 
-Extra spec fields (_schema, covers, configurations) are ignored on export — they
-drive our coverage gate / traceability, not the Testmo import.
+case.configurations is exported as the "Configurations" column (the platforms a
+case runs on: iOS / Android / web-desktop / mobile-web), comma-joined — maps to
+Testmo's Configurations field on import. Extra spec fields (_schema, covers) are
+ignored on export — they drive our coverage gate / traceability, not the import.
 
 Usage:
   python3 tools/export_spec_testmo_csv.py qa/PDT-3418/_epic/PDT-3418-manual-spec.json \
@@ -28,7 +30,7 @@ import sys
 from pathlib import Path
 
 HEADER = ["ID", "Key", "Name", "Folder Path", "Description",
-          "Preconditions", "Steps", "Expected Results", "Priority", "AC Covered", "QA Responsibility"]
+          "Preconditions", "Steps", "Expected Results", "Priority", "Configurations", "AC Covered", "QA Responsibility"]
 
 
 def main() -> int:
@@ -63,9 +65,10 @@ def main() -> int:
             expected = "\n".join(f"- {x}" for x in c.get("expectedResults", []))
             pre = "\n".join(f"- {ln}" for ln in (c.get("preconditions", "") or "").split("\n") if ln.strip())
             acs = ", ".join(c.get("acs", []))
+            configs = ", ".join(c.get("configurations", []) or [])
             w.writerow(["", "", c.get("name", ""), c.get("folderPath", ""),
                         c.get("description", ""), pre,
-                        steps, expected, c.get("priority", ""), acs, c.get("qaResponsibility", "Fai")])
+                        steps, expected, c.get("priority", ""), configs, acs, c.get("qaResponsibility", "Fai")])
 
     print(f"✅ wrote {len(cases)} case row(s) → {out_path}")
     return 0

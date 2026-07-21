@@ -1,0 +1,138 @@
+{
+  "_schema": "decision-ledger-v1",
+  "_purpose": "Every JUDGMENT call (things a human or source-code — not a mechanical rule — decided): story splits, priority, scope in/out, how a PENDING item was resolved, spec-vs-code policy. Converts silent judgment into an owned, queryable record.",
+  "_why": "A mechanical run can assemble schema + traceability on its own. It must NOT silently pick a side on a judgment call. This ledger is the HALT-and-flag surface: an autonomous run stops on any open human decision instead of guessing.",
+  "ids": {
+    "epic_id": "PDT-3421"
+  },
+  "type_vocab": {
+    "split": "re-decompose a story into QA-internal units",
+    "priority": "MoSCoW / sprint ordering",
+    "scope": "in/out boundary decision",
+    "pending-resolution": "how a PENDING clarification was answered (PM round OR source code)",
+    "spec-correction": "spec deliberately differs from the Jira/PM wording",
+    "policy": "cross-cutting rule for how the spec itself is authored / the pipeline is run"
+  },
+  "status_vocab": {
+    "confirmed": "a human locked it (user/PM) — settled",
+    "resolved-by-code": "answered from source code with a file ref — settled (no PM round needed)",
+    "proposed": "QA proposed it; awaiting human confirmation — OPEN",
+    "pending-human": "explicitly needs a named owner to sign off — OPEN"
+  },
+  "_halt_rule": "AUTONOMOUS run must HALT if any decision of type {split, priority, scope, policy} has status {proposed, pending-human}, OR any {pending-resolution} lacks a source_ref. {confirmed} and {resolved-by-code with source_ref} are settled and do not block. Enforced by checks/decision_ledger.py --autonomous.",
+  "decisions": [
+    {
+      "id": "DEC-01",
+      "type": "policy",
+      "unit": "epic",
+      "date": "2026-07-14",
+      "decision": "The 4 UC1 platform stories (PDT-3675 Core API, PDT-3724 Android UIKit, PDT-3725 iOS UIKit, PDT-3726 React/Web UIKit) carry BYTE-IDENTICAL acceptance criteria (5 scenarios). Author them as ONE canonical UC1 unit (5 ac_id, keyed PDT-3675). Analysis / scenarios / test cases are authored ONCE against the 5 AC. Platform-specific differences (event-type chip + community-avatar + dark-theme rendering, client-side date/time formatting, API payload vs UIKit render, deep-link) are captured as platform NOTES and — where a divergence is confirmed real, not a bug — R3 platform-behavior-registry entries; NOT as duplicated per-platform AC. Manifest = 5 ac_id.",
+      "rationale": "AC identical across all 4 clones (verified via Atlassian MCP 2026-07-14). Splitting into 4×5=20 ac_id would 4× the coverage burden with zero added behavioural signal. Platform differences are test-focus/rendering, not AC. Mirrors the PDT-3418 per-UC (not per-platform) structure.",
+      "decided_by": "user",
+      "status": "confirmed",
+      "source_ref": "user 2026-07-14 (AskUserQuestion: Story structure); products/PDT-3421/stories/PDT-3675-uc1-receive-tray-notification.json platforms{}",
+      "related": [
+        "UC1",
+        "PDT-3675",
+        "PDT-3724",
+        "PDT-3725",
+        "PDT-3726"
+      ]
+    },
+    {
+      "id": "DEC-02",
+      "type": "policy",
+      "unit": "epic",
+      "date": "2026-07-14",
+      "decision": "Figma visual ground truth will be obtained by AUTHORIZING the claude.ai Figma connector (user action in claude.ai settings), then re-pulling the Mobile (node 3759-26398) and Web (node 3759-26399) frames via the Figma MCP in an interactive session. Direct WebFetch is blocked (HTTP 403 — auth required, non-interactive OAuth not possible). Until the frames are pulled, the Layer-1 Readiness gate stays PARTIAL: design-dependent AC (AC-01 avatar, AC-02/03 event-type chip, dark-theme render) are not yet verifiable against design.",
+      "rationale": "User chose to authorize the connector over exporting PNGs or proceeding design-blind. Fallback if the connector still does not expose tools to the CLI session: export frames as PNG into products/PDT-3421/design/.",
+      "decided_by": "user",
+      "status": "confirmed",
+      "source_ref": "user 2026-07-14 (AskUserQuestion: Figma); WebFetch 403 on figma.com node 3759-26398",
+      "related": [
+        "Readiness-gate",
+        "Figma",
+        "AC-01",
+        "AC-02",
+        "AC-03"
+      ],
+      "_resolution": "RESOLVED 2026-07-14 — user re-authenticated; Figma MCP tools surfaced in-session on the 2nd attempt. QA pulled 7 frames to products/PDT-3421/design/ (Mobile: 3759-26400 overview, 26401 tray-Same-A, 26415 tray-Same-B, 26434 event-reminder-context; Web: 27812 overview, 27813 tray-Same, 27831 tray-Different), catalogued in products/PDT-3421/design/INDEX.md, and read them as ground truth. Design resolves TR-CL-04 (no grouping) + TR-CL-11 (community avatar). Readiness gate CLOSED — PRD + AC + Figma all present."
+    },
+    {
+      "id": "DEC-03",
+      "type": "scope",
+      "unit": "UC1",
+      "date": "2026-07-16",
+      "decision": "event_created tray audience = ALL active, non-banned NETWORK users on a PUBLIC community event (incl. non-members of that community); PRIVATE = members only. Audience is a SNAPSHOT at send time (no recompute on privacy change); public→private privacy exposure handled by the navigation/permission layer, not by revoking items. Tray is intentionally network-wide while push is NOT (TR-CL-02).",
+      "rationale": "PM answers TR-CL-07 ('All members of the network') + TR-CL-16 ('does not recompute … navigation should already handle it') + TR-CL-02 (intentional tray/push asymmetry). TR-CL-16 corroborates the network-wide reading. Consequence: user story persona 'As a community member' is too narrow and must be updated in Jira (FU-3).",
+      "decided_by": "PM",
+      "status": "confirmed",
+      "source_ref": "user 2026-07-16 (PM answers in chat); qa/PDT-3421/1_clarifications.json TR-CL-07/16/02",
+      "related": [
+        "TR-CL-07",
+        "TR-CL-16",
+        "TR-CL-02",
+        "AC-04",
+        "AC-05",
+        "user_story",
+        "FU-3"
+      ],
+      "_confirmed": "2026-07-16 — user confirmed 'members of the network' = all users incl. community non-members. Network-wide locked, no wording ambiguity remaining."
+    },
+    {
+      "id": "DEC-04",
+      "type": "scope",
+      "unit": "epic",
+      "date": "2026-07-16",
+      "decision": "The comprehensive MANUAL test suite covers BOTH the Notification Tray (PDT-3421 UC1 = PDT-3675, 5 AC; clients Web+iOS+Android) AND Push Notification (cross-epic PDT-3420: UC1 console config = PDT-3676, 3 AC [Admin Console + backend]; UC2 member receive+navigate = PDT-3677, 5 AC [mobile iOS/Android + backend]). Total manifest = 13 AC. Push stories are Deployed to Staging (testable). Web receives NO device push (push = mobile OS notification) -> push client coverage = iOS+Android; console coverage = web console.",
+      "rationale": "User chose scope 'UC1 tray + push (PDT-3420)' (AskUserQuestion 2026-07-16). Push shares the same event, nav (jack: 'reuse navigation from noti tray'), timezone rule, deleted-event handling, and content pattern as the tray -> one coherent suite. Push introduces NO new hard blocker: audience=community members (network toggle held/out), tz=event-tz (same PM rule), deleted->404, virtual->single push (Room go-live suppressed), OS-opt-out independent of tray.",
+      "decided_by": "user",
+      "status": "confirmed",
+      "source_ref": "user 2026-07-16 (AskUserQuestion: Scope=UC1 tray + push); Jira PDT-3420/3676/3677 fetched 2026-07-16",
+      "related": [
+        "PDT-3420",
+        "PDT-3676",
+        "PDT-3677",
+        "PDT-3675",
+        "manual-suite",
+        "TR-CL-02"
+      ]
+    },
+    {
+      "id": "DEC-05",
+      "type": "policy",
+      "unit": "UC1",
+      "date": "2026-07-16",
+      "decision": "QA expected-result for the event-type chip (TR-CL-21): assert LEGIBILITY (sufficient text/background contrast) in BOTH light and dark theme on each platform; accept per-platform styling divergence as long as legible. Do NOT require pixel-identical cross-platform chip. Android light-theme white-on-white FAILS = BUG-D (to file).",
+      "rationale": "User decided 2026-07-16 (AskUserQuestion: Chip theme) - 'legible both themes is enough; divergence OK; Android light = BUG-D'. Lets QA author the chip test cases now without waiting on a Design color spec (non-blocking Design nicety).",
+      "decided_by": "user",
+      "status": "confirmed",
+      "source_ref": "user 2026-07-16 (AskUserQuestion: Chip theme); qa/PDT-3421/1_clarifications.json TR-CL-21",
+      "related": [
+        "TR-CL-21",
+        "AC-02",
+        "AC-03",
+        "BUG-D"
+      ]
+    },
+    {
+      "id": "DEC-06",
+      "type": "pending-resolution",
+      "unit": "UC1",
+      "date": "2026-07-21",
+      "decision": "REVERSAL of the TR-CL-05 timezone decision. The notification tray shows the event start date/time in the VIEWER's LOCAL (device) timezone, following existing UIKit behavior (event cards + event detail pages already display local time). Explicitly NOT a new timezone feature. Supersedes the earlier 'follow the event timezone' answer + the NY/Bangkok event-tz example. Consequence: the client's current device-local formatting is CORRECT -> BUG-B1 RETRACTED. Push (server-rendered OS text, PDT-3420/BUG-B2) was NOT covered by the dev statement (viewer-local not feasible server-side) -> push display timezone is re-opened, needs a separate product decision.",
+      "rationale": "Developer feedback relayed by user 2026-07-21: tray start time should follow existing UIKit behavior = viewer's local timezone; 'should not be treated as a new timezone decision' since event cards / detail already show local. PM accepted, reversing the prior TR-CL-05 resolution.",
+      "decided_by": "PM",
+      "status": "confirmed",
+      "source_ref": "user 2026-07-21 (relaying PM reversal + dev statement); supersedes 1_clarifications.json TR-CL-05 (2026-07-16)",
+      "related": [
+        "TR-CL-05",
+        "BUG-B1",
+        "BUG-B2",
+        "AC-01",
+        "PushMember AC-05"
+      ],
+      "_followup_2026_07_21": "Later same day: QA verified on Android + iOS that PUSH also renders device-local (viewer-local) correctly — consistent with the tray. Push display-tz question RESOLVED (device-local, not re-opened after all); BUG-B2 RETRACTED (the source-based UTC inference did not reproduce on device)."
+    }
+  ]
+}

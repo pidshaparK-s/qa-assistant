@@ -3,9 +3,16 @@
   "epic": "PDT-3421",
   "summary": "UC1: Receive tray notification on event creation",
   "type": "Story",
-  "status": "Backlog",
+  "status": "Deployed to Staging",
   "priority": "Medium",
   "url": "https://socialplus.atlassian.net/browse/PDT-3675",
+  "synced_from_jira": "2026-07-14",
+  "platforms": {
+    "core_api": { "key": "PDT-3675", "status": "Deployed to Staging" },
+    "android": { "key": "PDT-3724", "status": "Deployed to Staging" },
+    "ios": { "key": "PDT-3725", "status": "Deployed to Dev" },
+    "react_web": { "key": "PDT-3726", "status": "Deployed to Staging" }
+  },
   "user_story": "As a community member, I want to receive a notification tray item when a new event is created in my community, so that I can find and RSVP to it in a single tap.",
   "value_rationale": "Reduces the path from awareness → RSVP from multiple steps to one.",
   "preconditions": [
@@ -91,7 +98,7 @@
       ],
       "when": "The tray notification fires",
       "then": [
-        "Only active, non-banned members of that community receive the notification"
+        "Only active, non-banned (global & community ban) members of that community receive the notification"
       ],
       "clarifications_needed": []
     }

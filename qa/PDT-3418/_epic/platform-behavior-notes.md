@@ -3,6 +3,12 @@
 > **Read this before writing test cases.** For the ACs below the behaviour is **not uniform across
 > platforms**, so a single cross-platform "expected" is WRONG. Write a **separate expected per platform**.
 > These are standing facts (not clarifications to close). Recorded 2026-07-08.
+>
+> **Cross-epic reuse:** the standing (non-epic-specific) divergences from this note — PV-1, mobile-web
+> pause availability, reconnect-indicator timing — are also tracked in the cross-epic
+> [`qa/_shared/platform-behavior-registry.json`](../../_shared/platform-behavior-registry.json) (PB-001..003)
+> so future epics touching video/live inherit them without re-discovering. This file stays as the fuller
+> PDT-3418-specific narrative (glossary, ledger cross-refs, code deltas being fixed for this epic).
 
 Interpretation used here: **"Web UIKit" = web on desktop**; **"web on mobile" behaves like the mobile app**.
 (If "Web UIKit" means something else in your setup, correct this note.)

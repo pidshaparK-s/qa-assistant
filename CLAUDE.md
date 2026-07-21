@@ -15,6 +15,16 @@
 
 ---
 
+## Cross-epic references
+
+ไม่ผูก epic เดียว — เช็คก่อนเริ่มงานใน feature area ที่อาจเคยเจอมาก่อน
+
+| Reference | ที่อยู่ | เช็คเมื่อไหร่ |
+|---|---|---|
+| **Platform Behavior Registry** | `qa/_shared/PLATFORM-BEHAVIOR-REGISTRY.md` (+ `.json`) | ก่อนเขียน AC/scenario/test case ที่มี behavior ต่างกันข้าม web-desktop/mobile-app/mobile-web — ดู R3 |
+
+---
+
 ## Workflow triggers
 
 | Workflow | พิมพ์ใน Claude Code | Output |
@@ -147,6 +157,7 @@ Match schema ใน `02-user-flow.json` ทุก field
 - **PM's AC คือ source of truth** — ห้ามเขียนทับ ให้ต่อยอดเป็น QA-enriched version แยก
 - **Write boundary (R1)** — Layer 2 เขียนเฉพาะ `qa/` + `output/` เท่านั้น · `products/<epic>/stories/*.json` เป็น **READ-ONLY input** (เขียนได้เฉพาะตอน L1 STEP 0 Jira-sync แล้ว re-bless ด้วย `checks/ac_coverage.py --update`) — บังคับกฎ source-of-truth ข้างบน การเผลอเขียนทับ PM AC จะโผล่เป็น **STALE** ใน `ac_coverage.py`
 - **Judgment → ledger (R2)** — ทุก judgment call ใน L2 (split / priority / scope / วิธีตอบ PENDING) ต้อง log ลง `qa/<epic>/decisions.json` · autonomous run หยุด (HALT) ถ้ามี open human decision — `checks/decision_ledger.py --autonomous`
+- **Platform divergence → registry (R3)** — PM มักบอก "behavior เดิม" ทั้งที่ web-desktop / mobile-app / mobile-web ไม่เหมือนกันจริง ยืนยันแล้วว่าต่างกัน (ไม่ใช่ bug ที่กำลังแก้) ต้อง log ลง `qa/_shared/platform-behavior-registry.json` (cross-epic, ไม่ผูก epic เดียว) — เช็คก่อนเขียน AC/scenario/test case ของ feature area ที่เคยเจอมาแล้ว · gate: `checks/platform_registry_integrity.py`
 - **Clarification questions** ต้องมี 3 ส่วนเสมอ: observation → consequence → question
 - **Edge case** ทุกข้อต้องระบุ state หลัง action ไม่ใช่แค่ UI ที่เห็น
 - **Error case** ทุกข้อต้องตอบ: trigger + user เห็นอะไร + **state หลัง error** (ส่วนที่ขาดมากที่สุด)

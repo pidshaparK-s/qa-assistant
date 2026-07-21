@@ -1,0 +1,81 @@
+{
+  "key": "PDT-3676",
+  "epic": "PDT-3420",
+  "summary": "UC1: Console configuration — enable push on event creation",
+  "type": "Story",
+  "status": "Deployed to Staging",
+  "priority": "Medium",
+  "url": "https://socialplus.atlassian.net/browse/PDT-3676",
+  "synced_from_jira": "2026-07-16",
+  "platforms": {
+    "core_api": { "key": "PDT-3676", "status": "Deployed to Staging" },
+    "admin_console": { "key": "PDT-3676", "status": "Deployed to Staging" }
+  },
+  "user_story": "As a network admin, I want to configure whether a push notification is sent when someone creates a new event in a community, so that networks can opt in/out of event-creation pushes without changing the creation flow.",
+  "value_rationale": "Network-level control; reduces accidental pushes while enabling pre-event RSVP growth for activation-heavy networks.",
+  "preconditions": [
+    "Admin has access to Admin Console settings",
+    "Push notifications are enabled for the network"
+  ],
+  "entry_points": [
+    "A. Admin Console → Settings → Push notifications → Event-related events"
+  ],
+  "push_message": {
+    "primary_line": "{{CommunityName}} has event {{EventName}}",
+    "secondary_line": "[EventType chip]  {{EventStartDate}} · {{EventStartTime}}",
+    "example": "\"Ulta Beauty Community has event Ulta Beauty World Masterclass 2026\" / [In-person]  10 Jul 2026 · 7:00 PM",
+    "notes": [
+      "{{EventType}} chip: In-person for in-person events, Virtual for virtual/livestream events",
+      "{{EventStartDate}} / {{EventStartTime}} = scheduled start (not send time)",
+      "Notification icon displays the community avatar"
+    ]
+  },
+  "notes": [
+    "jack (PDT-3676 comment): 'hold on \"Notify whole network for events in public communities\"' — a network-wide push toggle was HELD / NOT in this scope; default push audience = community members only (contrast with tray which IS network-wide on public — TR-CL-02).",
+    "jack (PDT-3420 comment): 'We don't handle push on our side. It reuse navigation from noti tray.' — push tap-nav reuses the tray deep-link/nav path (so tray nav bug BUG-C affects push too).",
+    "No dedicated console design; implemented as one more toggle under existing event notifications (jack + Tanat screenshots 2026-07-09/10)."
+  ],
+  "acceptance_criteria": [
+    {
+      "ac_id": "AC-01",
+      "group": "Console toggle visibility",
+      "scenario": "Admin sees event creation push toggle",
+      "given": [
+        "A network admin navigates to Admin Console → Settings → Push notifications → Event-related events"
+      ],
+      "when": "The settings page loads",
+      "then": [
+        "They see a toggle \"When someone creates a new event in the community\""
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-02",
+      "group": "Toggle OFF behavior",
+      "scenario": "Event-creation push disabled",
+      "given": [
+        "\"When someone creates a new event in the community\" is OFF"
+      ],
+      "when": "An event is created in any community",
+      "then": [
+        "No event-creation push notification is sent",
+        "The standard tray notification still fires to community members per existing behavior"
+      ],
+      "clarifications_needed": []
+    },
+    {
+      "ac_id": "AC-03",
+      "group": "Toggle ON behavior",
+      "scenario": "Event-creation push to community members",
+      "given": [
+        "\"When someone creates a new event in the community\" is ON"
+      ],
+      "when": "An event is created in any community",
+      "then": [
+        "A push notification is sent to all active, non-banned members of that community",
+        "The push deep-links to the event RSVP page (= event detail page where RSVP is visible, per shared tray nav)"
+      ],
+      "clarifications_needed": []
+    }
+  ]
+}

@@ -13,6 +13,7 @@ description: 'ใช้เมื่อมี executable test cases (phase-3-4) �
 - **Consumes:** `*-test-cases.json` (EC ทั้งหมดของ epic) + epic release date (`customfield_10860` → suiteTopLevel)
 - **Produces:** `PDT-XXXX-manual-spec.json` (schema `qa-manual-spec-v1` — team spec.json + `_schema`/`covers`) + `PDT-XXXX-manual-testmo.csv` (team columns + `QA Responsibility`; Preconditions/Expected Results เป็น bullet `- `) วางที่ epic-level (`qa/<epic>/_epic/`)
 - **Tool:** `tools/export_spec_testmo_csv.py <spec.json> -o <csv>` — spec → team CSV (mirror generator.ts)
+- **Cross-check:** `qa/_shared/platform-behavior-registry.json` — ตั้ง `configurations`/platforms ของแต่ละ case ตาม divergence ที่ยืนยันแล้ว (เช่น mobile-web ไม่มี pause control) แทนที่จะเดาว่าเหมือนกันหมด
 
 ## Consolidation (ลด "งานกด" ไม่ลด "สิ่งที่ตรวจ")
 EC ที่ **setup เดียวกัน** (success + guard + BVA-pair) → รวมเป็น **1 case ที่มี expectedResults หลาย outcome** (เพื่อนก็ทำแบบนี้ — 1 case มี expected 6 ข้อได้). re-tolerance เป็นค่าที่คนตัดสินได้ ("~1 วิ ไม่ใช่ 3", "~10s"). batch by setup. 109 EC → ~35 case

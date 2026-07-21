@@ -1,7 +1,9 @@
 {
   "feature": "PDT-3421 — Notification Tray: richer event details + one-tap to RSVP",
   "epic": "PDT-3421",
-  "stories": ["PDT-3675 (UC1: Receive tray notification on event creation)"],
+  "stories": [
+    "PDT-3675 (UC1: Receive tray notification on event creation)"
+  ],
   "generated": "2026-07-06",
   "sources": [
     "PRD: products/PDT-3421/prd/🔔 Close the Live Stream Activation Funnel — Notification Tray.html",
@@ -27,8 +29,17 @@
       "consequence": "dev อาจ deep-link ไปคนละที่ — ถ้ามีหน้า RSVP dedicated ที่ยังไม่มีจริงจะ link เสีย; ถ้าเป็น event detail page ต้องมั่นใจว่า RSVP CTA เห็นทันที",
       "question": "ปลายทางเมื่อ tap tray item คือ event detail page เดิม (มีปุ่ม RSVP) หรือหน้า RSVP dedicated แยก? deep-link target ที่แน่นอนคืออะไร (ต้องตรงกับ PDT-3677 AC-01)",
       "ask": "PM/Design",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "Destination = existing event detail page (RSVP CTA already visible there), NOT a separate RSVP page — resolves the PRD Opportunity-Brief vs Release-Note contradiction toward the detail-page reading.",
+        "verified_refs": [],
+        "ac_change_ref": null,
+        "followup_ref": null
+      },
+      "answer": "ปลายทางอยู่ที่ event detail page มันจะมี RSVP อยู่",
+      "answered_by": "PM",
+      "answered_date": "2026-07-16"
     },
     {
       "id": "TR-CL-02",
@@ -41,8 +52,17 @@
       "consequence": "ถ้าตั้งใจให้ต่างกันได้ (tray กว้าง, push แคบ) ต้องระบุใน AC ทั้งสองฝั่งให้ชัด; ถ้าเป็น gap จริงจะเกิด behavior ที่ member ได้ tray แต่ไม่ได้ push (หรือกลับกัน) โดยไม่ตั้งใจ",
       "question": "Public community event: tray และ push ควรมี audience เดียวกันไหม? ยืนยันว่า tray ยิงทั้ง network เสมอโดยไม่มี gate ใช่หรือไม่ (ตรงกับ PDT-3420 CL-03)",
       "ask": "PM",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "Intentional asymmetry confirmed: tray broadcasts network-wide on public communities (passive surface → low spam risk); push does NOT. Tray↔push audience divergence is by design, not a gap.",
+        "verified_refs": [],
+        "ac_change_ref": null,
+        "followup_ref": null
+      },
+      "answer": "It was intentional that tray notify the network but the push does not. Because the tray is passive, user has to click open to see it. So it’s less of spammy risk.",
+      "answered_by": "PM",
+      "answered_date": "2026-07-16"
     },
     {
       "id": "TR-CL-03",
@@ -55,8 +75,17 @@
       "consequence": "core behavior ไม่มี AC → dev อาจไม่ implement nav หรือ implement คนละแบบกับ push (PDT-3677); กรณี event deleted ก่อน tap (มีใน Idea) ไม่มี spec → blank/broken screen",
       "question": "ต้องการ AC เพิ่มสำหรับ (1) tap tray item → navigate ไป event detail/RSVP page และ (2) event ถูกลบก่อน tap → แสดง 'no longer available' ไหม? หรือ nav behavior ให้ reuse จาก PDT-3677 (push) ทั้งหมด?",
       "ask": "PM",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "Scope = message enrichment ONLY; tap-nav + deleted-event handling stay as current shipped behavior (no new AC). Spec question closed. QA must baseline the current nav + deleted-event behavior from the deployed build for regression (FU-1).",
+        "verified_refs": [],
+        "ac_change_ref": null,
+        "followup_ref": "FU-1"
+      },
+      "answer": "Since Noti tray for event creation already exist today. The scope of work is just to inrich the message. No change to the current nav behavior.",
+      "answered_by": "PM",
+      "answered_date": "2026-07-16"
     },
     {
       "id": "TR-CL-04",
@@ -69,8 +98,14 @@
       "consequence": "ระบบ notification tray อาจมี auto-grouping อยู่แล้ว (เช่น รวม noti จาก community เดียว) → ถ้าไม่ระบุ dev อาจปล่อยให้ group → ขัด requirement",
       "question": "ยืนยันว่า event-creation tray items ต้องไม่ถูก group (แต่ละ event = 1 item แยก) และต้องการ AC เพิ่มสำหรับพฤติกรรมนี้ไหม?",
       "ask": "PM",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "ไม่ group — แต่ละ event = 1 tray item แยก (รวมถึงหลาย event จาก community เดียวกัน)",
+        "source": "Figma ground truth: annotation pill '>1 Events from the same AND/OR different communities' + frames 3759:26401/26415 โชว์ item แยกทุกอัน (products/PDT-3421/design/INDEX.md)",
+        "resolved_by": "ground-truth",
+        "date": "2026-07-15",
+        "step": "STEP1"
+      }
     },
     {
       "id": "TR-CL-05",
@@ -83,8 +118,19 @@
       "consequence": "แสดงเวลาผิด timezone → member เข้าใจเวลา event ผิด → RSVP/เข้าร่วมผิดเวลา (critical สำหรับ live stream ที่ time-sensitive)",
       "question": "{{EventStartDate}} / {{EventStartTime}} ใน tray แสดงใน timezone ใด — device ของผู้รับ, timezone ของ event, หรือของ community? (ต้องตรงกับ push PDT-3420 CL-06)",
       "ask": "PM/Engineering",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "[REVERSED 2026-07-21 -> viewer-local, see _reversal] Event date/time render in the EVENT's timezone (not device/community). Same rule applies to push (PDT-3420 CL-06) → answer covers both surfaces. FU-2: verify event object carries a tz + tray/push format consistently.",
+        "verified_refs": [],
+        "ac_change_ref": null,
+        "followup_ref": "FU-2"
+      },
+      "answer": "Should follow the event timezone",
+      "answered_by": "PM",
+      "answered_date": "2026-07-16",
+      "_verification": "[SUPERSEDED 2026-07-21 — tray=viewer-local, BUG-B1 retracted; see _reversal_2026_07_21 + DEC-06. Historical 07-16 record below:] backend ตั้งใจส่ง raw startTime (ISO) + event.metadata.timezone (IANA, optional) แล้วให้ client format (design reject server-side format). PM อยาก event-tz → client (Web/iOS/Android) ต้อง format ด้วย metadata.timezone แต่ปัจจุบันใช้ device-local → BUG-B1 (client fix). + BUG-B2: push อ่าน rawData.timezone (top-level) แต่เก็บที่ metadata.timezone → push ตก UTC เสมอ (index.js:1866, ADR-0003). OPEN: ถ้า event ไม่มี metadata.timezone → client fallback อะไร (ask PM/Eng). || USER-CONFIRMED 2026-07-16 (concrete): event created at GMT-5 (New York) starting 7:00 PM on 10 Jul 2026 -> a recipient on a GMT+7 (Bangkok) device MUST see '7:00 PM, 10 Jul' (event tz), NOT the device-converted '7:00 AM, 11 Jul'. Current build formats device-local = BUG-B1 (test must fail on current build). Missing-metadata.timezone fallback = LOW-priority open (user reaffirmed event-tz rule; edge, non-blocking).",
+      "_reversal_2026_07_21": "PM reversed after dev input: tray shows start time in the VIEWER's LOCAL (device) timezone, per existing UIKit behavior (event cards + detail already local); 'not a new timezone decision'. Supersedes the event-tz answer + NY/Bangkok example. => client device-local is CORRECT, BUG-B1 RETRACTED. Push (server-rendered, BUG-B2) NOT covered -> push tz re-opened (viewer-local not feasible server-side; needs product decision). See DEC-06. UPDATE (same day): push verified device-local on Android + iOS too → push tz = viewer-local (consistent with tray), BUG-B2 retracted. No push-tz decision outstanding."
     },
     {
       "id": "TR-CL-06",
@@ -97,13 +143,21 @@
       "consequence": "dev อาจไม่ update badge count หรือ mark seen ผิดจังหวะ → count เพี้ยน หรือ item ค้าง unseen ตลอด",
       "question": "unseen tray item ควร increment global notification badge/count ไหม และเปลี่ยนเป็น seen เมื่อ (a) เปิดหน้า tray หรือ (b) tap ที่ item?",
       "ask": "PM/Engineering",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "badge = client คำนวณจาก lastTrayOccurredAt > lastTraySeenAt (ไม่มี server count); event_created ดัน occurredAt ให้ non-member ด้วย; seen set โดย markTraySeen/markItemsSeen เท่านั้น (fetch ไม่ set); item ใหม่ lastSeenAt=null",
+        "source": "backend as-built (social-plus-core release-4.132.0 + design doc 2026-07-07-new-event-creation-noti-tray.md); ดู qa/PDT-3421/as-built-verification.md",
+        "verified_refs": [
+          "index.ts:229-263,272-313; serializer:189"
+        ],
+        "resolved_by": "backend-as-built",
+        "date": "2026-07-16"
+      }
     },
     {
       "id": "TR-CL-07",
       "type": "ambiguous",
-      "severity": "medium",
+      "severity": "high",
       "story": "PDT-3675",
       "ac": "AC-01 vs AC-04",
       "source": "AC-01: 'Given a user is an active, non-banned member of a community... the user receives a NotificationTrayItem' | AC-04: 'PUBLIC community → all active, non-banned users in the network receive the notification'",
@@ -111,8 +165,19 @@
       "consequence": "dev อาจสร้าง tray item ให้เฉพาะ member ตาม AC-01 แล้วพลาด network user สำหรับ public event; หรือ content ('{{CommunityName}} has event...') อาจดูแปลกสำหรับคนที่ไม่ได้อยู่ community นั้น",
       "question": "สำหรับ public community: non-member network user ได้รับ tray item เดียวกัน (content เดียวกัน) กับ member ใช่ไหม? AC-01 เป็น base content ที่ใช้กับทั้ง member และ network user หรือเฉพาะ member?",
       "ask": "PM",
-      "status": "open",
-      "resolution": null
+      "status": "ac-change",
+      "resolution": {
+        "status": "ac-change",
+        "rationale": "Audience = ALL network users incl. community non-members (network-wide) — USER-CONFIRMED 2026-07-16 (wording ambiguity closed) + corroborated by TR-CL-16. Behaviour locked; residual action = update user story persona in Jira (FU-3).",
+        "verified_refs": [],
+        "ac_change_ref": "FU-3 + decisions.json DEC-03 (PM to update Jira user story; products/ NOT edited directly per R1 write-boundary)",
+        "followup_ref": "FU-3"
+      },
+      "_step1_note": "Escalated medium→high (STEP1): ยืนยันเป็น AS-BUILT (dev comment PDT-3675 'a user can receive an event_created item for a community they have not joined') + ขัดเชิงระบบ 5 จุด (PRD Idea/Entity Scope + Epic Entity Scope + user story persona ทั้งหมดพูด members-only ขณะ AC-04 + as-built = network-wide) + Figma โชว์ content เหมือนกัน member/non-member. คำถามสำคัญสุดของ feature — ต้องให้ PM ชี้ขาดก่อน.",
+      "answer": "All members of the network",
+      "answered_by": "PM",
+      "answered_date": "2026-07-16",
+      "answer_confirm": "2026-07-16 (user): 'members of the network' = users ทุกคน รวม non-member ของ community"
     },
     {
       "id": "TR-CL-08",
@@ -125,8 +190,14 @@
       "consequence": "dev อาจส่ง tray item กลับหาคนสร้างเอง (ได้ noti event ที่ตัวเองเพิ่งสร้าง) หรือ exclude โดยไม่ระบุ",
       "question": "คนที่สร้าง event ควรได้รับ tray item ของ event ตัวเองไหม หรือ exclude ออกจาก audience?",
       "ask": "PM",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "event creator/host ไม่ได้รับ tray item ของ event ตัวเอง (excluded)",
+        "source": "Jira regression exclusion (ทั้ง 4 story) + social.plus docs §7 'Event host/creator does not receive their own event notification'",
+        "resolved_by": "ground-truth",
+        "date": "2026-07-15",
+        "step": "STEP1"
+      }
     },
     {
       "id": "TR-CL-09",
@@ -139,8 +210,16 @@
       "consequence": "dev อาจ fire tray item ตอนบันทึก draft → member ได้ noti event ที่ยังไม่ finalize; recurring อาจยิงทุก instance",
       "question": "'Event created' หมายถึง event ทุกประเภทเมื่อบันทึกครั้งแรกใช่ไหม? draft/scheduled/recurring จัดการอย่างไร?",
       "ask": "PM/Engineering",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "ไม่มี draft/recurring — ทุก event สร้างเป็น SCHEDULED (start ≥ now+15m); fire ทุกครั้งที่สร้าง event ใน community (USER origin ถูก reject)",
+        "source": "backend as-built (social-plus-core release-4.132.0 + design doc 2026-07-07-new-event-creation-noti-tray.md); ดู qa/PDT-3421/as-built-verification.md",
+        "verified_refs": [
+          "event/index.ts:68-71,225; types.ts:17-22; worker.ts:92-93"
+        ],
+        "resolved_by": "backend-as-built",
+        "date": "2026-07-16"
+      }
     },
     {
       "id": "TR-CL-10",
@@ -153,8 +232,16 @@
       "consequence": "ถ้าสมาชิกทั่วไปสร้าง event ได้ tray อาจถูก trigger โดย role ที่ไม่ตั้งใจ หรือกลับกัน dev จำกัดเฉพาะ moderator ทำให้ admin-created event ไม่ยิง",
       "question": "Role ใดบ้างที่สร้าง event แล้ว trigger tray notification ได้ (moderator เท่านั้น หรือ admin/member ด้วย)?",
       "ask": "PM",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "permission-gated: role ที่มี CreateEvent (หรือ admin ManageEvent) trigger ได้ — ไม่ hardcode moderator, ตั้งให้ member ได้; creator ถูก exclude จากผู้รับ",
+        "source": "backend as-built (social-plus-core release-4.132.0 + design doc 2026-07-07-new-event-creation-noti-tray.md); ดู qa/PDT-3421/as-built-verification.md",
+        "verified_refs": [
+          "event.service.ts:116-123,146-158"
+        ],
+        "resolved_by": "backend-as-built",
+        "date": "2026-07-16"
+      }
     },
     {
       "id": "TR-CL-11",
@@ -167,8 +254,15 @@
       "consequence": "ถ้าเดิมแสดง event thumbnail แล้วเปลี่ยนเป็น community avatar อาจเป็น regression ที่ไม่ตั้งใจ หรือทั้งสองอย่างต้องแสดงคู่กัน",
       "question": "tray item ใหม่แสดงเฉพาะ community avatar เป็น icon ใช่ไหม? แล้ว event thumbnail (ที่ระบุว่ามีอยู่เดิม) ยังแสดงอยู่หรือถูกแทนที่?",
       "ask": "PM/Design",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "icon = community avatar เท่านั้น ไม่มี event thumbnail แยก",
+        "source": "Figma component 3759:26432: Avatar node 32px = community avatar; ไม่มี thumbnail element",
+        "resolved_by": "ground-truth",
+        "date": "2026-07-15",
+        "step": "STEP1"
+      },
+      "_verification": "verified: Web = community avatar ✓ (design); iOS = actor user avatar ✗; Android = event cover ✗ → mobile diverge (ผูกกับ TR-CL-25)."
     },
     {
       "id": "TR-CL-12",
@@ -181,8 +275,16 @@
       "consequence": "member เห็นเวลา/ชื่อเก่าใน tray แล้วเข้าใจผิด",
       "question": "ถ้า event ถูกแก้หลังสร้าง tray item ต้องการให้ tray item อัปเดตตามไหม หรือเป็น snapshot ณ เวลาสร้าง?",
       "ask": "PM",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "live (ไม่ใช่ snapshot) — tray เก็บแค่ actionReferenceId, serializer re-fetch event ตอน read; edit reflect หลัง Redis cache หมด (short TTL)",
+        "source": "backend as-built (social-plus-core release-4.132.0 + design doc 2026-07-07-new-event-creation-noti-tray.md); ดู qa/PDT-3421/as-built-verification.md",
+        "verified_refs": [
+          "event-event.handler.ts:58; serializer:217-243"
+        ],
+        "resolved_by": "backend-as-built",
+        "date": "2026-07-16"
+      }
     },
     {
       "id": "TR-CL-13",
@@ -195,8 +297,16 @@
       "consequence": "อาจมี tray item format เก่า+ใหม่ปนกันใน tray โดยไม่มีใครตัดสินใจว่ายอมรับได้ไหม",
       "question": "Format ใหม่ apply เฉพาะ event ที่สร้างหลัง release ใช่ไหม? tray item เดิมปล่อยไว้ format เก่า (ไม่ backfill) — ยืนยัน",
       "ask": "PM",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "network-broadcast scope = forward-only (ไม่ backfill; item เก่า stay community-scoped) แต่ copy generate ตอน read → item เก่าได้ text ใหม่; push copy migrate ด้วย migration",
+        "source": "backend as-built (social-plus-core release-4.132.0 + design doc 2026-07-07-new-event-creation-noti-tray.md); ดู qa/PDT-3421/as-built-verification.md",
+        "verified_refs": [
+          "plan doc; serializer:303-308; migrate-event-created-push-copy.ts"
+        ],
+        "resolved_by": "backend-as-built",
+        "date": "2026-07-16"
+      }
     },
     {
       "id": "TR-CL-14",
@@ -209,8 +319,16 @@
       "consequence": "member อาจได้ tray item ซ้ำสำหรับ event เดียว",
       "question": "เมื่อ public community event ยิงทั้ง network: community member (ที่อยู่ทั้ง 2 audience) ควรได้ tray item เดียวใช่ไหม?",
       "ask": "Engineering",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "member∈network (public) ได้ 1 item — UNION (ไม่ใช่ UNION ALL) dedup",
+        "source": "backend as-built (social-plus-core release-4.132.0 + design doc 2026-07-07-new-event-creation-noti-tray.md); ดู qa/PDT-3421/as-built-verification.md",
+        "verified_refs": [
+          "neo4j.ts:351,366; plan doc line 82"
+        ],
+        "resolved_by": "backend-as-built",
+        "date": "2026-07-16"
+      }
     },
     {
       "id": "TR-CL-15",
@@ -223,8 +341,258 @@
       "consequence": "tray item อาจแสดง icon ว่าง หรือ text ล้น/ตัดกลางคำ",
       "question": "ถ้า community ไม่มี avatar ใช้ fallback อะไร? และ long name ใน tray item ให้ truncate อย่างไร?",
       "ask": "Design",
-      "status": "open",
-      "resolution": null
+      "status": "resolved",
+      "resolution": {
+        "verdict": "fallback มีทุก platform (Web=community glyph SVG, iOS=initials, Android=event placeholder). truncation ต่างกัน: Web/iOS wrap ไม่ตัด, Android maxLines=3+ellipsis",
+        "source": "as-built source review 3 platforms (qa/PDT-3421/as-built-verification.md)",
+        "verified_refs": [
+          "Web CommunityAvatar.tsx:46-65",
+          "Android AmityNotificationTrayItemView.kt:190-198"
+        ],
+        "resolved_by": "as-built-verify",
+        "date": "2026-07-16"
+      }
+    },
+    {
+      "id": "TR-CL-16",
+      "type": "gap",
+      "severity": "high",
+      "story": "PDT-3675",
+      "ac": "AC-04 / AC-05",
+      "source": "AC-04 (public → all active, non-banned network users) + AC-05 (private → active, non-banned members only) กำหนด audience จาก community public/private ตอนสร้าง item; ทั้ง AC และ PRD Entity Scope 'Community — Read — privacy scoping (public vs private)' ไม่ระบุกรณี privacy เปลี่ยนหลังส่ง item",
+      "observation": "audience (ชุด user ที่ได้รับ item; ตรงกับ API field audienceScope) = public → network user ทุกคน (member + non-member ของ community นั้น); private → member ของ community นั้นเท่านั้น. moderator สลับ public↔private เมื่อไหร่ก็ได้ แต่ AC ไม่ระบุว่า item ที่ส่งไปแล้วถูก recompute ไหมเมื่อ privacy เปลี่ยน",
+      "consequence": "public→private: non-member (network user ที่ไม่ได้ join) ได้ item ตอนยัง public — พอเป็น private ยังเห็น + tap เข้า event ของ private community ที่ไม่ได้เป็นสมาชิก = privacy leak. private→public: item ส่งให้ member เท่านั้น — พอเป็น public, non-member network user ควรได้ item ย้อนหลังไหม?",
+      "question": "audience ของ item = snapshot ณ เวลาส่ง (ไม่ recompute) หรือ recompute เมื่อ community privacy เปลี่ยน? โดยเฉพาะ public→private: item ที่ส่งให้ non-member ไปแล้วต้อง revoke/hide ไหม?",
+      "ask": "PM/Engineering",
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "Audience is a SNAPSHOT at send time (no recompute on privacy change). public→private exposure is delegated to the navigation/permission layer — PM ASSUMES it already guards access. FU-4: QA must VERIFY the deep-link/event-detail permission guard blocks a non-member from opening a now-private community's event (privacy-critical; if missing = privacy bug).",
+        "verified_refs": [],
+        "ac_change_ref": null,
+        "followup_ref": "FU-4"
+      },
+      "_derivation": "STEP-1 State Machine (Object C — external transition) [internal analysis, not team-facing]",
+      "answer": "The notification does not recompute when privacy changes. But the navigation should already handle it when a user trying to open a link without permission",
+      "answered_by": "PM",
+      "answered_date": "2026-07-16",
+      "_backend_confirm": "ยืนยัน: audience = snapshot (node เก็บ audienceScope ตอนสร้าง, ไม่ recompute — plan doc 'do NOT backfill'); nav guard มีจริง — getById คืน 403 ForbiddenError ให้ non-member ของ private community (event/index.ts:271-290, checkEventAccess:1134-1164). caveat: tray enrichment (_getByPublicIds) ข้าม checkEventAccess → title โผล่ใน tray text แม้ไม่มีสิทธิ์ (leak เล็ก ถ้า scoping เพี้ยน)."
+    },
+    {
+      "id": "TR-CL-17",
+      "type": "gap",
+      "severity": "medium",
+      "story": "PDT-3675",
+      "ac": "AC-05 / exclusions",
+      "source": "STEP1 State Machine (Object C) — exclusions กำหนดที่ send-time เท่านั้น",
+      "observation": "exclusions (banned/left) ถูกใช้ตอน 'ส่ง' แต่ไม่ระบุว่าถ้า user โดน ban (global/community) หรือออก/ถูกลบจาก community 'หลัง' ได้รับ item แล้ว item จะถูก revoke/hide จาก tray ไหม",
+      "consequence": "user ที่โดน ban หรือถูกถีบออกจาก private community ยังเห็น item + tap deep-link เข้า event ของ community นั้นได้ → access ที่ไม่ควรมี",
+      "question": "tray item ที่ส่งไปแล้วต้องถูก revoke/hide เมื่อ recipient โดน ban หรือออกจาก community ไหม หรือคงอยู่ตลอด",
+      "ask": "PM/Engineering",
+      "status": "resolved",
+      "resolution": {
+        "verdict": "banned/left หลังรับ → hide ตอน read (node ไม่ถูกลบ): banned public → Mongo ban filter; left private → edge หาย; un-ban/re-join แล้วกลับมา (ภายใน 30 วัน)",
+        "source": "backend as-built (social-plus-core release-4.132.0 + design doc 2026-07-07-new-event-creation-noti-tray.md); ดู qa/PDT-3421/as-built-verification.md",
+        "verified_refs": [
+          "neo4j.ts read arms; index.ts:148-183"
+        ],
+        "resolved_by": "backend-as-built",
+        "date": "2026-07-16"
+      }
+    },
+    {
+      "id": "TR-CL-18",
+      "type": "conflict",
+      "severity": "medium",
+      "story": "PDT-3675",
+      "ac": "AC-01 / AC-02 / AC-03 (secondary line)",
+      "source": "PRD/stored copy 'Secondary line: [chip] {{EventStartDate}} · {{EventStartTime}}' (มี middle-dot) | vs | Figma component 3759:26432 (date + time = 2 text node ติดกัน gap 4px, ไม่มี '·')",
+      "observation": "copy pattern ใน PRD มี separator '·' คั่น date/time แต่ component จริงใน Figma (UIKit 4.0) ไม่มี dot — เป็น 2 node แยก",
+      "consequence": "AT ที่ assert สตริงรวมที่มี '· ' จะ fail; แต่ละ platform อาจ implement dot ไม่ตรงกัน (บางอันใส่ บางอันไม่ใส่)",
+      "question": "secondary line มี separator '·' ระหว่าง date กับ time ไหม (ยึด design ปัจจุบัน = ไม่มี) และต้องตรงกันทุก platform",
+      "ask": "Design",
+      "status": "resolved",
+      "resolution": {
+        "verdict": "ไม่มี separator '·' ทุก platform (Web=2 span+gap, iOS/Android=combined template) — PRD copy ที่มี dot ผิด",
+        "source": "as-built source review 3 platforms (qa/PDT-3421/as-built-verification.md)",
+        "verified_refs": [
+          "Web NotificationItem.tsx:162-167",
+          "Android AmityEventDateFormatter.kt:17-63"
+        ],
+        "resolved_by": "as-built-verify",
+        "date": "2026-07-16"
+      }
+    },
+    {
+      "id": "TR-CL-19",
+      "type": "gap",
+      "severity": "low",
+      "story": "PDT-3675",
+      "ac": "AC-01",
+      "source": "Figma ground truth (design โชว์ relative timestamp) vs 5-element content spec + AC (ไม่ระบุ)",
+      "observation": "design แสดง relative timestamp ของ notification (occurredAt: 'Just now'/'2m'/'10h') มุมขวาบนของแต่ละ item แต่ 5-element content spec และ AC ไม่ครอบคลุม",
+      "consequence": "ไม่ชัดว่า timestamp นี้อยู่ใน scope ที่ต้อง test/verify ของ story นี้ไหม; format (relative vs absolute) + threshold ไม่มี spec → tester/AT ไม่รู้จะ assert อะไร",
+      "question": "relative timestamp เป็นส่วนหนึ่งของ AC นี้ (ต้อง verify) หรือเป็น tray chrome กลางที่ test แยกจาก story นี้? เกณฑ์ format/threshold กำหนดที่ไหน",
+      "ask": "PM/Design",
+      "status": "resolved",
+      "resolution": {
+        "verdict": "relative timestamp (occurredAt) render ทุก platform เป็น tray chrome กลาง (Just now/m/h/d/date) — ไม่ใช่ event-specific",
+        "source": "as-built source review 3 platforms (qa/PDT-3421/as-built-verification.md)",
+        "verified_refs": [
+          "Web Timestamp.tsx:22-42",
+          "iOS Date+Extension.swift:62-91",
+          "Android DateTimeExt.kt:27-56"
+        ],
+        "resolved_by": "as-built-verify",
+        "date": "2026-07-16"
+      }
+    },
+    {
+      "id": "TR-CL-20",
+      "type": "gap",
+      "severity": "medium",
+      "story": "PDT-3675",
+      "ac": "AC-02 / AC-03",
+      "source": "STEP2 phase-1-4 Data-integrity — chip มี 2 ค่า (in_person/virtual); API events[].type",
+      "observation": "AC-02/03 ครอบเฉพาะ type = in_person หรือ virtual แต่ไม่ระบุพฤติกรรมเมื่อ event.type เป็น null / ค่าอื่น / ค่าใหม่ในอนาคต",
+      "consequence": "chip อาจ render ว่าง/พัง/แสดง raw enum; AT ที่ map enum→label ไม่รู้จะ handle unknown ยังไง → test ไม่ครบหรือ false-pass",
+      "question": "ถ้า event.type ไม่ใช่ in_person/virtual (null หรือค่าใหม่) tray item ต้องแสดงอะไร — ซ่อน chip, default label, หรือ fallback?",
+      "ask": "PM/Engineering",
+      "status": "resolved",
+      "resolution": {
+        "verdict": "create form บังคับ type 2 ค่า (Virtual/InPerson) → unknown ไม่เกิดจริง (moot). client fallback ต่างกัน: Web ซ่อน chip / iOS+Android ตกเป็น 'Virtual' (divergence, low risk)",
+        "source": "as-built source review 3 platforms (qa/PDT-3421/as-built-verification.md)",
+        "verified_refs": [
+          "Web useEventSetup.ts:41",
+          "iOS EventCardView.swift:66",
+          "Android EventCardItem.kt:161-171"
+        ],
+        "resolved_by": "as-built-verify",
+        "date": "2026-07-16"
+      }
+    },
+    {
+      "id": "TR-CL-21",
+      "type": "ambiguous",
+      "severity": "medium",
+      "story": "PDT-3675",
+      "ac": "AC-02 / AC-03",
+      "source": "STEP2 phase-1-4 Environment — chip bg=rgba(0,0,0,0.5); Jira PDT-3724 comment (Android dev ถาม Design เรื่อง dark theme)",
+      "observation": "chip background เป็นดำโปร่ง 50% ตัวอักษรขาว — ใน dark theme (พื้นหลังเข้ม) contrast/ความอ่านออกอาจไม่พอ; Android dev ถาม Design ไว้ใน PDT-3724 แต่ยังไม่มีคำตอบ",
+      "consequence": "chip ใน dark theme อ่านยาก/กลืนพื้นหลัง = accessibility issue; ถ้าแต่ละ platform แก้ต่างกัน = platform divergence (R3 candidate)",
+      "question": "chip มี design token/สีแยกสำหรับ dark theme ไหม? behavior ต้องตรงกันทุก platform (iOS/Android/Web) หรือปล่อยต่างได้?",
+      "ask": "Design",
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "QA expected-result decided (user 2026-07-16 AskUserQuestion:Chip theme): chip must be LEGIBLE (sufficient text/bg contrast) in BOTH light & dark theme on every platform; per-platform styling divergence ACCEPTED as long as legible. Android light-theme white-on-white FAILS this bar = BUG-D (file). Exact color spec is a Design nicety, non-blocking.",
+        "verified_refs": [],
+        "ac_change_ref": null,
+        "followup_ref": null,
+        "resolved_by": "user-qa-decision",
+        "date": "2026-07-16"
+      },
+      "_r3_candidate": "ถ้ายืนยันว่า dark-theme chip render ต่างกันข้าม platform จริง → log qa/_shared/platform-behavior-registry.json",
+      "_verification": "per-platform DIVERGE: Web+iOS = hardcoded black@50% bg + white text (อ่านออกทั้ง light/dark แต่ไม่ theme-aware); Android = เปลี่ยน bg เป็น theme token AmityTheme.colors.background@50% แต่ text ยัง hardcode white → default/light theme = white-on-white มองไม่เห็น = BUG-D (regression, AmityEventTypeChip.kt:40-44, unused amityColorBlack import ยืนยัน refactor ไม่ครบ). Design ต้องชี้ขาด chip appearance ที่ถูกต้อง (light+dark) ทุก platform."
+    },
+    {
+      "id": "TR-CL-22",
+      "type": "ambiguous",
+      "severity": "low",
+      "story": "PDT-3675",
+      "ac": "AC-03",
+      "source": "STEP2 — AC-03 scenario title 'Virtual / livestream event' vs chip มี 2 ค่า",
+      "observation": "AC-03 เรียก 'Virtual / livestream' รวมกัน แต่ chip enum มีแค่ virtual/in_person — ไม่ชัดว่า livestream = render 'Virtual' chip เสมอ หรือมี state ที่ 3",
+      "consequence": "ถ้า livestream ควรมี label/ไอคอนต่างจาก virtual ทั่วไป จะ implement/test พลาด",
+      "question": "livestream event render เป็น chip 'Virtual' เหมือน virtual event ทั่วไปใช่ไหม (ไม่มี chip ที่ 3)?",
+      "ask": "PM/Design",
+      "status": "resolved",
+      "resolution": {
+        "verdict": "livestream = virtual event → chip 'Virtual' (ไม่มี state 3) ทุก platform",
+        "source": "as-built source review 3 platforms (qa/PDT-3421/as-built-verification.md)",
+        "verified_refs": [
+          "Web LocationForm.tsx:231",
+          "iOS EventEnums.swift:39-42",
+          "Android AmityEventSetupPage.kt:270"
+        ],
+        "resolved_by": "as-built-verify",
+        "date": "2026-07-16"
+      }
+    },
+    {
+      "id": "TR-CL-23",
+      "type": "gap",
+      "severity": "medium",
+      "story": "PDT-3675",
+      "ac": "AC-04 / AC-05",
+      "source": "STEP2 phase-1-4 Timing — audience คำนวณตอน event created",
+      "observation": "ไม่ระบุว่า user ที่ join community (private) หรือเข้ามาใน network หลัง event ถูกสร้างไปแล้ว จะได้ tray item ย้อนหลังไหม",
+      "consequence": "member ใหม่อาจพลาด event ที่สร้างก่อนเขา join (หรือกลับกัน ได้ item ของ event เก่าย้อนหลังจำนวนมาก) — ไม่ชัดว่า expect แบบไหน",
+      "question": "event_created item ส่งเฉพาะ audience ณ เวลาสร้าง (snapshot) ใช่ไหม — user ที่ join ทีหลังไม่ได้ item ย้อนหลัง?",
+      "ask": "PM/Engineering",
+      "status": "resolved",
+      "resolution": {
+        "verdict": "private = ไม่ได้ item ย้อนหลัง (community arm filter occurredAt > member.createdAt); public = ได้อยู่แล้ว network-wide",
+        "source": "backend as-built (social-plus-core release-4.132.0 + design doc 2026-07-07-new-event-creation-noti-tray.md); ดู qa/PDT-3421/as-built-verification.md",
+        "verified_refs": [
+          "neo4j.ts:354"
+        ],
+        "resolved_by": "backend-as-built",
+        "date": "2026-07-16"
+      }
+    },
+    {
+      "id": "TR-CL-24",
+      "type": "gap",
+      "severity": "medium",
+      "story": "PDT-3675",
+      "ac": "AC-04 / AC-05 / exclusions",
+      "source": "STEP2 — social.plus docs §7 'Banned / blocked / non-member (private) users don't receive it' (มี 'blocked' แต่ exclusions ไม่นิยาม)",
+      "observation": "docs §7 พูดถึง 'blocked' users ไม่ได้รับ แต่ regression exclusions ระบุแค่ banned/left/creator — ไม่นิยามว่า user-level block (A block B / block community) กระทบการส่ง event_created ไหม",
+      "consequence": "ถ้า block relationship ควร exclude แต่ dev ไม่ได้ทำ → user เห็น event จากคนที่ตัวเอง block; หรือกลับกัน exclude เกินจนพลาด audience",
+      "question": "user-level block ('blocked' ใน docs §7) หมายถึงอะไร และกระทบการส่ง event_created tray item ไหม (นอกเหนือจาก global/community ban)?",
+      "ask": "PM/Engineering",
+      "status": "resolved",
+      "resolution": {
+        "verdict": "user-block กด suppress: block recipient↔creator (2 ทาง either direction) → arm filter NOT actors._id IN blockedUserIds",
+        "source": "backend as-built (social-plus-core release-4.132.0 + design doc 2026-07-07-new-event-creation-noti-tray.md); ดู qa/PDT-3421/as-built-verification.md",
+        "verified_refs": [
+          "neo4j.ts:347,357-358,373-374; follow.helper.ts:59-63"
+        ],
+        "resolved_by": "backend-as-built",
+        "date": "2026-07-16"
+      }
+    },
+    {
+      "id": "TR-CL-25",
+      "type": "conflict",
+      "severity": "high",
+      "story": "PDT-3724 (Android) + PDT-3725 (iOS)",
+      "ac": "AC-01 / AC-02 / AC-03",
+      "source": "Shared AC-01/02/03 (ทั้ง 4 story identical) require chip + start date + start time + community avatar. Source review: iOS AmityNotificationTrayItemView.swift:30-78 + Android AmityNotificationTrayItemView.kt:41-106 render event_created แบบ generic (avatar+text+timestamp, ไม่มี chip/date/time); Web NotificationItem.tsx:161-167 implement ครบ",
+      "observation": "enriched event-created tray item (chip + start date/time + community avatar) implement เฉพาะ Web. iOS = actor/user avatar + text + timestamp; Android = event-cover + text + timestamp — ไม่มี chip/date/time. Android อยู่ Staging เท่า Web (ไม่ใช่แค่ 'iOS ตามหลัง')",
+      "consequence": "AC-01/02/03 จะ FAIL บน iOS+Android เพราะ feature ไม่มี — ไม่ใช่ test bug แต่ mobile impl gap. QA test enriched item บน mobile ไม่ได้. ถ้าไม่ตั้งใจ = bug ของ PDT-3724/3725; ถ้าตั้งใจ (web-only release นี้) = ต้องแก้ AC/scope ให้ mark mobile out + log divergence (R3)",
+      "question": "enriched event-created tray item (chip + start date/time + community avatar) ต้อง render บน iOS + Android ด้วยไหม (ตามที่ AC ร่วมกันบอก)? ถ้าใช่ = mobile ยังไม่เสร็จ (bug); ถ้าไม่ = web-only, ต้องอัปเดต AC/scope + ยืนยัน mobile ควร render อะไร",
+      "ask": "PM/Engineering",
+      "status": "resolved",
+      "resolution": {
+        "verdict": "RETRACTED (false alarm) — enriched item (chip+date+time+community avatar) render ครบทั้ง 3 platform. รอบแรก iOS+Android agent พลาด code path ของ event_created (HEAD ไม่เปลี่ยน = agent miss ไม่ใช่ branch). แต่ re-verify เจอ BUG-D (Android chip light-theme) เป็นของแถม",
+        "source": "re-verify: Web NotificationItem.tsx:161-167; iOS NotificationTrayItemView.swift:79-127; Android AmityNotificationTrayItemView.kt:84-131",
+        "verified_refs": [
+          "all 3 platforms enriched"
+        ],
+        "resolved_by": "re-verify",
+        "date": "2026-07-16"
+      },
+      "_derivation": "as-built-verification 2026-07-16 (3 platform source review)",
+      "_branch_context": "อ่านจาก iOS feat/create_event_noti_tray + Android fr/feat/pdt-3724-event-tray-notification @2026-07-10 (feature branch ถูกตัว ไม่ใช่ wrong-branch). PROVISIONAL: commit 07-10 อาจ behind remote → pull latest + re-verify ก่อน confirm เป็น bug. Web = develop (merged)."
     }
-  ]
+  ],
+  "updated": "2026-07-21",
+  "_step1_update": "STEP1 Understand (PDT-3675-uc1-analysis.md): resolved TR-CL-04/08/11 by design+docs; escalated TR-CL-07→high; added TR-CL-16..19.",
+  "_step2_update": "STEP2 Specify (PDT-3675-uc1-analysis.md): enriched AC-01..05 (happy+edge/error); added TR-CL-20..24 from 4 mental models.",
+  "_review_update": "qa-clarifications-review 2026-07-16: recorded PM answers TR-CL-01/02/03/05/07/16; classified (resolved 4 / ac-change 1 / resolved+verify). FU-1..4 → FOLLOWUPS.md; DEC-03 → decisions.json.",
+  "_verify_update": "as-built verify 2026-07-16: resolved TR-CL-15/18/19/20/22; flagged TR-CL-05 (dev-delta/BUG-B), TR-CL-11 (mobile avatar diverge), TR-CL-21 (→Design, chip not theme-aware); NEW TR-CL-25 (mobile tray not enriched — headline).",
+  "_final_update": "all-platform verify done 2026-07-16: retract TR-CL-25 (mobile enriched, false alarm); backend resolved TR-CL-06/09/10/12/13/14/17/23/24 + confirm TR-CL-16/FU-4; refine TR-CL-05 (client tz bug BUG-B1) + TR-CL-21 (Android BUG-D). Bugs: BUG-B1/B2/C/D + 2 minor backend.",
+  "_answers_update": "2026-07-16 user answers: TR-CL-05 event-tz CONFIRMED (NY/Bangkok concrete data; BUG-B1 catch); TR-CL-21 RESOLVED (QA expected=legible both themes, divergence OK, Android light=BUG-D); scope=tray+push -> DEC-04. Register now: resolved 24 / ac-change 1 (TR-CL-07) / open 0."
 }

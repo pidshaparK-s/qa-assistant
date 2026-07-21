@@ -10,6 +10,7 @@ description: 'ใช้เมื่อมี scenarios (phase-3-3) แล้ว 
 ## Artifacts
 - **Consumes:** scenarios (`*-scenarios.json` — SC ที่มี `expected.success` + `expected.alternative[]`, `steps`, `test_layer`)
 - **Produces:** `qa/<epic>/PDT-XXXX-ucN-test-cases.json` (schema `qa-test-cases-v1`)
+- **Cross-check:** `qa/_shared/platform-behavior-registry.json` — feature area ที่มี entry อยู่แล้ว ต้องแตก EC ต่อ platform (อย่ารวม expected_result เดียวข้าม platform ที่รู้อยู่แล้วว่าต่างกัน)
 
 ## What an EC is
 Concrete runnable expansion of one scenario path: **1 `success` EC** + **1 `alternative` EC per entry in `expected.alternative[]`**. `steps` มีค่าจริง (แทน `[field]` แล้ว), `test_data` ค่าจริง, `expected_result` คัดตรงจาก scenario.

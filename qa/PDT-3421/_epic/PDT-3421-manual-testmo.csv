@@ -1,0 +1,175 @@
+ID,Key,Name,Folder Path,Description,Preconditions,Steps,Expected Results,Priority,Configurations,AC Covered,QA Responsibility
+,,"[ Tray content ] Verify the event-created tray item shows community avatar, title, event-type chip, start date and time, and unseen state",Tray · Content & rendering,Core content of the enriched event-created tray item (5-element spec). Icon = community avatar (not user avatar / not event thumbnail).,"- A community exists with an avatar set
+- The signed-in user is an active, non-banned member of that community
+- The Notification Tray is open on the target device","1. Have a moderator create a new event in the community
+2. Open the Notification Tray on the recipient device
+3. Locate the newly created event item","- The item icon is the COMMUNITY avatar (not the creator/user avatar and not an event thumbnail)
+- The primary line reads ""[Community name] has event [Event name]""
+- The secondary line shows an event-type chip followed by the event start date and start time
+- The item is marked as unseen (unseen / primary-tint indicator)",P1,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ Event type chip ] Verify the In-person and Virtual chips show the correct label and stay legible in light and dark theme,Tray · Content & rendering,"TR-CL-21 / DEC-05 (expected = legible in both themes, per-platform divergence accepted) + BUG-D (Android chip white-on-white in LIGHT theme). Virtual == livestream (no third chip state).","- A test community is available for creating both In-person and Virtual (livestream) events
+- The target device/app supports both light and dark theme","1. Create an In-person event and open its tray item
+2. Create a Virtual / livestream event and open its tray item
+3. View each item in LIGHT theme
+4. View each item in DARK theme","- The In-person event shows a chip labelled ""In-person""
+- The Virtual / livestream event shows a chip labelled ""Virtual"" (there is no third chip type)
+- The chip text is legible (sufficient contrast) in LIGHT theme on every platform
+- The chip text is legible in DARK theme on every platform
+- Known risk (BUG-D): on Android the chip may render white-on-white in light theme — this must FAIL the legibility check",P2,"iOS, Android, web-desktop, mobile-web","Tray AC-02, Tray AC-03",Fai
+,,[ Start time timezone ] Verify the tray date and time render in the viewer's local timezone (matching event cards and event detail),Tray · Content & rendering,"TR-CL-05 REVERSED 2026-07-21 (PM, after dev input): the tray follows existing UIKit behavior and shows the start time in the VIEWER's LOCAL timezone — same as event cards / event detail pages — NOT the event's own timezone. BUG-B1 is therefore RETRACTED: device-local is the intended behavior.","- Create an event and, in the timezone picker (shown as a GMT offset), select GMT-5 (e.g. New York / Eastern); set the start time to 7:00 PM on 10 Jul 2026
+- Set the viewer's device timezone to GMT+7 (e.g. Bangkok)","1. Create the GMT-5 event as described
+2. On the GMT+7 device, open the event-created tray item
+3. Compare with the same event's start time on the event card / event detail page","- The tray shows the start time converted to the VIEWER's local (GMT+7) timezone — i.e. 7:00 AM on 11 Jul 2026
+- This matches how the same event's start time is shown on the event card and the event detail page (all viewer-local)
+- It does NOT show the event's source-timezone wall-clock (must NOT show 7:00 PM on 10 Jul)",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ Timestamp & separator ] Verify the relative notification timestamp renders and the date/time has no middle-dot separator,Tray · Content & rendering,TR-CL-19 (relative timestamp is tray chrome) + TR-CL-18 (no '·' separator — the PRD copy with a dot is wrong).,- An event-created tray item is visible,"1. Observe the item's notification timestamp (corner / top)
+2. Observe the secondary line between the date and the time","- A relative timestamp is shown (e.g. Just now / 2m / 10h / a date)
+- There is NO '·' middle-dot separator between the date and the time
+- Date and time are separated by spacing only (per current design, not the PRD copy)",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ Avatar fallback & truncation ] Verify the community-avatar fallback and long-name handling per platform,Tray · Content & rendering,TR-CL-15. Per-platform truncation differs and is accepted (Web/iOS wrap; Android ellipsizes ~3 lines).,"- A community with NO avatar set
+- A community and event with very long names","1. Trigger a tray item for the community that has no avatar
+2. Trigger a tray item with very long community and event names","- The no-avatar community shows a fallback (Web = community glyph, iOS = initials, Android = placeholder) — never a broken/empty icon
+- Long names do not break the layout or overlap other elements
+- Truncation may differ per platform (Web/iOS wrap; Android ellipsizes ~3 lines) — accepted as long as readable",P4,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,"[ Public audience ] Verify a public-community event notifies the entire network including non-members, with no duplicate item",Tray · Audience & privacy,AC-04 network-wide incl non-members (DEC-03) + TR-CL-14 dedup (UNION → 1 item). Needs >=3 accounts.,"- A PUBLIC community
+- Account A = active member of that community
+- Account B = active network user who is NOT a member of that community
+- Account C = the event creator","1. As Account C, create an event in the public community
+2. Open the tray on Account A (member)
+3. Open the tray on Account B (non-member network user)
+4. Check Account A for duplicate items","- Account A (member) receives ONE event-created tray item
+- Account B (non-member network user) ALSO receives the item, with the same content (community name shown even though B is not a member)
+- Account A sees only ONE item (a member who is also in the network is de-duplicated, not shown twice)
+- The creator (Account C) does NOT receive an item for their own event",P1,"iOS, Android, web-desktop, mobile-web",Tray AC-04,Fai
+,,"[ Private audience ] Verify a private-community event notifies only active, non-banned members",Tray · Audience & privacy,AC-05. Private = members-only; non-members and banned members excluded.,"- A PRIVATE community
+- Account A = active member
+- Account B = network user who is NOT a member
+- Account D = a member who is community-banned","1. Create an event in the private community
+2. Open the tray on Account A (member)
+3. Open the tray on Account B (non-member)
+4. Open the tray on Account D (banned member)","- Account A (active member) receives the item
+- Account B (non-member) does NOT receive the item
+- Account D (banned member) does NOT receive the item
+- The creator does not receive their own item",P2,"iOS, Android, web-desktop, mobile-web",Tray AC-05,Fai
+,,"[ Exclusions ] Verify creator, banned, and blocked users are excluded at send and hidden at read",Tray · Audience & privacy,"TR-CL-08 creator + TR-CL-17 ban/leave after receive (hide at read, node kept) + TR-CL-24 user-block bidirectional.","- An event created in a community
+- A recipient who will be banned after receiving
+- A recipient who has a block relationship with the creator (either direction)","1. Create the event and confirm eligible members received the item
+2. Ban a recipient (global or community) and re-open their tray
+3. Set up a block between a recipient and the creator, then create another event","- The creator never receives their own event item
+- A user banned AFTER receiving no longer sees the item on next read (hidden at read; node not deleted)
+- Un-banning / re-joining within retention restores visibility
+- If the recipient and creator have a block relationship (either direction), the item is suppressed",P3,"iOS, Android, web-desktop, mobile-web","Tray AC-04, Tray AC-05",Fai
+,,[ Late join ] Verify a user who joins a private community after an event is created does not receive that event's notification,Tray · Audience & privacy,TR-CL-23 — private community gives no retroactive backfill to a user who joins after the event was created.,"- A PRIVATE community already has an event, and its event-created tray item was delivered to the members who were in the community at that time
+- A separate test user is NOT yet a member of that community","1. Have the test user join the private community (after the event was created)
+2. Open that user's Notification Tray","- The newly joined user does NOT receive the earlier event's tray item
+- Only members who were in the community when the event was created received it (no retroactive backfill)",P4,"iOS, Android, web-desktop, mobile-web",Tray AC-05,Fai
+,,[ Privacy change ] Verify switching a community to private keeps notifications already sent and guards access on tap,Tray · Audience & privacy,TR-CL-16 / FU-4 — audience is a send-time snapshot (no recompute on privacy change); public->private exposure is handled by the nav/permission guard (event getById returns 403 for a non-member).,"- A PUBLIC community created an event, so its tray item was delivered network-wide (including to non-members)
+- A non-member who received that item is signed in on the target device","1. Switch the community from public to private
+2. Open the non-member's Notification Tray
+3. As that non-member, tap the event's tray item","- The already-delivered tray item is NOT removed after the privacy change (audience is a snapshot at send time)
+- Tapping the now-private event is blocked — the event shows as unavailable and the non-member is not let in",P3,"iOS, Android, web-desktop, mobile-web","Tray AC-04, Tray AC-05",Fai
+,,[ Tray tap ] Verify tapping an event-created tray item opens the event detail page with RSVP visible,Tray · Navigation,"TR-CL-01 / FU-1. Destination = event detail page (RSVP CTA already visible there), not a separate RSVP page. Push reuses this same nav.",- An event-created tray item is visible and the event still exists,1. Tap the event-created tray item,"- The event detail page opens
+- The RSVP action / button is visible on that page
+- This is the shared destination that a push tap also routes to once wired",P2,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ Deleted event ] Verify tapping a tray item for a deleted event shows a graceful unavailable state with no crash or blank,Tray · Navigation,TR-CL-03 + BUG-C (Android shows 'This community is private' for a DELETED event) + BUG-E (web FailedToShow flash on load). iOS conflates deleted vs forbidden.,- An event-created tray item whose event is then deleted (isDeleted = true) before tapping,"1. Delete the event
+2. Tap the tray item for the deleted event","- A graceful 'no longer available' state is shown — no crash, no error, no blank screen
+- A Go-back / dismiss path is available
+- Known risk (BUG-C, Android): a deleted event must NOT say 'This community is private' — that wrong message must FAIL
+- Known risk (BUG-E, web): the unavailable screen must not flash before the content finishes loading",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ No grouping ] Verify each event creation produces its own distinct tray item,Tray · Lifecycle,"TR-CL-04 — no grouping, even for multiple events from the same community.",- One community that will host multiple events,"1. Create 3 events in the same community
+2. Open the tray","- Each event appears as its OWN separate tray item
+- Items are NOT grouped or collapsed even when they come from the same community",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,"[ Unseen & seen ] Verify the unseen indicator is computed correctly and clears only on mark-seen, not on fetch",Tray · Lifecycle,AC-01 unseen + TR-CL-06 (client computes lastTrayOccurredAt > lastTraySeenAt; seen set by markTraySeen/markItemsSeen only; fetch does not set seen).,- A fresh event-created tray item that has never been seen,"1. Fetch / load the tray list without triggering the mark-seen action
+2. Trigger the seen action (open tray / mark seen per platform)
+3. Re-open the tray","- A new item appears as unseen
+- Merely fetching the list does not by itself flip the item to seen if mark-seen is not triggered
+- After mark-seen, the item shows as seen and the unseen count decreases",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,"[ Event edited ] Verify editing an event updates its existing tray item (live, not a snapshot)",Tray · Lifecycle,TR-CL-12 — serializer re-fetches the event at read; edit reflects after the short Redis cache TTL.,- An event-created tray item exists,"1. Edit the event's name / time / type
+2. Wait for the cache TTL to expire
+3. Re-open the tray item","- The tray item reflects the UPDATED event details (name / time / type)
+- It is not frozen to the values at creation time (live re-fetch, not a snapshot)",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ Backfill & old format ] Verify pre-existing items get the new copy at read and network broadcast is forward-only,Tray · Lifecycle,TR-CL-13 — copy generated at read time; network-broadcast scope is forward-only (old items stay community-scoped).,- A tray item created before this release (old 'You've been invited' copy),"1. Open the tray containing a pre-release event item
+2. Check whether old public-community items are re-broadcast network-wide retroactively","- Old items render with the NEW copy (text generated at read time)
+- Network broadcast is forward-only — old items stay community-scoped and are not re-broadcast to the network",P4,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ Console toggle ] Verify the event-creation push toggle is present and correctly labelled,Push · Console configuration,PDT-3676 AC-01. Toggle = event-activate-switch (field isPushNotifiable) under the 'Event-related events' section.,"- The signed-in account is a network admin with Admin Console access
+- Push notifications are enabled for the network","1. Open Admin Console → Settings → Push notifications
+2. Open the Community tab / 'Event-related events' section","- A section titled 'Event-related events' is present
+- It contains a toggle labelled 'When someone creates a new event in the community'
+- The toggle sits alongside the 'event reminder' and 'event started' toggles",P3,web-desktop,PushConsole AC-01,Fai
+,,[ Toggle on ] Verify enabling the toggle sends a push to community members and deep-links to the event,Push · Console configuration,"PDT-3676 AC-03 + P-CL-2 (members only, not network-wide). Combines list #1 (enable) with delivery.","- The 'When someone creates a new event in the community' toggle is OFF
+- Account A is an active, non-banned member of the community (push enabled)
+- Account B is a network user who is not a member of the community (push enabled)","1. Turn the toggle ON and save
+2. Create a new event in a PUBLIC community as another user
+3. Observe the push on Account A (member)
+4. Observe the push on Account B (non-member)","- The toggle switches to ON and the setting persists
+- Account A (member) receives an event-creation push
+- Account B (non-member) does NOT receive the push — audience is community members only, even for a public community (unlike the tray)
+- Tapping the push deep-links to the event (once push-tap is wired in the host app)",P2,"web-desktop, iOS, Android",PushConsole AC-03,Fai
+,,[ Toggle off ] Verify disabling the toggle stops the push while the in-app tray still fires,Push · Console configuration,PDT-3676 AC-02 + list #2. Cross-surface: push and tray are independent.,"- The 'When someone creates a new event in the community' toggle is ON
+- A member device with push enabled","1. Turn the toggle OFF and save
+2. Create a new event in the community
+3. Observe the member device for a push
+4. Open the member's in-app notification tray","- The toggle switches to OFF and the setting persists
+- No event-creation push is delivered
+- The in-app tray item still appears to community members (the tray is independent of the push toggle)",P3,"web-desktop, iOS, Android",PushConsole AC-02,Fai
+,,"[ Edit message ] Verify the push message template can be edited, placeholders inserted, and saved",Push · Console configuration,"Beyond PDT-3676 AC — the console 'Edit message for event' modal (Notification Title + Notification Text + placeholder buttons). Merges list #3, #4, #5, #6.","- The signed-in account can edit push-notification settings
+- The 'Event-related events' list is visible","1. Click the edit (pencil) icon in the Actions column for the event-creation row
+2. Replace the Notification Title with e.g. 'New event in {{CommunityName}}!'
+3. Replace the Notification Text with e.g. '{{EventName}} starts on {{EventStartDate}}'
+4. Place the cursor in a field and click a placeholder button e.g. {{EventType}}
+5. Click OK / Save","- The 'Edit message for event' modal opens showing the current Notification Title, Notification Text, and the list of supported placeholders
+- Clicking a placeholder button inserts that placeholder at the cursor position
+- On save, the edited title and text persist
+- A newly created event's push reflects the edited title and body, with placeholders replaced by real values",P2,web-desktop,,Fai
+,,[ Message validation ] Verify the title and text length limits and empty-field handling,Push · Console configuration,"Beyond PDT-3676 AC. Title limit 62, Text limit 235, empty-field block. Merges list #7, #8, #9.",- The 'Edit message for event' modal is open,"1. Type more than 62 characters in the Notification Title field
+2. Type more than 235 characters in the Notification Text field
+3. Clear the Title and/or Text field to leave it empty
+4. Click OK / Save","- The Title field does not accept more than 62 characters; its counter (x/62) updates correctly
+- The Text field does not accept more than 235 characters; its counter (x/235) updates correctly
+- An empty Title or Text shows a validation error and is not saved",P3,web-desktop,,Fai
+,,[ Modal controls ] Verify Restore Default reverts and Cancel or X discards changes,Push · Console configuration,"Beyond PDT-3676 AC. Merges list #10, #11, #12.",- The 'Edit message for event' modal is open with the title/text edited but not yet saved,"1. Click 'Restore Default'
+2. Edit the fields again, then click 'Cancel'
+3. Reopen the modal, edit the fields, then click the X (top-right)","- 'Restore Default' reverts the Notification Title and Text to the system's original default values
+- 'Cancel' closes the modal without saving — reopening shows the pre-edit text
+- The X button closes the modal without saving",P4,web-desktop,,Fai
+,,[ Template rendering ] Verify saved placeholders and emoji render as real values in the delivered push,Push · Console configuration,"Beyond PDT-3676 AC. Merges list #13, #14 — verifies the console edit produces correct push output.","- The push message template is edited to include all placeholders and an emoji / special characters, and saved
+- The toggle is ON
+- A member device (iOS / Android) with push enabled","1. Create an event named 'Yoga Night' in the community 'Fitness Club', type virtual, starting 21 Jul 2026 18:00
+2. Observe the delivered push on the member device","- The push replaces {{CommunityName}} with 'Fitness Club', {{EventName}} with 'Yoga Night', and fills {{EventType}}, {{EventStartDate}}, {{EventStartTime}} with the real event values
+- Emoji and special characters display correctly with no encoding issues
+- The start date/time render in the viewer's device-local timezone (consistent with the tray; verified on Android + iOS)",P2,"web-desktop, iOS, Android",,Fai
+,,[ Access control ] Verify push-notification settings are restricted by role,Push · Console configuration,Beyond PDT-3676 AC. List #16.,- The signed-in account has a role that lacks access to the push-notification settings,"1. Attempt to open the Push notifications settings page
+2. Attempt to edit the event-creation toggle or message","- Access is denied or a permission-denied message is shown, per the role's permissions
+- An unauthorized role cannot change the setting or the message",P3,web-desktop,,Fai
+,,"[ Push content ] Verify the push shows the correct title, body chip and date/time, and community-avatar icon",Push · Delivery & content,PDT-3677 AC-05. OS notification text is server-rendered. Icon = community avatar.,"- The event-creation push toggle is ON
+- A member device (iOS / Android) with push enabled","1. Create an In-person event in the community
+2. Observe the push notification on the member device
+3. Repeat with a Virtual event","- The push title reads '[Community name] has event [Event name]'
+- The push body shows the event-type chip label ('In-person' or 'Virtual') followed by the start date and start time
+- The notification icon is the community avatar
+- An event with an unknown type shows an empty chip label ('')",P1,"iOS, Android",PushMember AC-05,Fai
+,,[ Push timezone ] Verify the push start time renders in the viewer's device-local timezone (matching the tray),Push · Delivery & content,Push shows the start time in the VIEWER's device-local timezone — consistent with the tray (DEC-06) and existing UIKit surfaces. VERIFIED CORRECT on Android + iOS (2026-07-21). Supersedes BUG-B2: the earlier source-based 'push renders UTC' inference did not reproduce on device.,"- Create an event and, in the timezone picker (shown as a GMT offset), select GMT-5 (e.g. New York / Eastern); set the start time to 7:00 PM on 10 Jul 2026
+- Set the viewer's device timezone to GMT+7 (e.g. Bangkok)
+- The event-creation push toggle is ON","1. Create the GMT-5 event with the push toggle ON
+2. On the GMT+7 device, observe the push notification body","- The push body shows the start time converted to the viewer's device-local (GMT+7) timezone — i.e. 7:00 AM on 11 Jul 2026
+- It matches the in-app tray and event detail (all viewer-local)
+- It does NOT show raw UTC (12:00 AM / midnight 11 Jul) nor the event's source-tz wall-clock (7:00 PM 10 Jul)",P3,"iOS, Android",PushMember AC-05,Fai
+,,[ Virtual single push ] Verify a virtual event delivers exactly one push with the Room go-live push suppressed,Push · Delivery & content,PDT-3677 AC-04. Dedup is backend-only; no client-side dedup exists.,"- The push toggle is ON
+- A member device with push enabled","1. Create a VIRTUAL event (which auto-generates a Room)
+2. Observe all push notifications delivered to the member device","- Exactly ONE push notification is delivered for the event
+- No separate Room / livestream-creation push arrives for the same event (it is suppressed)",P3,"iOS, Android",PushMember AC-04,Fai
+,,[ OS opt-out ] Verify a device or OS push opt-out stops the push but not the in-app tray,Push · Delivery & content,PDT-3677 AC-03. push and tray are independent.,"- A member has disabled push for the app at the device / OS level
+- The push toggle is ON at network level","1. Disable push for the app in device / OS settings
+2. Create an event in the community
+3. Observe the device for a push
+4. Open the in-app notification tray","- No push is delivered (the OS suppresses it)
+- The in-app tray item still appears (the tray is independent of the OS push opt-out)",P3,"iOS, Android",PushMember AC-03,Fai
+,,[ Push tap ] Verify tapping the push opens the event detail / RSVP page,Push · Navigation,PDT-3677 AC-01 + P-CL-8: push-tap routing is host-app/integrator responsibility (not wired in the reference sample apps). Destination nav is the SAME as the tray tap. Run on a push-integrated host build.,"- A push-integrated host app that routes the event.created payload (eventId) to the UIKit event detail page
+- An event-creation push has been received",1. Tap the received event-creation push,"- The event detail / RSVP page for that event opens (routed off the eventId payload)
+- The RSVP action is visible
+- If the host app does not wire push-tap routing, this cannot be verified on that build — the shared destination nav is covered by the Tray tap case",P3,"iOS, Android",PushMember AC-01,Fai
+,,[ Push deleted ] Verify tapping a push for a deleted event shows a graceful unavailable state,Push · Navigation,PDT-3677 AC-02 + shared BUG-C (Android). Same nav path as the Tray deleted-event case; event getById returns 404.,"- A push-integrated host build
+- An event-creation push whose event is deleted before tapping","1. Delete the event after the push is delivered
+2. Tap the push","- A graceful 'This event is no longer available' state is shown (event getById returns 404)
+- No error or blank screen
+- Known risk (BUG-C, Android): must NOT show 'This community is private' for a deleted event",P4,"iOS, Android",PushMember AC-02,Fai
