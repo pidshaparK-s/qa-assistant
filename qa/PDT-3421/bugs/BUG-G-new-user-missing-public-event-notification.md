@@ -23,7 +23,7 @@ A brand-new user who has **not joined any community** does not receive the Notif
 1. Create a brand-new user who has **not joined any community**.
 2. Open/check that user's Notification Tray (it is empty — correct at this point).
 3. As a different user, create a new event in a **public** community.
-4. Re-check the new user's Notification Tray shortly after (within roughly 30 seconds of step 2/3).
+4. Re-check the new user's Notification Tray. (Confirmed not a timing issue: still empty even after waiting 30+ seconds before this check.)
 
 ## Expected result
 - The new user receives the event-created tray item for the public-community event, per AC-04 (public → entire network, including non-members and users in zero communities).
@@ -44,9 +44,7 @@ A brand-new user who has **not joined any community** does not receive the Notif
 
 ## ⚠️ Relation to BUG-F — fix order matters
 This is the flip side of the exact same mechanism as **BUG-F** (`new-user-network-backlog.md`): BUG-F's "flood" starts the moment a user's `User` node gets created (e.g., by joining any community), because the network arm has no lower time-bound once it's reachable.
-**If Option A above ships without also shipping BUG-F's network-arm time-bound fix, every brand-new signup will immediately see the full 30-day backlog of public-community notifications — a regression, not a fix, and worse than today's bug (it would no longer require even joining a community to trigger).** Ship both together, or Option B first as a safer interim fix (it does not create new users flood risk, since it only unblocks the specific network arm read, not a general node-creation change) — then decide on Option A + BUG-F's time-bound as a pair.
 
-## Relation to BUG-F — summary
 | | BUG-F | BUG-G (this ticket) |
 |---|---|---|
 | Trigger | New user **joins a community** (no new event created) | New user **joins nothing**; someone else creates a new public event |
@@ -55,6 +53,8 @@ This is the flip side of the exact same mechanism as **BUG-F** (`new-user-networ
 | File | `notification-tray-item.neo4j.ts` (read query) + `user-graph.neo4j.ts` / `community-graph.service.ts` (lazy sync) | same files |
 
 Not contradictory — two symptoms (too much vs. too little) of one shared mechanism (lazy `User` node creation) crossed with one additional independent gap (network arm's missing time-bound, BUG-F).
+
+**If Option A above ships without also shipping BUG-F's network-arm time-bound fix, every brand-new signup will immediately see the full 30-day backlog of public-community notifications — a regression, not a fix, and worse than today's bug (it would no longer require even joining a community to trigger).** Ship both together, or Option B first as a safer interim fix (it does not create a flood risk, since it only unblocks the specific network arm read, not a general node-creation change) — then decide on Option A + BUG-F's time-bound as a pair.
 
 ## Scope / impact
 - Any brand-new / zero-community user, on any network with public communities; all platforms (backend-level defect).

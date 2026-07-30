@@ -54,6 +54,9 @@ The asymmetry between the two arms is the direct bug: the community arm is time-
 BUG-G (`new-user-missing-public-event-notification.md`) is the flip side of mechanism #1 above: a user who has done **nothing** yet (not even joined a community) has no `User` node at all, so their ENTIRE tray read returns empty — including network-wide items they're structurally eligible for.
 **If engineering fixes BUG-G's root cause (e.g., syncing every user's `User` node eagerly at signup) without ALSO adding the time-bound from this ticket, the result is a regression, not a fix:** every brand-new signup would immediately see the full 30-day backlog of public-community notifications from the moment their account exists — not just after joining a community. **Ship the network-arm time-bound (this ticket) together with, or before, any fix to BUG-G's missing-node issue.**
 
+## Second confirmation (2026-07-21)
+While testing the separate `[ Backfill & old format ]` manual case (TR-CL-13), QA independently observed the same flood — old events rendering with the NEW copy pattern (not legacy format), confirming this is the SAME mechanism reproducing via a second, unrelated test path, not an environment fluke.
+
 ## Scope / impact
 - Every new user on any network with public communities; all platforms (backend query).
 - Degrades the first-run experience and inflates the unseen badge — directly undermines the epic's relevance goal ("richer, more relevant tray → higher tap-through / RSVP").

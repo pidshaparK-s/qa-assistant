@@ -7,6 +7,15 @@ ID,Key,Name,Folder Path,Description,Preconditions,Steps,Expected Results,Priorit
 - The primary line reads ""[Community name] has event [Event name]""
 - The secondary line shows an event-type chip followed by the event start date and start time
 - The item is marked as unseen (unseen / primary-tint indicator)",P1,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ Tray content — deleted event ] Verify the tray item keeps the COMMUNITY avatar after its event is deleted,Tray · Content & rendering,"Sibling of [ Tray content ] — same 5-element spec, but exercised AFTER the event is deleted (isDeleted = true). BUG-I: on web-desktop & mobile-web the item icon swaps to a DIFFERENT avatar once the event is deleted (no longer the community avatar). Distinct from [ Deleted event ] (Navigation), which checks the tap destination, not how the item itself renders.","- An event-created tray item is visible and correctly shows the COMMUNITY avatar
+- The signed-in user is an active, non-banned member of that community
+- A moderator can delete the event","1. Confirm the fresh event item shows the community avatar as its icon
+2. Have a moderator delete the event (isDeleted = true)
+3. Refresh / re-open the Notification Tray
+4. Re-locate the same event item and inspect its icon","- The item icon is STILL the COMMUNITY avatar — identical to before the deletion
+- The icon is NOT swapped to the creator/user avatar, the event thumbnail, or any other image
+- The rest of the item content (title, chip, date/time) remains as specified
+- Known risk (BUG-I, web-desktop & mobile-web): after deletion the item shows a DIFFERENT avatar — that swap must FAIL this case",P2,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
 ,,[ Event type chip ] Verify the In-person and Virtual chips show the correct label and stay legible in light and dark theme,Tray · Content & rendering,"TR-CL-21 / DEC-05 (expected = legible in both themes, per-platform divergence accepted) + BUG-D (Android chip white-on-white in LIGHT theme). Virtual == livestream (no third chip state).","- A test community is available for creating both In-person and Virtual (livestream) events
 - The target device/app supports both light and dark theme","1. Create an In-person event and open its tray item
 2. Create a Virtual / livestream event and open its tray item
@@ -99,6 +108,10 @@ ID,Key,Name,Folder Path,Description,Preconditions,Steps,Expected Results,Priorit
 2. Wait for the cache TTL to expire
 3. Re-open the tray item","- The tray item reflects the UPDATED event details (name / time / type)
 - It is not frozen to the values at creation time (live re-fetch, not a snapshot)",P3,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
+,,[ Backfill & old format ] Verify pre-existing items get the new content at read and network broadcast stays forward-only,Tray · Lifecycle,"TR-CL-13, CONFIRMED by PM via TR-CL-30 (2026-07-22, answer C): an old event (created before this release) shows the new rich content when reopened, but does not newly start reaching the whole network.","- An event exists that was created before this release, in a community (its tray item still shows the old content, e.g. ""You've been invited to an event"")
+- A second test account is a network user who is NOT a member of that community","1. As a member of that community, open the old event's tray item
+2. As the second account (non-member of that community), check whether the same tray item appears","- The member sees the old item now showing the new content (community avatar, chip, start date, start time) — not the old generic text
+- The non-member does NOT see that item — it has not started reaching the whole network",P4,"iOS, Android, web-desktop, mobile-web",Tray AC-01,Fai
 ,,[ Console toggle ] Verify the event-creation push toggle is present and correctly labelled,Push · Console configuration,PDT-3676 AC-01. Toggle = event-activate-switch (field isPushNotifiable) under the 'Event-related events' section.,"- The signed-in account is a network admin with Admin Console access
 - Push notifications are enabled for the network","1. Open Admin Console → Settings → Push notifications
 2. Open the Community tab / 'Event-related events' section","- A section titled 'Event-related events' is present

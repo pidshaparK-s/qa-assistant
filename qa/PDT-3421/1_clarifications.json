@@ -306,7 +306,9 @@
         ],
         "resolved_by": "backend-as-built",
         "date": "2026-07-16"
-      }
+      },
+      "_reopened_note_2026_07_21": "User raised a sharper UX framing (2026-07-21): should pre-release events be excluded from the tray entirely (clean cutover) rather than re-skinned with new copy? This resolution documents CURRENT (as-built) behavior only — it was never confirmed as INTENDED by PM. See NEW item TR-CL-26 (open, high) for the product decision.",
+      "_closed_2026_07_22": "CONFIRMED by PM via TR-CL-30 follow-up: the original as-built finding here (old items get new copy at read time) is correct and intended. No longer just an as-built observation — now an explicit PM-confirmed answer."
     },
     {
       "id": "TR-CL-14",
@@ -586,13 +588,137 @@
       },
       "_derivation": "as-built-verification 2026-07-16 (3 platform source review)",
       "_branch_context": "อ่านจาก iOS feat/create_event_noti_tray + Android fr/feat/pdt-3724-event-tray-notification @2026-07-10 (feature branch ถูกตัว ไม่ใช่ wrong-branch). PROVISIONAL: commit 07-10 อาจ behind remote → pull latest + re-verify ก่อน confirm เป็น bug. Web = develop (merged)."
+    },
+    {
+      "id": "TR-CL-26",
+      "type": "gap",
+      "severity": "high",
+      "story": "PDT-3675",
+      "ac": "AC-01 (secondary line date/time) + TR-CL-13",
+      "source": "TR-CL-13 was resolved from AS-BUILT behavior only (backend-as-built, 2026-07-16), not a PM decision — and the as-built answer actually CONTRADICTS the original question's premise ('old items keep old format — confirm') by showing old items with NEW copy instead.",
+      "observation": "User (2026-07-21) raised a sharper UX framing: for a clean release cutover, arguably NO pre-release event should generate/show a tray item at all (regardless of copy version) — only events CREATED AFTER this release should ever appear in the enriched tray. Today's as-built behavior instead re-skins old (pre-release) events with the new enriched copy at read time, so a member scrolling back can see old events dressed up as if they were newly enriched — which may read as confusing/inconsistent ('why does this month-old event suddenly look new') rather than a clean cutover.",
+      "consequence": "If PM wants a clean cutover (new copy + new audience rules apply ONLY to events created from the release date forward), engineering needs an explicit event.createdAt >= releaseDate filter/cutoff — this does not exist today (copy is generated fresh at read-time for ANY event, old or new, with no release-date gate). Distinct from BUG-F/BUG-G (which are about a per-USER join-time bound, not a per-RELEASE date bound) — fixing this does not fix BUG-F/G, and fixing BUG-F/G does not resolve this.",
+      "question": "Should the tray feature (enriched copy + network-wide audience for public communities) apply ONLY to events created on/after this release's ship date, with pre-release events excluded from generating/showing a tray item entirely going forward? Or is today's as-built behavior (old events re-skinned with new copy at read time, audience scope left as originally set) acceptable?",
+      "ask": "PM",
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "USER DECIDED 2026-07-21 (acting as product owner for this question): the enriched tray (new copy + network-wide audience) applies ONLY to events created ON/AFTER this release's ship date. Pre-release events are excluded entirely — no re-skinning with new copy, no participation in the new network-wide audience logic, and no test/verification needed for them going forward (once the cutoff ships, every testable event is by definition post-release, so this scenario is not meaningfully re-testable as an ongoing regression case).",
+        "verified_refs": [],
+        "ac_change_ref": "DEC-07 (decisions.json) — new engineering requirement, not yet implemented",
+        "followup_ref": null
+      },
+      "_relation": "Complements, does NOT replace, BUG-F/BUG-G's per-user join-time bound fix. Two independent axes: (1) per-RELEASE cutoff (this item) vs (2) per-USER join-time cutoff (BUG-F/G). Both may be needed for a fully clean experience.",
+      "_supersedes_context": "Revisits TR-CL-13 (resolved 2026-07-16 from as-built only) — that resolution documented CURRENT behavior; this item asks whether current behavior is actually the INTENDED/desired behavior, since the as-built answer contradicted the original question's premise.",
+      "answer": "apply ONLY to events created on/after this release's ship date",
+      "answered_by": "user (product decision)",
+      "answered_date": "2026-07-21",
+      "_engineering_gap": "CONFIRMED via BUG-F source investigation: no release-date cutoff exists in the current code today — copy is generated fresh at read time for ANY event, old or new, with zero gating on creation date. This decision requires a NEW engineering change (add an event.createdAt >= releaseDate guard) — it is not yet built. See DEC-07."
+    },
+    {
+      "id": "TR-CL-27",
+      "type": "gap",
+      "severity": "medium",
+      "story": "PDT-3675",
+      "ac": "AC-01 (tap nav)",
+      "source": "PM/Eng Q&A 2026-07-21",
+      "observation": "No AC/case covered a member who LEAVES a private community after receiving the event-created notification, then taps it.",
+      "consequence": "Without a defined behavior, a former member might still access a private community's event after leaving — an access-control gap.",
+      "question": "User left the private community, then taps the event notification — where do they land?",
+      "ask": "PM",
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "PM answer (C): if the user is not part of the community, show \"this event is no longer available.\" Same nav-guard family as the Privacy-change case (TR-CL-16/FU-4), triggered by leaving rather than a privacy flip.",
+        "verified_refs": [],
+        "ac_change_ref": null,
+        "followup_ref": null
+      },
+      "answer": "C) If the user is not part of the community, show this event is no longer availble",
+      "answered_by": "PM",
+      "answered_date": "2026-07-21"
+    },
+    {
+      "id": "TR-CL-28",
+      "type": "gap",
+      "severity": "medium",
+      "story": "PDT-3675",
+      "ac": "AC-01 (tap nav)",
+      "source": "PM/Eng Q&A 2026-07-21",
+      "observation": "No AC/case covered tapping a notification for an event that has already ENDED (passed its duration) — only the deleted-event and live-event tap paths were specified.",
+      "consequence": "Without a defined behavior, an ended event might wrongly show 'unavailable' (like a deleted event) or an active RSVP button that no longer makes sense.",
+      "question": "Event has ENDED (passed its duration), then taps the notification — where do they land?",
+      "ask": "PM",
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "PM answer (A): opens the Event Detail page (event still exists, just ended) in an 'ended' state with no RSVP button — distinct from a deleted event, which shows 'no longer available' instead of the detail page.",
+        "verified_refs": [],
+        "ac_change_ref": null,
+        "followup_ref": null
+      },
+      "answer": "A - Open Event Detail page - the page will have no rsvp button, event ended state",
+      "answered_by": "PM",
+      "answered_date": "2026-07-21"
+    },
+    {
+      "id": "TR-CL-29",
+      "type": "gap",
+      "severity": "high",
+      "story": "PDT-3675",
+      "ac": "AC-04 / AC-05 (audience & exclusions)",
+      "source": "PM/Eng Q&A 2026-07-21",
+      "observation": "Blocked users × community events was not addressed by any AC — user-level content blocking (bidirectional) exists elsewhere in the product, but was never explicitly extended to events until this Q&A.",
+      "consequence": "Without this, a blocked relationship might leak event visibility/access through the notification tray or the Event Hub, inconsistent with how blocking works for other content types.",
+      "question": "Blocked users x a community event — is this in scope, and if so, what's the behaviour?",
+      "ask": "PM/Eng",
+      "status": "ac-change",
+      "resolution": {
+        "status": "ac-change",
+        "rationale": "Eng (Jack) confirms this is a NEW scope addition (not originally considered) — blocking will be made bidirectional for events, same as other content. 3 sub-scenarios: (A) block AFTER event created+notified -> blocked user taps -> lands on no-access state [NEW test case needed]. (B) block BEFORE event created -> recipient never gets the notification [ALREADY covered by the existing '[ Exclusions ]' manual case]. (C) Event Hub / Event tab listing -> blocked users don't see each other's events there either [NEW surface, NEW test case needed].",
+        "verified_refs": [],
+        "ac_change_ref": "DEC-08 (decisions.json)",
+        "followup_ref": null
+      },
+      "answer": "Blocking is bidirectional; applies to events the same as other content. Scenario A (block after notify -> no-access on tap), Scenario B (block before creation -> no notification, already covered), Scenario C (Event Hub visibility hidden both ways). @Jack will add engineering support.",
+      "answered_by": "Eng (Jack)",
+      "answered_date": "2026-07-21"
+    },
+    {
+      "id": "TR-CL-30",
+      "type": "gap",
+      "severity": "medium",
+      "story": "PDT-3675",
+      "ac": "AC-01 + DEC-07",
+      "source": "Follow-up to DEC-07 (2026-07-22)",
+      "observation": "DEC-07 decided the enriched tray applies only to events created on/after this release. It did not address EXISTING (not-new) users who already have an old-format event notification (created before release) still sitting in their tray, within the ~30-day retention window, at the moment the release ships.",
+      "consequence": "Copy is generated fresh at read time (no stored text) — so without new engineering work, these already-delivered old items will silently pick up the NEW rich copy once the app updates, which is exactly the backfill DEC-07 decided to avoid for newly-generated items. Left unanswered, old and new tray items render inconsistently with the DEC-07 policy.",
+      "question": "Existing user already has an old-format event notification (created before this release) still in their tray at the time of the update — what should it show now? A) Old copy, frozen as before (new engineering work to gate by event date) B) Removed/hidden from the tray entirely (clean cutover) C) New copy, today's default as-built behavior (no extra work, but reaches old data)",
+      "ask": "PM",
+      "status": "resolved",
+      "resolution": {
+        "status": "resolved",
+        "rationale": "PM answer: C — an existing user's already-delivered, pre-release tray item shows the NEW rich copy when reopened, same as today's as-built default. No new engineering work needed for the copy dimension. This CONFIRMS the original TR-CL-13 as-built finding and REVERSES the copy-related clause of DEC-07 (which had assumed pre-release items should keep old copy / be excluded). The audience dimension (old events stay community-scoped, no retroactive network-wide reach) is untouched by this question and still holds.",
+        "verified_refs": [],
+        "ac_change_ref": "DEC-07 amended",
+        "followup_ref": null
+      },
+      "_relation": "Refines DEC-07 — does not change the 'new events only' decision, just closes the gap on already-existing pre-release items for existing users.",
+      "answer": "C",
+      "answered_by": "PM",
+      "answered_date": "2026-07-22"
     }
   ],
-  "updated": "2026-07-21",
+  "updated": "2026-07-22",
   "_step1_update": "STEP1 Understand (PDT-3675-uc1-analysis.md): resolved TR-CL-04/08/11 by design+docs; escalated TR-CL-07→high; added TR-CL-16..19.",
   "_step2_update": "STEP2 Specify (PDT-3675-uc1-analysis.md): enriched AC-01..05 (happy+edge/error); added TR-CL-20..24 from 4 mental models.",
   "_review_update": "qa-clarifications-review 2026-07-16: recorded PM answers TR-CL-01/02/03/05/07/16; classified (resolved 4 / ac-change 1 / resolved+verify). FU-1..4 → FOLLOWUPS.md; DEC-03 → decisions.json.",
   "_verify_update": "as-built verify 2026-07-16: resolved TR-CL-15/18/19/20/22; flagged TR-CL-05 (dev-delta/BUG-B), TR-CL-11 (mobile avatar diverge), TR-CL-21 (→Design, chip not theme-aware); NEW TR-CL-25 (mobile tray not enriched — headline).",
   "_final_update": "all-platform verify done 2026-07-16: retract TR-CL-25 (mobile enriched, false alarm); backend resolved TR-CL-06/09/10/12/13/14/17/23/24 + confirm TR-CL-16/FU-4; refine TR-CL-05 (client tz bug BUG-B1) + TR-CL-21 (Android BUG-D). Bugs: BUG-B1/B2/C/D + 2 minor backend.",
-  "_answers_update": "2026-07-16 user answers: TR-CL-05 event-tz CONFIRMED (NY/Bangkok concrete data; BUG-B1 catch); TR-CL-21 RESOLVED (QA expected=legible both themes, divergence OK, Android light=BUG-D); scope=tray+push -> DEC-04. Register now: resolved 24 / ac-change 1 (TR-CL-07) / open 0."
+  "_answers_update": "2026-07-16 user answers: TR-CL-05 event-tz CONFIRMED (NY/Bangkok concrete data; BUG-B1 catch); TR-CL-21 RESOLVED (QA expected=legible both themes, divergence OK, Android light=BUG-D); scope=tray+push -> DEC-04. Register now: resolved 24 / ac-change 1 (TR-CL-07) / open 0.",
+  "_reopen_update_2026_07_21": "Reopened cutover-cutoff question as TR-CL-26 (open, high) — as-built TR-CL-13 answer contradicted its own question's premise, never PM-confirmed. Register now: {'resolved': 24, 'ac-change': 1, 'open': 1}",
+  "_final_reopen_close_2026_07_21": "TR-CL-26 resolved by user product decision (release-date cutoff). Register: {'resolved': 25, 'ac-change': 1}",
+  "_qna_update_2026_07_21": "Added TR-CL-27 (left-community nav), TR-CL-28 (event-ended nav), TR-CL-29 (block x events, scope addition -> DEC-08). Register: {'resolved': 27, 'ac-change': 2}",
+  "_followup_2026_07_22": "Added TR-CL-30 (existing-user pre-release backlog display) as a DEC-07 follow-up. Register: {'resolved': 27, 'ac-change': 2, 'open': 1}",
+  "_followup_2026_07_22b": "TR-CL-30 resolved (PM: C). Confirms TR-CL-13's original finding; reverses DEC-07's copy clause. Register: {'resolved': 28, 'ac-change': 2}"
 }

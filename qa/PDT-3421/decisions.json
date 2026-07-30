@@ -133,6 +133,44 @@
         "PushMember AC-05"
       ],
       "_followup_2026_07_21": "Later same day: QA verified on Android + iOS that PUSH also renders device-local (viewer-local) correctly — consistent with the tray. Push display-tz question RESOLVED (device-local, not re-opened after all); BUG-B2 RETRACTED (the source-based UTC inference did not reproduce on device)."
+    },
+    {
+      "id": "DEC-07",
+      "type": "scope",
+      "unit": "UC1",
+      "date": "2026-07-21",
+      "decision": "The enriched event-created tray notification (new rich copy: avatar+chip+date/time, AND the AC-04/05 network-wide-for-public-communities audience logic) applies ONLY to events created ON/AFTER this release's ship date. Events created before the release are excluded entirely from this feature — no retroactive re-skinning with new copy, no retroactive network-wide reach. This SUPERSEDES the earlier as-built-only finding for TR-CL-13 (which found old items DO get new copy at read time, with no release-date gate) — that was a description of current code behavior, not a confirmed requirement.",
+      "rationale": "User decided directly 2026-07-21 while simplifying the '[ Backfill & old format ]' manual test case: a clean cutover is simpler to reason about and test than re-skinning historical data, and avoids the exact confusion TR-CL-26 raised (old events looking freshly-enriched is surprising). Also makes the scenario naturally untestable-going-forward once shipped (every event you can manually test after the cutoff is, by definition, post-release).",
+      "decided_by": "user",
+      "status": "confirmed",
+      "source_ref": "user 2026-07-21 (chat); supersedes TR-CL-13 as-built finding + TR-CL-26",
+      "related": [
+        "TR-CL-13",
+        "TR-CL-26",
+        "AC-01",
+        "AC-04",
+        "AC-05"
+      ],
+      "_engineering_note": "SUPERSEDED — see _amended_2026_07_22. No cutoff/guard needed after all.",
+      "_amended_2026_07_22": "PARTIALLY REVERSED per TR-CL-30 (PM follow-up, answer C): the COPY dimension is NOT excluded for pre-release events after all — an existing user's already-delivered old-format tray item (within the 30-day retention window) DOES get re-skinned with the new rich copy when reopened, matching the original TR-CL-13 as-built default. This reverses this decision's 'no retroactive re-skinning with new copy' clause. The AUDIENCE dimension is unaffected and still holds — old events remain community-scoped (they were created before the network-wide-audience code existed, so audienceScope=NETWORK was never structurally possible for them). CORRECTION to the engineering note below: NO new engineering guard is needed for EITHER dimension — copy already renders fresh at read time (confirmed correct), and audience scope is already naturally forward-only per-record (nothing to retroactively change). Net: this decision required zero engineering work, not the cutoff originally assumed."
+    },
+    {
+      "id": "DEC-08",
+      "type": "scope",
+      "unit": "UC1",
+      "date": "2026-07-21",
+      "decision": "User-level blocking (bidirectional, same as other content types) is extended to cover community events: (A) a block made AFTER an event notification was already delivered blocks the recipient's TAP access (no-access state), (B) a block made BEFORE event creation suppresses the notification entirely (already covered by the existing audience-exclusion behavior), (C) blocked users don't see each other's events in the Event Hub / Event tab listing either.",
+      "rationale": "Eng (Jack) confirmed 2026-07-21: 'this was not originally considered as part of scope but needs to be added' — extending the existing bidirectional content-blocking rule to events for consistency.",
+      "decided_by": "Eng (Jack), relayed by user",
+      "status": "confirmed",
+      "source_ref": "user 2026-07-21 (PM/Eng Q&A, relayed in chat); qa/PDT-3421/1_clarifications.json TR-CL-29",
+      "related": [
+        "TR-CL-29",
+        "TR-CL-24",
+        "AC-04",
+        "AC-05"
+      ],
+      "_engineering_note": "Jack to implement (per Q&A: '@Jack will add it') — not yet built as of 2026-07-21."
     }
   ]
 }
