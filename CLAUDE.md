@@ -15,6 +15,14 @@
 
 ---
 
+## Working process: Goldfish (ตั้งแต่ 2026-09-28)
+
+ทีมทำงานแบบ **Goldfish** (Frame → Solution → Delivery · Rule แทน AC) — อ่าน `process/goldfish.md` ก่อนเริ่มงาน feature ใหม่
+งานใน repo นี้ช่วง Solution (สถานะ 02–05) ต้องอ้าง F / ST / R / §4 Permissions แทน Jira AC
+ข้อเสนอแก้ spec เป็น rule-request / clarification ส่งห้อง Solution ไม่เขียนลง console-next `docs/solution/` เอง
+
+---
+
 ## Cross-epic references
 
 ไม่ผูก epic เดียว — เช็คก่อนเริ่มงานใน feature area ที่อาจเคยเจอมาก่อน
@@ -64,6 +72,9 @@ Skills เป็น Claude skills อยู่ที่ `.claude/skills/<name>/S
 | `phase-3-6-manual-runsheet` | — | EC → manual test cases แบบ team convention (sc-console); ยุบ ~3:1; `[ Category ] Verify …`; priority 10/25/45/20; expectedResults[]; Testmo spec.json + CSV; trace ทุก EC |
 | `qa-clarifications-review` | — | review answered clarifications → resolved/followup/ac-change/still-ambiguous |
 | `qa-story-diff` | — | Jira story เปลี่ยน → diff กับ stored JSON → แนะนำ re-run phases |
+| `gf-day0-intake` | Goldfish (ทดลอง) | Day 0: frame หรือ PRD + Figma → QA frame card + คำถามก่อน 03 — `goldfish/README.md` |
+| `gf-solution-review` | Goldfish (ทดลอง) | sketch (02) / spec draft (04) → testability flags + finding ต่อ R/ST/F — `goldfish/README.md` |
+| `open-bug-ticket` | — | Testmo failed test (หรือบั๊คที่สังเกตเอง) → Jira bug ticket, duplicate-check gate ก่อนเปิดทุกครั้ง |
 
 ---
 

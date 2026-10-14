@@ -1,0 +1,804 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Group-Content</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+	/* Paint a complete callout box on every PDF page fragment. */
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="3e65f8b2-37fc-803d-be2d-c363591cfe1a" class="page sans"><header><h1 class="page-title" dir="auto">Group-Content</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-text"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>AI summary</th><td>Enable Groups to function as independent, configurable components—allowing customers to create, manage, and customize self‑contained groups with their own membership, roles, visibility, and content attachments—so they can offer flexible community spaces without tying group functionality to the core product’s monolithic architecture.</td></tr><tr class="property-row property-row-status"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><td><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Pitch Ready</span></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Pitch Decision</th><td><span class="selected-value select-value-color-green">Committed</span></td></tr><tr class="property-row property-row-person"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/friends_gray.svg" style="width:14px;height:14px;display:block"/></span>Created by</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocLIm2X64QdxMzgxVw0urzGJSBUjk-eyRXRHWtgPNuKYJ9K2Ng=s100" class="icon user-icon"/>Ghita El Marzouki</span></td></tr></tbody></table></header><div class="page-body"><h2 id="3e65f8b2-37fc-80a1-a2e2-d3564bff0de8" class="" dir="auto">A1: Context</h2><p id="3e65f8b2-37fc-80f6-ae3b-cb14e8f8337b" class="" dir="auto">As social.plus becomes an <strong>engagement infrastructure</strong> built from independently deployable components (Posts, Comments, Reactions, Chat, and others), Groups needs the same treatment. Today, Groups is bundled together with the built-in community construct — membership, roles, and content permissions all live inside one experience. As part of the Componentization initiative, we want Groups to work as an independently configurable component in its own right: a customer should be able to give end users the ability to organize into self-contained groups — with their own membership, join rules, and roles — regardless of which content components (Posts, Comments, Reactions) are attached to those groups, or whether any are.</p><p id="3e65f8b2-37fc-80ea-8bff-f18237b2653e" class="" dir="auto"><strong>Componentization principles this supports</strong></p><ul id="3e65f8b2-37fc-8037-afe2-f3d6cc45fcab" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Groups should be composable. Whatever content components a customer later attaches to a group — Posts, Comments, Reactions — group membership and role configuration should work the same way underneath, through one consistent model.</li></ul><ul id="3e65f8b2-37fc-8028-9cfe-c32d54751ebf" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Existing group experiences should continue to work exactly as today (default join behavior, existing roles) — this is a configuration layer on top of current capability, not a rebuild of it.</li></ul><ul id="3e65f8b2-37fc-80ce-bf02-f379e09eef44" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Group-level roles (Community Admin, Moderator, Member, Not a member) reuse the same role already used elsewhere in the product; this doc doesn&#x27;t introduce a second, Group-specific role system.</li></ul><h2 id="3e65f8b2-37fc-8021-8c5c-f6b5d3098b36" class="" dir="auto">A2: MVP Principles &amp; Boundaries</h2><p id="3e65f8b2-37fc-80d8-b94f-e008d699ef2f" class="" dir="auto"><strong>MVP principles</strong></p><ul id="3e65f8b2-37fc-80f3-b62f-fff82f4c0578" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Settings are group-specific.</strong> A customer can run public groups, private &amp; hidden, private &amp; visible groups side by side, each configured independently.</li></ul><ul id="3e65f8b2-37fc-8067-ba64-eb2c76edde91" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Make permission consequences explicit.</strong> Where an existing role (e.g. Moderator) is the mechanism used to approve join requests, the console should make clear what else that role can do, so the customer isn&#x27;t surprised by capabilities they didn&#x27;t intend to grant.</li></ul><p id="3e65f8b2-37fc-80cf-8318-fe8c7d73cb2c" class="" dir="auto">
+</p><table id="3e65f8b2-37fc-802c-9a58-f1ed3bb3a675" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="3e65f8b2-37fc-80d9-baa1-ce41c233c0d2" dir="ltr"><th id="TQPg" class="simple-table-header-color simple-table-header">Approach</th><th id="yaj=" class="simple-table-header-color simple-table-header">Benefit</th><th id="CIG=" class="simple-table-header-color simple-table-header">Trade-off</th></tr></thead><tbody><tr id="3e65f8b2-37fc-8019-a45b-e11a1c86d762" dir="ltr"><td id="TQPg" class="">Use existing permission model (Community Admin, Moderator, Member)</td><td id="yaj=" class="">Works with current backend — minimal engineering effort; covers </td><td id="CIG=" class="">Approval authority is tied to roles that also carry other capabilities (e.g. Moderator can also moderate content), which may be broader than a customer wants for “just approve joins”</td></tr></tbody></table><h2 id="3e65f8b2-37fc-80fc-959d-ea76ac10703d" class="" dir="auto">Scope — MVP</h2><p id="3e65f8b2-37fc-80ee-ae45-f410e64e6dd5" class="" dir="auto">Here is an early prototype: </p><p id="3e65f8b2-37fc-8045-b559-de31218c5219" class="" dir="auto"><a href="https://claude.ai/artifact/XbE7PQD1JJ1oUfswiKNC2r?sk=ufc0oYgmzkBqQy2oqbd6uQ">https://claude.ai/artifact/XbE7PQD1JJ1oUfswiKNC2r?sk=ufc0oYgmzkBqQy2oqbd6uQ</a></p><p id="3e65f8b2-37fc-8013-aa86-db809778be2a" class="" dir="auto">
+</p><p id="3e65f8b2-37fc-8059-85db-ea7535abd2e0" class="" dir="auto"><strong>Group list</strong></p><ul id="3e65f8b2-37fc-8018-a02d-d3e570eec522" class="bulleted-list" dir="auto"><li style="list-style-type:disc">View the list of  groups<ul id="3e65f8b2-37fc-807d-851a-cf3fed472074" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Active</li></ul><ul id="3e65f8b2-37fc-806d-b542-f19b45a8b13d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Deleted</li></ul></li></ul><ul id="3e65f8b2-37fc-80bd-8e3c-d95d60955f15" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each group in the list shows<ul id="3e65f8b2-37fc-801c-96eb-eba9f4b23b8b" class="bulleted-list" dir="auto"><li style="list-style-type:circle"> Post published count</li></ul><ul id="3e65f8b2-37fc-8058-98f0-ccae64367134" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Group Type ( Public, Private &amp; Visible, Private &amp; Hidden)</li></ul><ul id="3e65f8b2-37fc-8093-bc2b-fb5e265037a6" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Category</li></ul></li></ul><ul id="3e65f8b2-37fc-80d2-ac3c-f72a1ec8aa5d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Filter the active list by category</li></ul><ul id="3e65f8b2-37fc-80a0-8f03-edcd629a7b47" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Search the list by group name</li></ul><ul id="3e65f8b2-37fc-80c0-94da-e24bf17af587" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can access activity ( Content+ Manage User+Group details)</li></ul><p id="3e65f8b2-37fc-80cd-8ca5-e0b10a80b2f8" class="" dir="auto"><strong>Categories</strong></p><ul id="3e65f8b2-37fc-804d-abb6-f914b7d8a132" class="bulleted-list" dir="auto"><li style="list-style-type:disc">View  the list of categories<ul id="3e65f8b2-37fc-80ff-9ec2-f7fcd29c6e75" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Avatar</li></ul><ul id="3e65f8b2-37fc-80c8-b3e4-d40d73fc2f87" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Name</li></ul></li></ul><ul id="3e65f8b2-37fc-802d-9941-d38cd25b8eb5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can add a category</li></ul><ul id="3e65f8b2-37fc-8007-9580-f57b5787eac4" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can delete a category</li></ul><ul id="3e65f8b2-37fc-80cb-9716-ed66b6425cd6" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><del> Can edit a category</del></li></ul><p id="3e65f8b2-37fc-801a-a833-ec01695b13e3" class="" dir="auto"><strong>Create group</strong></p><ul id="3e65f8b2-37fc-807f-8ae6-cf4ac0b713b9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Set the group&#x27;s<ul id="3e65f8b2-37fc-8067-8914-f6a159f9130d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Name</li></ul><ul id="3e65f8b2-37fc-8071-b5db-d892fe061488" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Description</li></ul><ul id="3e65f8b2-37fc-801c-afb8-faee72822790" class="bulleted-list" dir="auto"><li style="list-style-type:circle"> Avatar</li></ul><ul id="3e65f8b2-37fc-80b3-a1f7-c843d980433f" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Assign the group to one or more  categories</li></ul><ul id="3e65f8b2-37fc-808b-a87d-f87a1b299c96" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Visibility: Public, Invite-only, or Discoverable &amp; hidden</li></ul><ul id="3e65f8b2-37fc-8047-a28d-c79bd749e60a" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Set membership management mode: Anyone can join, Invite only, or Requires approval</li></ul></li></ul><ul id="3e65f8b2-37fc-8039-ace7-d076abbe8977" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Set the push notification mode</li></ul><ul id="3e65f8b2-37fc-805d-aafa-c4cea817391f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The group creator is automatically added as the group&#x27;s first member, with the Owner role</li></ul><ul id="3e65f8b2-37fc-8086-8bc9-fe60f40572e9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Delete</li></ul><p id="3e65f8b2-37fc-80d1-bbec-c17db5101915" class="" dir="auto"><strong>View Activities— Group detail/editing</strong></p><ul id="3e65f8b2-37fc-80a3-bcd7-dec5d74575d0" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Editing a group exposes the same fields as creation: name, description, avatar, category, visibility, membership management mode, and push notification mode</li></ul><ul id="3e65f8b2-37fc-80a7-b79a-d577e52a076c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Deleting the group, moving it to Deleted and immediately members can’t access it</li></ul><p id="3e65f8b2-37fc-800a-909c-f3c98f551305" class="" dir="auto"><strong>View Activities-Content</strong></p><ul id="3e65f8b2-37fc-809c-85bb-c7717aa5b129" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display all the content inside the feed<ul id="3e65f8b2-37fc-8034-aa4e-f1693dd8db33" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Surface Posts (native S+ content) attached to the group, with a management action that redirects into the Post&#x27;s own content management</li></ul><ul id="3e65f8b2-37fc-8020-81a2-f893b609071d" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><del>Surface External Content attached to the group </del></li></ul><ul id="3e65f8b2-37fc-809d-871b-ce18fc76d2f3" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Surface Stories  (Out of scope for Q4)</li></ul><ul id="3e65f8b2-37fc-802b-8cf9-dc2583809b70" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Surface Livestreams</li></ul><ul id="3e65f8b2-37fc-8045-8a23-c8ca19f1da6b" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Surface Polls</li></ul><ul id="3e95f8b2-37fc-80dc-9925-eac03a9366ec" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Surface Clips ( Out of scope for Q4)</li></ul></li></ul><ul id="3e65f8b2-37fc-804d-93f1-d77dda4cf9db" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Search activity by keyword</li></ul><ul id="3e65f8b2-37fc-802a-9ca1-eeaa867928c5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Filter activity by creator</li></ul><ul id="3e65f8b2-37fc-8042-892a-e991424bc6c9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Filter activity by timeframe</li></ul><ul id="3e65f8b2-37fc-8034-97cc-d6dbafd0b112" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Sort activity by creation date</li></ul><ul id="3e65f8b2-37fc-806d-b957-e1a8d0d49f92" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Content is organized into five status tabs: Published, Featured, Scheduled, Requires approval, and Deleted</li></ul><ul id="3e65f8b2-37fc-80b6-8aa4-e77dfc2d28ad" class="bulleted-list" dir="auto"><li style="list-style-type:disc">This is a viewing/light-moderation surface for content already governed by its own component (Posts, External Content, Stories) — it doesn&#x27;t configure how those components behave</li></ul><p id="3e65f8b2-37fc-8016-bac2-f667e0a54c66" class="" dir="auto"><strong>View Activities — Manage members</strong></p><ul id="3e65f8b2-37fc-80e8-984c-f2d3b8b52c41" class="bulleted-list" dir="auto"><li style="list-style-type:disc">View the list of all<ul id="3e65f8b2-37fc-8000-b5cd-f9fe36489eaf" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Members</li></ul><ul id="3e65f8b2-37fc-80e6-97c2-d170f48f2d50" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Invitation sent</li></ul><ul id="3e65f8b2-37fc-806e-9acb-f2efdf9afc17" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Pending Join requests ( Based on the group membership)</li></ul></li></ul><p id="3e65f8b2-37fc-80e5-aea2-d2047489f393" class="" dir="auto"><strong>Members</strong></p><ul id="3e65f8b2-37fc-8007-97d8-cb15dc2dad8e" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can view for all members<ul id="3e65f8b2-37fc-80f4-85f6-f910d9d850fa" class="bulleted-list" dir="auto"><li style="list-style-type:circle">User name &amp; Avatar</li></ul><ul id="3e65f8b2-37fc-8068-8400-c7fef85b29a5" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Role last activity, date joined</li></ul></li></ul><ul id="3e65f8b2-37fc-8003-bec7-dd2b4c77bb3a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Members can be filtered by role</li></ul><ul id="3e65f8b2-37fc-800e-ada6-ca5eaf0952f9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Role filtering applies only within the Active members view</li></ul><ul id="3e65f8b2-37fc-80cb-9a53-cd9ef9c84434" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can take moderation actions on Members<ul id="3e65f8b2-37fc-80a7-b010-ff9e359acf42" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Ban a member / Unban Member</li></ul><ul id="3e65f8b2-37fc-8054-a567-d3232db2d904" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Remove a member</li></ul><ul id="3e65f8b2-37fc-8063-b167-dcf362ba1538" class="bulleted-list" dir="auto"><li style="list-style-type:circle"> Change a member&#x27;s role</li></ul></li></ul><ul id="3e65f8b2-37fc-801d-a345-d277784c61ff" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can view<ul id="3e65f8b2-37fc-809c-98a4-cc900f16f7c9" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Active with the count</li></ul><ul id="3e65f8b2-37fc-80fe-99ee-ec95de7d2d66" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Banned Members with the count</li></ul><ul id="3e65f8b2-37fc-808c-96c0-dc74ba9d86a2" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Removed users with the count ( To check if remove same thing as delete)</li></ul></li></ul><ul id="3e95f8b2-37fc-80d0-b096-fa48c4d923df" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can add member</li></ul><p id="3e65f8b2-37fc-806d-ad8e-fe1c57cb361c" class="" dir="auto"><strong>Invitation Sent</strong></p><ul id="3e65f8b2-37fc-8000-a2d1-c7d0fdbb9e47" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display all the  invitations shows<ul id="3e65f8b2-37fc-8098-802e-cd84cbf98d04" class="bulleted-list" dir="auto"><li style="list-style-type:circle"> User, status, sent date, and available actions</li></ul></li></ul><ul id="3e65f8b2-37fc-8023-a7f4-f52d196c5fe0" class="bulleted-list" dir="auto"><li style="list-style-type:disc"> Filtered by status: All, Pending, or Declined</li></ul><ul id="3e65f8b2-37fc-8023-be1d-c1a00092fb74" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Declined invitations can be resent</li></ul><ul id="3e95f8b2-37fc-80c3-bf8f-c5f92e89eb7f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can Add Member</li></ul><p id="3e65f8b2-37fc-80ed-80d8-ce2c41b31dfe" class="" dir="auto"><strong>Pending Join requests</strong></p><ul id="3e65f8b2-37fc-8084-af85-f7a9c6f79381" class="bulleted-list" dir="auto"><li style="list-style-type:disc"> Display it only if the membership of the group is requires admin approval</li></ul><ul id="3e65f8b2-37fc-8005-91cc-efeebee442a3" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display user, requested date, and accept/decline actions</li></ul><ul id="3e65f8b2-37fc-80ae-b13f-c6653f4b0836" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can Accept- User will appear under member</li></ul><ul id="3e65f8b2-37fc-80d8-b2bc-dde3a75e8142" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can decline- user won’t be displayed anymore</li></ul><ul id="3e95f8b2-37fc-80fd-a311-d3191f00863b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can add member</li></ul><p id="3e65f8b2-37fc-80a0-90ba-c3880a1d3549" class="" dir="auto">
+</p><h3 id="3e65f8b2-37fc-80f2-bf39-e12beedf9a6d" class="" dir="auto">Out of Scope</h3><table id="3e65f8b2-37fc-80be-ade1-e2656b69300a" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="3e65f8b2-37fc-806c-93ae-f563364caa28" dir="ltr"><th id="Gynf" class="simple-table-header-color simple-table-header" style="width:363px">Item</th><th id="s\KX" class="simple-table-header-color simple-table-header" style="width:371px">Why it&#x27;s out of scope / Assumptions</th></tr></thead><tbody><tr id="3e65f8b2-37fc-80ba-b99c-d440769fe30d" dir="ltr"><td id="Gynf" class="" style="width:363px">Setting up permission</td><td id="s\KX" class="" style="width:371px">Setting-up permission will be under the settings in the new destination page</td></tr><tr id="3e65f8b2-37fc-8003-9cbc-cfbfca00aa72" dir="ltr"><td id="Gynf" class="" style="width:363px">Group discovery and search improvements</td><td id="s\KX" class="" style="width:371px">This MVP covers list-level filtering and keyword search only. Suggested groups, recommendations — is a separate initiative.</td></tr><tr id="3e65f8b2-37fc-8062-892f-c037a0c68b12" dir="ltr"><td id="Gynf" class="" style="width:363px">Comments and Reactions won’t have their own entries under group</td><td id="s\KX" class="" style="width:371px">We’re keeping Comments and Reactions out of scope. Under <strong>Content</strong>, we’ll surface Posts, Stories, Livestreams, and Polls as the main content types. Comments and Reactions are tied to that parent content rather than being standalone content types.Admins can still see the number of Comments and Reactions directly from the parent content. If they need to view the actual Comments or Reactions and manage them, they can click <strong>Manage Content</strong> to access the full details. Because of this, we don’t think separate entries for Comments and Reactions are necessary at this stage.</td></tr><tr id="3e95f8b2-37fc-800c-a06f-e52c33d59bfc" dir="ltr"><td id="Gynf" class="" style="width:363px">Edit Category</td><td id="s\KX" class="" style="width:371px">We scoped out the edit category because, given the time we have, it doesn’t add much value. If needed, they can still edit it or create a new one.</td></tr><tr id="3e95f8b2-37fc-8079-b7f6-e990ea12af72" dir="ltr"><td id="Gynf" class="block-color-orange_background" style="width:363px"><strong>Deferred Scope<br/><br/>Membership-only groups are supported.</strong> A group&#x27;s only function can be membership and role status, with no content component (Posts, Comments, Reactions) attached at all — e.g. a class roster, a loyalty tier, a waitlist. Use case could be : A customer creates a &quot;Gold Members&quot; group with no Posts, Comments, or Reactions attached. Users join or get added, the customer checks group membership to unlock a discount elsewhere in their app — the group itself never shows any content.</td><td id="s\KX" class="block-color-orange_background" style="width:371px">Currently, we can’t distinguish between them; it will require more effort, so we need to do it in a later scope.</td></tr></tbody></table><h2 id="3e65f8b2-37fc-8027-9041-c10b5c675461" class="" dir="auto">User Stories / Journeys-IN PROGRESS</h2><h4 id="3e65f8b2-37fc-8013-8b4c-c6ff588107d0" class="" dir="auto">1. Manage the group list</h4><p id="3e65f8b2-37fc-8048-95d4-de686afb3be7" class="" dir="auto"><em>As an admin, I want to view, filter, and search all groups on my network so that I can find and manage the ones I need.</em></p><ul id="3e65f8b2-37fc-80cc-b50a-d4048588f7d6" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Active groups are listed</li></ul><ul id="3e65f8b2-37fc-801c-a2e5-cfed3540decf" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each listed group shows its post count</li></ul><ul id="3e65f8b2-37fc-803e-8c08-f769ad86d4d8" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The active list can be filtered by category</li></ul><ul id="3e65f8b2-37fc-80e3-90f9-ec9119ff27c0" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The active list can be searched by group name</li></ul><ul id="3e65f8b2-37fc-8070-a42f-faf8707e895a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Deleted groups appear in a separate Deleted list — soft-deleted, not purged, so it stays available as a historical record</li></ul><ul id="3e65f8b2-37fc-80e5-9d81-c7e1ac937a20" class="bulleted-list" dir="auto"><li style="list-style-type:disc">From the list, an admin can open Manage Activities (  Content, Manage Members, and Group Details) ( The final naming  TBC with designers)</li></ul><ul id="3e65f8b2-37fc-804b-b194-d4d60056256d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">From the list, an admin can copy the group&#x27;s ID (TBC with designer where to take this action)</li></ul><ul id="3e65f8b2-37fc-80c6-b9de-f629840c9892" class="bulleted-list" dir="auto"><li style="list-style-type:disc">From the list, an admin can copy the group&#x27;s shareable link (TBC with designer where to take this action)</li></ul><ul id="3e65f8b2-37fc-8024-a81f-fc997563a426" class="bulleted-list" dir="auto"><li style="list-style-type:disc">From the list, an admin can delete the group ((TBC with designer where to take this action)</li></ul><h4 id="3e65f8b2-37fc-80cf-ae65-f671a28ea9e5" class="" dir="auto">2. Create a group</h4><p id="3e65f8b2-37fc-8087-9fc9-ee4f9dc3d334" class="" dir="auto"><em>As an admin, I want to create a group with its own identity and access rules so that I can stand up a new space for a specific audience or purpose.</em></p><ul id="3e65f8b2-37fc-8030-94c7-c9db40a3cea9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Customers can set the group&#x27;s name</li></ul><ul id="3e65f8b2-37fc-80eb-ab7f-d8265adb391a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Customers can set the group&#x27;s description</li></ul><ul id="3e65f8b2-37fc-80eb-96a1-f0df93ff9158" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Customers can set the group&#x27;s avatar</li></ul><ul id="3e65f8b2-37fc-8032-acfc-e142667673c5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Customers can set the group&#x27;s visibility: Public, Invite-only, or Discoverable &amp; hidden</li></ul><ul id="3e65f8b2-37fc-8042-8cfa-f2c0cfec6760" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Customers can set the membership management mode: Anyone can join, Invite only, or Requires approval</li></ul><ul id="3e65f8b2-37fc-80ed-bd2e-f625f56e8a6b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Customers can set the push notification mode: Default (members get notifications but can turn them off), Silent (no notifications for anyone; members can&#x27;t turn them on), or Subscribe (off by default; members can opt in)</li></ul><ul id="3e65f8b2-37fc-80da-86a9-f07c078e221b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Customers can assign the group to one or more existing categories</li></ul><ul id="3e65f8b2-37fc-807c-ad32-d691ba8fc06c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Customers can create a new category for the group</li></ul><ul id="3e65f8b2-37fc-802e-a914-fb8292e98f5f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The group creator is automatically added as the group&#x27;s first member, with the Owner role</li></ul><h4 id="3e65f8b2-37fc-8069-b9ed-f091dee5a93e" class="" dir="auto">3. Manage group categories</h4><p id="3e65f8b2-37fc-80c1-aca0-d3f40059e371" class="" dir="auto"><em>As an admin, I want to organize groups into categories so that I can keep a large number of groups manageable.</em></p><ul id="3e65f8b2-37fc-8039-a3ea-c28b8c541e0f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admins can add a category <ul id="3e95f8b2-37fc-806b-9f05-e2fb65e79a51" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Name</li></ul><ul id="3e95f8b2-37fc-803a-92ae-c162645b256c" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Avatar</li></ul></li></ul><ul id="3e65f8b2-37fc-804b-a5fb-fda9fb5a694e" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admins can delete a category</li></ul><ul id="3e65f8b2-37fc-80a4-ab88-fb6c90b7be03" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The category list reflects active groups only</li></ul><ul id="3e65f8b2-37fc-80c2-a3af-d2782454219a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Deleting a category removes it from the category list without deleting the groups in it</li></ul><ul id="3e65f8b2-37fc-8008-8e39-c85c152d290e" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Categories are shared across every group on the network — changes here affect the category picker everywhere</li></ul><h4 id="3e65f8b2-37fc-80c8-ad5b-e9cb114ce7ce" class="" dir="auto">4. View group activity</h4><p id="3e65f8b2-37fc-8060-9499-fe9ebcc84e26" class="" dir="auto"><em>As an admin, I want to see the content activity happening inside a group so that I can review what&#x27;s being posted without leaving the group context.</em></p><ul id="3e65f8b2-37fc-80dd-a32f-edf753baf8a7" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Content is organized into five status tabs: Published, Featured, Scheduled, Requires approval, and Deleted</li></ul><ul id="3e65f8b2-37fc-80ce-86da-f89246511f57" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Activity can be searched by keyword</li></ul><ul id="3e65f8b2-37fc-8050-8063-c892a0bb9bc1" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Activity can be filtered by creator</li></ul><ul id="3e65f8b2-37fc-8055-8de8-c93fcaa1e5c1" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Activity can be filtered by timeframe</li></ul><ul id="3e65f8b2-37fc-8077-8936-f6b186b71c2d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Activity can be sorted by creation date</li></ul><ul id="3e65f8b2-37fc-8008-9882-f47ccc152976" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Posts attached to the group are shown, with an action that redirects into the Post&#x27;s own content management</li></ul><ul id="3e65f8b2-37fc-8009-a09c-def7962dfa3c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">This view surfaces content for reviewing, not configuring — it doesn&#x27;t change how Posts,  behave</li></ul><ul id="3e65f8b2-37fc-807b-855d-f637334709b4" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each activity item shows its author, including a verified badge when applicable</li></ul><ul id="3e65f8b2-37fc-8055-9b7e-e483e17df033" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each activity item shows its creation timestamp</li></ul><ul id="3e65f8b2-37fc-8018-9abd-c780aa9638df" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each activity item shows an image grid when the content includes images</li></ul><ul id="3e65f8b2-37fc-8090-9c37-d4049d242594" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each activity item shows its reaction count</li></ul><ul id="3e65f8b2-37fc-80d9-8ea1-c58e5e9d1da6" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each activity item shows its comment count</li></ul><ul id="3e65f8b2-37fc-809c-9e63-eebf78425c6b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each activity item has a &quot;Manage content&quot; action that redirects into that content&#x27;s own management surface</li></ul><h4 id="3e65f8b2-37fc-80ad-be38-f6746327f8a6" class="" dir="auto">5. Manage group members</h4><p id="3e65f8b2-37fc-807d-88d7-da7b9a41ae32" class="" dir="auto"><em>As an admin or moderator, I want to manage who is in a group and what role they hold so that I can keep membership accurate and control access.</em></p><ul id="3e65f8b2-37fc-8003-bc19-f5943a6651f7" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Members can be filtered by role</li></ul><ul id="3e65f8b2-37fc-80a3-a900-f96c44ba714d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Role filtering applies only within the Active members view</li></ul><ul id="3e65f8b2-37fc-80af-9d19-cae71ac1f08d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Members can be viewed as all members</li></ul><ul id="3e65f8b2-37fc-8038-becc-f2d369a283be" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admins can ban a member</li></ul><ul id="3e65f8b2-37fc-80fe-bee5-d05cd7d98077" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admins can remove a member</li></ul><ul id="3e65f8b2-37fc-80f4-a56a-f55b6788d372" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admins can change a member&#x27;s role</li></ul><ul id="3e65f8b2-37fc-80e1-851f-c90923cb5b08" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The Owner role cannot be banned, removed, or have its role changed</li></ul><ul id="3e65f8b2-37fc-8081-99f5-d61c407e5c47" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Banned members are shown separately, with an option to unban</li></ul><ul id="3e65f8b2-37fc-80e0-a1ab-d8acff813b3f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Removed members are not shown at all</li></ul><ul id="3e65f8b2-37fc-8041-a955-c5b4a3c51625" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The members table shows: user, role, last activity, date joined, and available actions</li></ul><ul id="3e65f8b2-37fc-80e7-8c84-da80a67b7c4c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each status view (Active, Banned) shows a count of members in that status</li></ul><ul id="3e65f8b2-37fc-8056-88c3-c3b785490cb3" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Membership is a real view on the group itself, not a redirect into another component&#x27;s data</li></ul><ul id="3e95f8b2-37fc-80e5-b259-ca0d6f36de92" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admin can add members and select multiple members</li></ul><h4 id="3e95f8b2-37fc-80d9-95e5-c6b77e37e61d" class="" dir="auto"><strong>6. Manage sent invitations</strong></h4><p id="3e95f8b2-37fc-80a4-a362-d0af0ad3aed8" class="" dir="auto">As an admin, I want to track sent invitations, so that I can see who still needs to respond </p><ul id="3e95f8b2-37fc-8089-8fc0-f6ef4a67daec" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Sent invitations can be filtered by status: All, Pending, or Declined<ul id="3e95f8b2-37fc-80d9-910f-c4d0b9c93a9e" class="bulleted-list" dir="auto"><li style="list-style-type:circle">By default, it&#x27;s filtered by Pending</li></ul></li></ul><ul id="3e95f8b2-37fc-80a6-9cec-e1f842359db2" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Declined invitations can be resent</li></ul><ul id="3e95f8b2-37fc-8062-8da9-fdaac8067a0e" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The invitations table shows: user, status, sent date, and available actions</li></ul><ul id="3e95f8b2-37fc-80e6-94e6-fb54a45e2936" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Can add member from this view<ul id="3e95f8b2-37fc-80bd-b049-cb63457a820d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Can select multiple members</li></ul></li></ul><p id="3e95f8b2-37fc-80cd-99c1-e4bfbb4d22cb" class="" dir="auto">
+</p><h4 id="3e95f8b2-37fc-8097-9e97-c6eeae6f9e1b" class="" dir="auto"><strong>7-Manage join requests</strong></h4><p id="3e95f8b2-37fc-80aa-bcb1-e31447f2ee3e" class="" dir="auto">As an admin, I want to review and act on incoming join requests, so that I can control who joins request-based groups.</p><ul id="3e95f8b2-37fc-80fe-a700-dd00c481357f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Pending join requests can be accepted</li></ul><ul id="3e95f8b2-37fc-807c-80ac-f164e347177b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admins can decline a pending join request</li></ul><ul id="3e95f8b2-37fc-8055-addf-e8f9e4364d2a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The join-requests table shows: user, requested date, and available actions</li></ul><ul id="3e95f8b2-37fc-8086-9386-e97915fcd2fa" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admins can add a member directly from this view<ul id="3e95f8b2-37fc-8095-9222-dc36a82bad4a" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Can select multiple members</li></ul></li></ul><p id="3e95f8b2-37fc-8002-be54-e22045226333" class="" dir="auto">
+</p><h4 id="3e95f8b2-37fc-8038-b5b5-f91930ab8a01" class="" dir="auto">8- Edit group details</h4><p id="3e95f8b2-37fc-8000-b2de-d9e4b8130014" class="" dir="auto">As an admin, I want to view and edit a group&#x27;s details, so that I can keep the group&#x27;s information  accurate as it evolves.</p><ul id="3e95f8b2-37fc-800f-9007-cb7c5bbf34c5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The form shows: group name, description, avatar, category, visibility, membership (requires moderator approval), and push notification setting</li></ul><ul id="3e95f8b2-37fc-8074-8570-ecbc6a29cc44" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Category is a free-text field — admins can search existing categories or create a new one inline</li></ul><ul id="3e95f8b2-37fc-8092-8e5e-f6d783431501" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Visibility options are: Public, Private &amp; Visible, or Private &amp; Hidden</li></ul><ul id="3e95f8b2-37fc-80e2-9bf9-e0d58a04d8e4" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Push notification setting has three modes: Default, Silent, or Subscribe</li></ul><ul id="3e95f8b2-37fc-8011-bf8a-cbd7552096f5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Saving updates the group with the new values</li></ul><ul id="3e95f8b2-37fc-8007-8293-fbabf0d8f67f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admins can cancel out of changes without saving them</li></ul><ul id="3e95f8b2-37fc-80a4-a8d9-f426fc78785f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Admins can delete the group from this view — this moves it to the Deleted list and members can’t access it anymore</li></ul><h3 id="3e65f8b2-37fc-8070-99f9-d810be04867d" class="" dir="auto">Open Questions</h3><ul id="3e65f8b2-37fc-80d7-9b5f-ed10a434b429" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Is the notification a separate module that needs to be purchased separately?<ul id="3e65f8b2-37fc-8080-bf15-e906cd9cdfd3" class="bulleted-list" dir="auto"><li style="list-style-type:circle">If so, how should we handle invitations? Specifically, how will users accept or decline an invitation if the notification tray is the only place where we currently surface them?</li></ul><ul id="3e65f8b2-37fc-8077-a13c-fad335b62821" class="bulleted-list" dir="auto"><li style="list-style-type:circle">FYI-We also have an <strong>Invitation API</strong> that clients can use to fetch invitations and display them in their own app notification tray. In this case, the client would be responsible for implementing the invitation experience on their side.</li></ul></li></ul><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="🗣" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3e95f8b2-37fc-8073-810c-c3ef6d2afc12" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="🗣"></span></div><div style="width:100%"><p id="3e95f8b2-37fc-80d2-a14a-f2fa9768496e" class="" dir="auto"><strong>Decision</strong><br/>Notifications will be scoped to group notifications for now (similar to our product today). There’s too many edge cases to handle to open this up to non-group destinations at the moment unfortunately, but it’s something i’d like us to tackle next year.</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="🗣" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3e95f8b2-37fc-804d-8b26-d803a13c087f" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="🗣"></span></div><div style="width:100%"><p id="3e95f8b2-37fc-80d5-a199-ec5429d69ee4" class="" dir="auto"><strong> What about user profile</strong></p><p id="3e95f8b2-37fc-8094-b584-d31dd297a6ab" class="" dir="auto">User profiles, that&#x27;s still in scope for phase 1. the only thing that i&#x27;m aware of, and that i agree on, is that brand profiles would be a paid component. Regular user profiles would also be like notifications, where you &#x27;get&#x27; them without additional cost.</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-icon="❓" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3e95f8b2-37fc-801e-ac4d-ca9e3531fdf0" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="❓"></span></div><div style="width:100%"><p id="3e95f8b2-37fc-8045-bca6-fae824d3beca" class="" dir="auto"><strong> What  should be under fundmental user module or other capabilities under user module?</strong></p><p id="3e95f8b2-37fc-8097-a27e-d5b47202df95" class="" dir="auto">Should we establish whether there should be a boundary between the fundamental user module and certain user-related capabilities that could potentially be gated/packaged separately (e.g. following another user, “friend feed”). <br/>I think the key question is how we envision customers using and thinking about these capabilities, and whether that suggests they belong in the fundamental User module or should be independently configurable/packaged<br/></p><p id="3e95f8b2-37fc-80d9-a36b-c4d3ab3baa84" class="" dir="auto">As part of the users, the undestanding is that:</p><ol type="1" id="3e95f8b2-37fc-800e-bd49-e69c01651b5f" class="numbered-list" start="1" dir="auto"><li>The user module itself, such as sessions, user information, and users in the network list, is the fundamental part.</li></ol><ol type="1" id="3e95f8b2-37fc-8066-9524-d687c07f57cf" class="numbered-list" start="2" dir="auto"><li>Branded profiles, sponsored profiles, etc., are potential paid modules or features.</li></ol><ol type="1" id="3e95f8b2-37fc-801b-8ed7-ca0761ea48ee" class="numbered-list" start="3" dir="auto"><li>User relationships, such as followingship and blocking users, are still unclear.</li></ol></div></aside><p id="3e95f8b2-37fc-80ba-b569-f7b96fc3c162" class="" dir="auto">
+</p><p id="3e95f8b2-37fc-806b-afea-fd4d5dd72c73" class="" dir="auto"> </p><p id="3e65f8b2-37fc-80f6-8aed-fe4227bb4d98" class="" dir="auto">
+</p><h3 id="3e65f8b2-37fc-8057-991a-f2c5b6c154aa" class="" dir="auto">Decision Log </h3><p id="3e65f8b2-37fc-809e-8d43-fb0df609637c" class="" dir="auto"><em>Record any significant calls made during squad discussions — design tradeoffs, scope cuts, technical constraints that shaped the spec. A well-written decision should be readable by someone who wasn&#x27;t in the room: they should be able to understand what was decided, why, and what it means for the build without needing to ask anyone.</em></p><table id="3e65f8b2-37fc-80aa-82b7-eb7356211ded" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="3e65f8b2-37fc-80b9-b89c-c3a5b9da570f" dir="ltr"><th id="k^bf" class="simple-table-header-color simple-table-header" style="width:306.6640625px">Decision<br/><em><mark class="highlight-gray" data-notion-highlight="gray">What was decided — be specific, not vague.</mark></em></th><th id="sWqO" class="simple-table-header-color simple-table-header" style="width:413.6640625px">Rationale<br/><em><mark class="highlight-gray" data-notion-highlight="gray">Why this option over the alternative</mark></em></th><th id="Cyj\" class="simple-table-header-color simple-table-header" style="width:239.66666666666666px"><strong>Impact</strong><br/><em><mark class="highlight-gray" data-notion-highlight="gray">What this means for scope, design, or engineering</mark></em></th></tr></thead><tbody><tr id="3e65f8b2-37fc-8041-82e7-ffa5ef8c3cb2" dir="ltr"><td id="k^bf" class="" style="width:306.6640625px"><strong>Requires moderator approval”</strong> will be enabled by default for <strong>Private &amp; Visible</strong> and <strong>Private &amp; Hidden</strong> groups and cannot be changed. <br/>For <strong>Public</strong> groups, customers can choose whether membership <strong>requires moderator approval</strong>. </td><td id="sWqO" class="" style="width:413.6640625px">The setting was made configurable for <strong>Public groups to avoid blocking the existing behavior of clients using older SDK versions</strong>. Since we expect new clients to use the new SDK, this compatibility requirement can eventually be removed. We also need to define the <strong>timing and behavior of the related banners</strong>, as they should not remain visible indefinitely.</td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr><tr id="3e65f8b2-37fc-8087-88c1-df2a2482f906" dir="ltr"><td id="k^bf" class="" style="width:306.6640625px"><strong>External content cannot belong to a group.</strong> Customers should create a Post component instead.</td><td id="sWqO" class="" style="width:413.6640625px">We don’t have a concept of membership for external content, and external content has a source that is owned by the client.</td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr><tr id="3e65f8b2-37fc-805a-809a-e6d635d7dc8d" dir="ltr"><td id="k^bf" class="" style="width:306.6640625px">Display the aggregated content under group</td><td id="sWqO" class="" style="width:413.6640625px">The one aggregated view needs to retrieve and display all content in one place, so admins can view all what has been created in the group from the same place.</td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr><tr id="3e65f8b2-37fc-8077-a3df-e376d1e0aeeb" dir="ltr"><td id="k^bf" class="" style="width:306.6640625px">Display the number of posted posts in the group list and the number of pending content under require approval<br/></td><td id="sWqO" class="" style="width:413.6640625px"></td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr><tr id="3e65f8b2-37fc-8014-bebb-d57175fe792a" dir="ltr"><td id="k^bf" class="" style="width:306.6640625px">-Deleted members will not be displayed anymore under the list of members and the filter of deleted members will be removed- </td><td id="sWqO" class="" style="width:413.6640625px">Displaying deleted members doesn’t bring any additional value to the admin</td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr><tr id="3e65f8b2-37fc-80c8-8c61-de33c511ed2d" dir="ltr"><td id="k^bf" class="" style="width:306.6640625px">For invitation sent, all invitation statuses will remain available as filters, with Pending as the default filter.</td><td id="sWqO" class="" style="width:413.6640625px">To make it easy for admin to focus on the pending invitation first</td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr><tr id="3e65f8b2-37fc-806c-a34e-c23973c4f2e1" dir="ltr"><td id="k^bf" class="" style="width:306.6640625px">Add Members will support multi-select and search by 3 characters as per current behavior</td><td id="sWqO" class="" style="width:413.6640625px">To make it easy for admin to select multiple users at the same time</td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr><tr id="3e65f8b2-37fc-8055-9516-e9da44dadae1" dir="ltr"><td id="k^bf" class="" style="width:306.6640625px">There are two ways for users to appear and we support both:<br/>1-<strong>Users need to log in and then they will appear as part of the members list.</strong> <br/>2-User sync can be handled by the customer using the existing API. </td><td id="sWqO" class="" style="width:413.6640625px">Notes:<br/>We also need to consider adding user via email in the future.</td><td id="Cyj\" class="" style="width:239.66666666666666px"></td></tr></tbody></table></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
