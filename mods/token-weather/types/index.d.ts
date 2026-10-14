@@ -1,7 +1,7 @@
-export type Sample = { tokens: number; window: number }
+export type TokenWeatherReading = { tokens: number; window: number; percent: number };
 
-declare module 'claude-code' {
+declare module "claude-code" {
   interface PluginState {
-    'token-weather': { history: Sample[] }
+    "token-weather": { readings: TokenWeatherReading[] };
   }
 }
