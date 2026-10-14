@@ -1,0 +1,798 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Posts — Analytics</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+	/* Paint a complete callout box on every PDF page fragment. */
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="2475f8b2-37fc-821f-8246-8103bdb6655d" class="page sans"><header><h1 class="page-title" dir="auto">Posts — Analytics</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-text"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>AI summary</th><td>Provide a Post Analytics overview page that lets marketers filter by date, destination, and creator role to see synthesized key insights, high‑level post metrics, performance trends, and top‑performing posts, as well as individual content performance to enable rapid identification of content, audience, and engagement drivers.</td></tr><tr class="property-row property-row-status"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><td><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Pitch Ready</span></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Pitch Decision</th><td><span class="selected-value select-value-color-green">Committed</span></td></tr><tr class="property-row property-row-person"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/friends_gray.svg" style="width:14px;height:14px;display:block"/></span>Created by</th><td><span class="user"><img src="Posts%20%E2%80%94%20Analytics/025A8037_VSCO.jpg" class="icon user-icon"/>Lindley</span></td></tr></tbody></table></header><div class="page-body"><nav id="b405f8b2-37fc-8209-96a8-8126eab28363" class="block-color-gray table_of_contents" data-notion-highlight="gray" data-notion-toc="" dir="ltr"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1505f8b2-37fc-8310-9d9e-018ac923a095">A1: Context</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b525f8b2-37fc-829a-80c5-019fc80ee364">A2: MVP Principles &amp; Boundaries</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4325f8b2-37fc-830f-b998-016fc2d24bf3">A3: 📝 Product Specs</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#75e5f8b2-37fc-83f4-ad7e-01f78014b82d">Scope — MVP</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#1a25f8b2-37fc-834d-ba2a-015da85d4c5f">Scope Decisions </a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3e55f8b2-37fc-8011-8f67-eb13c94cb687">Product Decisions </a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4315f8b2-37fc-82f0-b470-01cef2dbd029">User Stories / Journeys</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#f835f8b2-37fc-83bc-b747-81eca62f371d">Understand Overall Performance of S+ Posts</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3db5f8b2-37fc-8082-92cf-ca177daf5e52"><strong>1. Post Overview — Filters</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3dc5f8b2-37fc-80f9-b929-d25d27261521"><strong>2. View synthesized insights for posts</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-806b-836c-f1bc33838ac1"><strong>3. View Key Post Metrics</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-80cc-a1ce-d06f716300df"><strong>4. View Post Performance over Time</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-8018-9aa1-cb323e7fcc2a"><strong>5. View Top Performing Posts</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-8004-956e-ca5c84e19bc0"><strong>6. Export Post Analytics</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-8027-8c8e-f1898c502fdd"><strong>[Descoped] 7. Explore Further</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3de5f8b2-37fc-801c-9b52-f832b476f6b0">Understand Content Performance of S+ Posts</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-8079-b481-c99e204cb8cc"><strong>1. Post Overview — Filters</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-80a9-9a3c-d832028bd2f3"><strong>2. View Performance by Post Type</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-8028-b78d-c31a7b7fc17f"><strong>3. View Destination Performance</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-804e-817f-f231c30ed568"><strong>4. View All Posts Performance</strong></a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3de5f8b2-37fc-8052-bfe3-f71eeafc510a"><strong>5. View Top Creators</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3dc5f8b2-37fc-80ab-b04f-c13097580bc9">[Appendix A] Insight Library</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3dd5f8b2-37fc-808a-ad4e-c265056af6af">A.1 Insight Selection</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3dd5f8b2-37fc-808d-b12b-cb0c76f5e056">A.2 Insight Eligibility</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3dd5f8b2-37fc-8006-be24-c29673672041">A.3 Insight Diversity</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3dd5f8b2-37fc-8052-978b-f4e31b042f60">A.4 Filter Scope</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3dd5f8b2-37fc-80d8-9b96-ee6e573f79a1">A.5 Data Traceability</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3dd5f8b2-37fc-8017-9e2e-f128fda6359d">A.6 Insight Wording</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3dd5f8b2-37fc-8081-a124-fc071727ddba">A.7 Insufficient Data</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#dce5f8b2-37fc-8330-9adf-01e1e49798b1">A3: 🎯 GTM Summary</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#fd15f8b2-37fc-830e-9d09-815c07174935">A4: 🚀 Launch Checklist</a></div></nav><h2 id="1505f8b2-37fc-8310-9d9e-018ac923a095" class="" dir="auto">A1: Context</h2><p id="3db5f8b2-37fc-80f5-9ebb-eb11bd64bc94" class="" dir="auto">Feedback from many customers, including Ulta, David Lloyd, XM, and many others — has highlighted limited visibility into how their Social+ content performs, and how different audiences interact with that content. </p><p id="3dc5f8b2-37fc-80a9-92af-f3ae511c0436" class="" dir="auto">As we evolve toward a more <strong>componentized, in-app engagement infrastructure</strong>, our analytics needs to evolve with it. Social+ is no longer only a destination for communities; its components can be embedded across different surfaces and experiences within a customer&#x27;s application.</p><p id="3dc5f8b2-37fc-807a-ae16-ddad5f0eb6a6" class="" dir="auto">This creates an opportunity to provide customers with a broader understanding of their Social+ ecosystem — not only <strong>what content is being created and how it performs</strong>, but also <strong>how different audiences consume, engage with, and contribute to that content</strong>.</p><p id="3dc5f8b2-37fc-809c-a8c0-c7444c6045e6" class="" dir="auto">We looked at established patterns in marketing, social media, and content analytics dashboards. These products commonly provide a high-level <strong>channel performance</strong> view, followed by deeper content and audience analysis.</p><p id="3dc5f8b2-37fc-8057-8e93-f38f24b0611e" class="" dir="auto">From an analytics perspective, Social+ posts can be treated similarly to a <strong>channel within the customer&#x27;s product</strong>: posts are created, distributed across destinations, consumed, and engaged with. This makes a channel-level view useful for understanding the overall performance of Posts as an engagement component, before drilling down into the content driving that performance.</p><p id="3dc5f8b2-37fc-8052-be2e-fc923d68beb3" class="" dir="auto">Based on this, Post Analytics is structured around two distinct analytical questions:</p><ol type="1" id="3dc5f8b2-37fc-800e-a482-cc2d586e9cc8" class="numbered-list" start="1" dir="auto"><li><strong>Channel Performance: </strong>How are Social+ posts performing as an engagement component?</li></ol><ol type="1" id="3dc5f8b2-37fc-8052-b295-c1d13fbced70" class="numbered-list" start="2" dir="auto"><li><strong>Content Performance: </strong>Which posts are performing, and what’s driving that performance? </li></ol><p id="3dc5f8b2-37fc-8079-88f7-cb8f59095595" class="" dir="auto"><strong><span style="border-bottom:0.05em solid">Audience Intelligence</span></strong></p><p id="3dc5f8b2-37fc-8011-ac4e-c1f9130949fd" class="" dir="auto">We initially considered including some audience intelligence within Post Analytics, as understanding who is consuming and engaging with posts is a natural extension of content performance. However, as we shaped the experience further, we recognized that the underlying problem was broader: customers want to understand what their audiences are interested in and how the behave across their Social+ experience. </p><p id="3dc5f8b2-37fc-8039-9ded-d449565e70da" class="" dir="auto">That interest may be expressed through posts, but also through comments, reactions, comments, live streams, and other interactions. Keeping Audience Intelligence within each component would constrain the solution to a single component and ultimate require audience analysis to be duplicated across components.</p><p id="3dc5f8b2-37fc-8062-ae63-c3ba5f52f0ba" class="" dir="auto"><strong>We therefore decided to treat Audience Intelligence as a broader, cross-component capability</strong>, focusing on building an overall behavioral profile of an audience from signals across Social+. As part of this, customers will receive <strong>aggregate audience insights as part of their existing Social+ analytics experience</strong>, allowing them to discover the value of their audience data. For example, they may learn which audience segments are most engaged or what content they respond to across Social+.</p><p id="3dc5f8b2-37fc-8086-813e-c6fed4dea108" class="" dir="auto">Customers who want to <strong>identify the specific users behind these insights and take action on those audiences</strong> can unlock this through a <strong>paid</strong> module.</p><p id="3dc5f8b2-37fc-80a7-b42f-c46ea1eb7151" class="" dir="auto">This creates a clear product-led growth journey:</p><blockquote id="3dc5f8b2-37fc-804c-b7a8-dfe93a92fff6" class="" dir="auto"><strong>Show the value → Identify the audience → Take action</strong></blockquote><hr id="bbb5f8b2-37fc-83f6-ac33-01759a015d99" dir="auto"/><h2 id="b525f8b2-37fc-829a-80c5-019fc80ee364" class="" dir="auto">A2: MVP Principles &amp; Boundaries</h2><ul id="3dc5f8b2-37fc-800d-b9cc-fb3a26227e21" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Channel Performance</strong> should follow familiar marketing/channel analytics patterns: headline KPIs, trends, synthesized insights, and lightweight evidence.</li></ul><ul id="3dc5f8b2-37fc-804a-91af-e893fca28e3e" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Content Performance</strong> should provide deeper investigation of individual Posts and their performance drivers.</li></ul><ul id="3dc5f8b2-37fc-807d-99bc-ded871efc9cb" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Keep the MVP focused and <strong>avoid building a flexible analytics/query engine.</strong></li></ul><ul id="3dc5f8b2-37fc-8035-aef2-cb7901131589" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Prioritize <strong>trustworthy</strong> and <strong>actionable insights </strong>over breadth.</li></ul><ul id="3e55f8b2-37fc-8014-ab55-dfb8094fa4ba" class="bulleted-list" dir="auto"><li style="list-style-type:disc">[Added 22-Sept]: Analytics and Operations should be treated as separate experiences, with Analytics focusing on understanding performance, and Operations focused on managing content and taking action. <ul id="3e55f8b2-37fc-80f6-a953-e72592e8de8b" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Our customers use Social+ in different organizational contexts. For larger enterprise customers (e.g. True, AirBnB, Ulta), we see separate teams responsible for <strong>day-to-day content/community operations</strong> and <strong>performance analysis and reporting</strong>. These users have different jobs: operational users need to manage and take action on content, while analytical users need to understand performance, identify trends, and investigate what is driving results.</li></ul><ul id="3e55f8b2-37fc-80f8-934b-dbe2ae59ee3d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Smaller customers may have the same person performing both roles, but the underlying jobs remain distinct.</li></ul><ul id="3e55f8b2-37fc-8017-8ad4-f453517b1900" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>Therefore, Analytics and Operations should be designed as separate experiences around their distinct jobs</strong>, with Analytics focused on <strong>understanding and investigating performance</strong>, and Operations focused on <strong>managing content and taking action</strong>. The two experiences can remain connected where useful, but Analytics should not replicate operational workflows.</li></ul></li></ul><aside class="block-color-yellow_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="yellow_background" style="white-space:pre-wrap;display:flex" id="3dc5f8b2-37fc-80cc-b75f-f0176b1a367d" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3dc5f8b2-37fc-804d-9080-f1d2cbf6281f" class="" dir="auto">Sample conceptual screens here: </p><figure id="3dc5f8b2-37fc-807e-b0e0-f0c68ee191fe" dir="ltr"><div class="source">https://www.figma.com/board/3WXrL2E2h3xkUKKqqo70jY/componentization?node-id=1638-6580&amp;t=FMGgT2XQOykOAY6G-4</div></figure></div></aside><p id="3e55f8b2-37fc-80c6-8084-e72f4b84e7d3" class="" dir="auto">
+</p><hr id="3e55f8b2-37fc-8082-b807-c1430b6745cc" dir="auto"/><h2 id="4325f8b2-37fc-830f-b998-016fc2d24bf3" class="" dir="auto">A3: 📝 Product Specs</h2><aside class="block-color-yellow_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="yellow_background" style="white-space:pre-wrap;display:flex" id="3de5f8b2-37fc-8079-ba2e-e4ce1037b47a" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3de5f8b2-37fc-80da-ba75-f1cbccecd95d" class="" dir="auto">Refer to ‘03 Metric Library’ for logic definitions: <a href="https://docs.google.com/spreadsheets/d/1CK5nBFQ5UXkah4cZ_KfnbvqUdvnuFsn656I4JkFCKLQ/edit?gid=361456270#gid=361456270">https://docs.google.com/spreadsheets/d/1CK5nBFQ5UXkah4cZ_KfnbvqUdvnuFsn656I4JkFCKLQ/edit?gid=361456270#gid=361456270</a></p></div></aside><h3 id="75e5f8b2-37fc-83f4-ad7e-01f78014b82d" class="" dir="auto">Scope — MVP</h3><ul id="0135f8b2-37fc-82c8-b3c8-01b39f05be17" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Overview page <ul id="3e35f8b2-37fc-8064-b0a3-ce25cd29281c" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must have] Key Insights — refer to scope decisions table</li></ul><ul id="3e35f8b2-37fc-8018-949a-f1741ff7711c" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must Have] Key Post Metrics</li></ul><ul id="3e35f8b2-37fc-80cf-bec7-f6cdbfab207d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must Have] Post Performance Over Time</li></ul><ul id="3e35f8b2-37fc-8008-bc82-d3a17943c168" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must Have] Top Performing Posts</li></ul><ul id="3e55f8b2-37fc-80d9-a321-f8a0427be503" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must Have] Export Post Performance &amp; Top Performing Posts — refer to scope decisions table</li></ul><ul id="3e55f8b2-37fc-804f-a0fc-e0e53bf3db1f" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><del>[Nice to Have] Explore Further</del></li></ul></li></ul><ul id="3e55f8b2-37fc-8051-a703-f458ab456ade" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Content Performance page<ul id="3e55f8b2-37fc-80a5-bf19-f993f3a3ed96" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must Have] View Performance by Post Type</li></ul><ul id="3e55f8b2-37fc-8062-8364-c4d73b2e729d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must Have] View Performance by Destination</li></ul><ul id="3e55f8b2-37fc-80b6-890e-d95b0a5bd3a6" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must Have] View All Posts Performance<ul id="3e55f8b2-37fc-80da-9c55-e5303bbf814d" class="bulleted-list" dir="auto"><li style="list-style-type:square"><del>[Should Have]: Post Comparison </del></li></ul></li></ul><ul id="3e55f8b2-37fc-8084-8676-c8d2ed4818dc" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must Have]: View Top Creators<ul id="3e55f8b2-37fc-80be-9cf8-c9665b8c9d9e" class="bulleted-list" dir="auto"><li style="list-style-type:square"><del>[Nice to Have]: View All Posts by Specific Creator</del></li></ul></li></ul><ul id="3e55f8b2-37fc-801c-8e69-e6f83b72d753" class="bulleted-list" dir="auto"><li style="list-style-type:circle">[Must Have]: Export All Data on Content Performance page </li></ul></li></ul><h3 id="1a25f8b2-37fc-834d-ba2a-015da85d4c5f" class="" dir="auto">Scope Decisions </h3><table id="a8e5f8b2-37fc-8266-87cc-012331637b0c" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="4965f8b2-37fc-8226-841c-0135e2256c6a" dir="ltr"><th id="GgWd" class="simple-table-header-color simple-table-header" style="width:239.66666666666666px"><strong>Item</strong></th><th id="yb[E" class="simple-table-header-color simple-table-header" style="width:426.6527862548828px">Scoping Decisions </th></tr></thead><tbody><tr id="6c55f8b2-37fc-82df-a9a8-0113fa1f5d30" dir="ltr"><td id="GgWd" class="" style="width:239.66666666666666px">Post comparison</td><td id="yb[E" class="" style="width:426.6527862548828px"><strong>Removed from MVP</strong> as a should have capability — While Post Comparison is supported in the current Dashboard and will need to be retained as part of the broader analytics experience, it is not essential to the core Content Performance experience for the initial release. <br/><br/>MVP will focus on helping customers understand overall Post performance and identify the content, destinations, and creators driving that performance.</td></tr><tr id="7835f8b2-37fc-839c-89b7-81298993422c" dir="ltr"><td id="GgWd" class="" style="width:239.66666666666666px">View all posts by specific creator</td><td id="yb[E" class="" style="width:426.6527862548828px"><strong>Removed from MVP</strong> as a nice to have capability. While marketers may naturally want to explore the types of content published by top creators, this is a deeper drill-down rather than a core requirement for understanding creator performance. <br/><br/>MVP can establish which creators are contributing to Post activity and performance through the <strong>Top Creators</strong> widget, while individual Post performance remains accessible through <strong>All Posts</strong>. A creator-specific Post view can be added as a follow-on capability.</td></tr><tr id="7245f8b2-37fc-82f7-bd95-81552fa43cc4" dir="ltr"><td id="GgWd" class="" style="width:239.66666666666666px">Post insights</td><td id="yb[E" class="" style="width:426.6527862548828px"><strong>Insights will be phased based on data maturity.</strong> Insights that can provide value from <strong>passive consumption and exposure signals</strong> can be developed toward the end of 2026, as these signals can provide meaningful insights without requiring significant user contribution. <br/><br/>We will prioritize the components where these insights provide the most value (i.e Posts, Feeds, Groups, Live Stream) <br/><br/>Insights that rely on <strong>user-generated engagement and contribution</strong> will be deferred until 2027, allowing time for customers to adopt our components and build sufficient usage data for these insights to become meaningful.</td></tr><tr id="c2c5f8b2-37fc-82d9-b03c-8163419fba04" dir="ltr"><td id="GgWd" class="" style="width:239.66666666666666px">Exporting data </td><td id="yb[E" class="" style="width:426.6527862548828px">Include both period-based exports and the 1P Data API in scope. The 1P Data API provides broader access to Social+ data but requires additional data preparation, while period-based exports provide analysis-ready data for a defined reporting period. <br/><br/><strong>If capacity is constrained, prioritize period-based exports for MVP. </strong>Marketers typically analyse performance within defined time periods (e.g. monthly, campaign, or reporting periods), making a scoped export more immediately useful than a full data dump.</td></tr><tr id="3e55f8b2-37fc-80b3-985c-c1f61c37c389" dir="ltr"><td id="GgWd" class="" style="width:239.66666666666666px">‘Explore Further’ section</td><td id="yb[E" class="" style="width:426.6527862548828px"><strong>Removed from MVP </strong>as a nice to have capability because it does not provide a core analytical capability. Its primary purpose was to encourage customers to move from the Overview into deeper analysis in <strong>Content Performance</strong>, and eventually discover <strong>Audience Intelligence</strong> as part of our PLG motion.<br/><br/>While this cross-navigation may be useful, customers can already access these areas through the Analytics navigation. Adding a dedicated Explore Further section would therefore add UI complexity without materially increasing the analytical value of the MVP. <strong>The opportunity to drive deeper exploration and introduce Audience Intelligence as a PLG motion can be addressed separately once those experiences are more mature.</strong></td></tr></tbody></table><hr id="0f75f8b2-37fc-8386-b4f8-81dec6a8f587" dir="auto"/><h3 id="3e55f8b2-37fc-8011-8f67-eb13c94cb687" class="" dir="auto">Product Decisions </h3><p id="3e55f8b2-37fc-803f-9501-c96a6dfef0d0" class="" dir="auto"><em>Record any significant calls made during squad discussions — design tradeoffs, technical constraints that shaped the spec. A well-written decision should be readable by someone who wasn&#x27;t in the room: they should be able to understand what was decided, why, and what it means for the build without needing to ask anyone.</em></p><table id="5e05f8b2-37fc-836a-9a48-01af47334a88" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="a345f8b2-37fc-82e5-8783-8172f02eb73a" dir="ltr"><th id="k^bf" class="simple-table-header-color simple-table-header" style="width:239.66666666666666px">Decision<br/><em><mark class="highlight-gray" data-notion-highlight="gray">What was decided — be specific, not vague.</mark></em></th><th id="sWqO" class="simple-table-header-color simple-table-header" style="width:239.66666666666666px">Rationale<br/><em><mark class="highlight-gray" data-notion-highlight="gray">Why this option over the alternative</mark></em></th><th id="Cyj\" class="simple-table-header-color simple-table-header" style="width:239.66666666666666px"><strong>Impact</strong><br/><em><mark class="highlight-gray" data-notion-highlight="gray">What this means for scope, design, or engineering</mark></em></th></tr></thead><tbody><tr id="b445f8b2-37fc-8300-b608-8114f3b220ee" dir="ltr"><td id="k^bf" class="" style="width:239.66666666666666px">Remove navigation from insight cards</td><td id="sWqO" class="" style="width:239.66666666666666px"><strong>Insight navigation was removed from MVP because not all insights can be reliably mapped to a specific underlying object or destination.</strong> <br/><br/>Some insights may describe patterns or trends across a set of data rather than a single Post, creator, or other object. <br/><br/>Providing a navigation action in these cases could lead users to an imprecise or misleading destination. To keep the experience consistent and avoid creating dead-end or low-confidence navigation paths, insights will be <strong>informational in MVP</strong>, without requiring a drill-down action.</td><td id="Cyj\" class="" style="width:239.66666666666666px">Insights will be presented as informational findings without requiring a navigation or drill-down action. This gives us flexibility to surface insights that describe broader patterns or trends, even when there is no single underlying object to navigate to, while avoiding inaccurate or misleading navigation paths.</td></tr><tr id="ad05f8b2-37fc-8360-9317-81e36ea95846" dir="ltr"><td id="k^bf" class="" style="width:239.66666666666666px">Separate Analytics from Operations</td><td id="sWqO" class="" style="width:239.66666666666666px">Our customers operate in different organizational contexts. Larger enterprise customers (e.g. True, Airbnb, Ulta) may have separate teams responsible for day-to-day content/community operations and performance analysis/reporting, while smaller customers may have the same person performing both. <br/><br/>Regardless of who performs them, these are distinct jobs with different needs.</td><td id="Cyj\" class="" style="width:239.66666666666666px">Analytics will be designed around <strong>understanding and investigating performance</strong>, while Operations will focus on <strong>managing content and taking action</strong>. The experiences can remain connected where useful, but Analytics will not replicate operational workflows.</td></tr><tr id="3e55f8b2-37fc-807a-bffc-e5a839d6639c" dir="ltr"><td id="k^bf" class="" style="width:239.66666666666666px">Use historical data existence as the source of truth for engagement metrics</td><td id="sWqO" class="" style="width:239.66666666666666px">Destination configuration can change over time. A configuration change today does not mean that engagement data did not exist or was not available when the activity occurred. <br/><br/>Analytics should represent <strong>what actually happened historically</strong>, rather than reinterpret historical activity based on the destination&#x27;s current configuration.</td><td id="Cyj\" class="" style="width:239.66666666666666px">Engagement metrics will be calculated based on the <strong>historical availability/existence of engagement data</strong>, rather than the current destination configuration. <br/><br/>Backend logic must be able to distinguish between engagement data that was available at the time of activity and engagement functionality that is currently enabled.</td></tr><tr id="3e55f8b2-37fc-8089-a683-daf278a2d528" dir="ltr"><td id="k^bf" class="" style="width:239.66666666666666px">To keep the MVP cost-effective while still providing meaningful synthesis, Post Overview will use a small set of <strong>fixed, non-configurable insight types</strong>: Growth/Decline, Top Content, and Content Mix. This aligns with our principle of prioritizing insights that can provide value from <strong>passive consumption and exposure signals</strong>, rather than relying heavily on user contribution such as reactions or comments.</td><td id="sWqO" class="" style="width:239.66666666666666px">To keep the MVP cost-effective while still providing meaningful synthesis, Post Overview will use a small set of <strong>fixed, non-configurable insight types</strong>: Growth/Decline, Top Content, and Content Mix. This aligns with our principle of prioritizing insights that can provide value from <strong>passive consumption and exposure signals</strong>, rather than relying heavily on user contribution such as reactions or comments.</td><td id="Cyj\" class="" style="width:239.66666666666666px">Post Overview will initially surface a fixed set of insight types rather than a configurable Insight Library. Insights must respect the <strong>global filters</strong> so that the findings remain relevant to the selected analytical scope. The underlying insight framework should remain extensible so additional insight types can be introduced as data maturity and product needs evolve.</td></tr><tr id="3e55f8b2-37fc-80fa-8e88-ef6df75529e8" dir="ltr"><td id="k^bf" class="" style="width:239.66666666666666px">Use available historical data within the current analytics data window</td><td id="sWqO" class="" style="width:239.66666666666666px">Analytics data is updated daily and is currently available from the beginning of 2025. <br/><br/>For dashboard use cases, marketers are primarily expected to analyze <strong>recent and current performance</strong>, where historical patterns are most relevant to current decision-making. <br/><br/>Data from significantly older periods is less representative because customer behavior, content strategy, audiences, and product usage can change substantially over time.</td><td id="Cyj\" class="" style="width:239.66666666666666px">Analytics dashboards will support the historical data window available through the analytics architecture, with <strong>daily data refreshes</strong>. The UI should clearly communicate <strong>when the data was last refreshed</strong> so customers understand the data&#x27;s freshness and do not assume the dashboard reflects real-time activity.<br/><br/>The MVP does not need to optimize for deep historical analysis beyond the available/current reporting window. <br/><br/>Where data is unavailable for a selected period, the experience should clearly indicate that data is unavailable rather than displaying zero.</td></tr></tbody></table><hr id="3e55f8b2-37fc-80af-8925-f710d8d38433" dir="auto"/><h2 id="4315f8b2-37fc-82f0-b470-01cef2dbd029" class="" dir="auto">User Stories / Journeys</h2><h3 id="f835f8b2-37fc-83bc-b747-81eca62f371d" class="" dir="auto">Understand Overall Performance of S+ Posts</h3><p id="3db5f8b2-37fc-8053-b9ec-c9a50378daa5" class="" dir="auto">As a marketer, I want to understand the overall performance of my Social+ posts and quickly identify the most important trends, content, and audience signals within my selected scope.</p><p id="3dd5f8b2-37fc-80d1-bf64-e75199f99c79" class="" dir="auto"><strong>Page Structure:</strong></p><p id="3dd5f8b2-37fc-80ff-9b29-d5b571a4a979" class="" dir="auto">The Overview page consists of: </p><ul id="3dd5f8b2-37fc-805d-8498-c5a27468fb31" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Key Insights — </strong>synthesized findings from the selected scope</li></ul><ul id="3dd5f8b2-37fc-80cd-82f8-ed84f0f83dd4" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Key Post Metrics —</strong> high-level measure of post activity and performance </li></ul><ul id="3dd5f8b2-37fc-8093-aedf-fdf649462f97" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Post Performance over Time —</strong> changes in key performance metrics over the selected period</li></ul><ul id="3dd5f8b2-37fc-801e-9558-cb4593e09468" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Top Performing Posts —</strong> posts contributing strongly to overall performance </li></ul><p id="3dd5f8b2-37fc-80fb-a2fd-c569c96888bd" class="" dir="auto"><strong>Analytical Scope: </strong></p><p id="3dd5f8b2-37fc-80e8-bc6a-cfa1a8dd2a63" class="" dir="auto">The user can define the scope of their analysis using: </p><ul id="3dd5f8b2-37fc-8014-aacd-cc89144896d5" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Date filter — </strong>the period over which post activity and performance is analyzed</li></ul><ul id="3dd5f8b2-37fc-80aa-a928-c32bce02b6fc" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Destination — </strong>the destinations associated with the posts included in the analysis</li></ul><ul id="3dd5f8b2-37fc-8045-83bb-f4487d933092" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Creator role — </strong>the creator roles associated with the posts included in the analysis</li></ul><p id="3dd5f8b2-37fc-8087-9746-c0018be494d2" class="" dir="auto">All widgets in the Overview page should reflect the selected scope</p><hr id="3dd5f8b2-37fc-800f-9d2b-c6b7197a89a9" dir="auto"/><h4 id="3db5f8b2-37fc-8082-92cf-ca177daf5e52" class="" dir="auto"><strong>1. Post Overview — Filters</strong></h4><blockquote id="3dd5f8b2-37fc-8068-8547-df4e350e669d" class="" dir="auto"><em>As a marketer, I want to filter my analysis by date, destination, and creator role so that I can focus on the Post activity that is relevant to me.</em></blockquote><ul id="3dd5f8b2-37fc-80e9-902e-dd74e64b31ff" class="bulleted-list" dir="auto"><li style="list-style-type:disc">User should be able to define the scope of the Overview using the following filters: <ul id="3dd5f8b2-37fc-8008-9c2a-d65da34286d2" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Date<ul id="3dd5f8b2-37fc-80e6-acac-c49cd573b82d" class="bulleted-list" dir="auto"><li style="list-style-type:square">User can select a date range </li></ul><ul id="3dd5f8b2-37fc-80df-a685-ee97928d0b7a" class="bulleted-list" dir="auto"><li style="list-style-type:square">Selected date range applies to all Overview widgets</li></ul><ul id="3dd5f8b2-37fc-80aa-8ec3-c31a9d9bb9e5" class="bulleted-list" dir="auto"><li style="list-style-type:square">On the Overview page, the date range represents the activity period</li></ul><ul id="3dd5f8b2-37fc-805f-ac57-d4b62f82ce28" class="bulleted-list" dir="auto"><li style="list-style-type:square">Post activity and performance metrics should include activity occurring within the selected period</li></ul></li></ul><ul id="3dd5f8b2-37fc-80b3-a3c4-e84d97345809" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Destination<ul id="3dd5f8b2-37fc-8079-878a-cdbbd482a48c" class="bulleted-list" dir="auto"><li style="list-style-type:square">The user can select a destination.</li></ul><ul id="3dd5f8b2-37fc-8091-a0e8-d3252e266de0" class="bulleted-list" dir="auto"><li style="list-style-type:square">Selecting a destination includes Posts associated with that destination.</li></ul><ul id="3dd5f8b2-37fc-808b-bbfa-e2ee266295ee" class="bulleted-list" dir="auto"><li style="list-style-type:square">A Post associated with multiple destinations should be included when any of its associated destinations matches the selected filter.</li></ul></li></ul><ul id="3dd5f8b2-37fc-80e5-98b6-ededa14a988b" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Creator role<ul id="3dd5f8b2-37fc-809d-99e9-dbf59229f164" class="bulleted-list" dir="auto"><li style="list-style-type:square">User can select one or more creator roles, from admin, moderator, and user role</li></ul><ul id="3dd5f8b2-37fc-80f8-8ba8-c41b291079f6" class="bulleted-list" dir="auto"><li style="list-style-type:square">Selecting a creator role includes posts created by users with that role </li></ul></li></ul></li></ul><h4 id="3dc5f8b2-37fc-80f9-b929-d25d27261521" class="" dir="auto"><strong>2. View synthesized insights for posts</strong></h4><blockquote id="3dd5f8b2-37fc-8082-a0f4-c1b83da3f7e8" class="" dir="auto"><em>As a marketer, I want to see the most important insights about my Post performance so that I can quickly understand what is happening and identify areas I may want to investigate further.</em></blockquote><ul id="3dd5f8b2-37fc-8095-9a1b-f39b8c063829" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The Overview should display 3 key insight cards</li></ul><ul id="3dd5f8b2-37fc-8011-bf0f-d6beb4e36737" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Insights should be dynamically selected from a predefined insight library rather than being permanently assigned to specific cards </li></ul><ul id="3dd5f8b2-37fc-8027-be03-fa32a6e544bd" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The insights displayed should be relevant to the user’s selected date, destination, and creator role filters</li></ul><ul id="3dd5f8b2-37fc-80f0-af9d-ecb93de21b44" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each insight should communicate one clear finding rather than requiring the user to interpret a chart or multiple metrics</li></ul><ul id="3dd5f8b2-37fc-8064-8379-fcf1970ac18a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Insight statements should be specific about <strong>what is driving the finding</strong> and, where relevant, include the supporting metric or value.</li></ul><ul id="3dd5f8b2-37fc-806b-8ae5-fcb1d4338265" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Insights should provide enough context for the user to understand <strong>why the finding is notable</strong>.</li></ul><ul id="3dd5f8b2-37fc-80a6-b4b6-de4360e0dd9c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The three cards should aim to provide <strong>different perspectives on Post performance</strong> rather than repeating the same underlying finding.</li></ul><ul id="3dd5f8b2-37fc-808a-b8cb-cd94df3765a5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Where an insight can be investigated further, the card should provide a clear <strong>path to the relevant deeper analysis</strong>.</li></ul><ul id="3dd5f8b2-37fc-80d5-832a-d188b202af4b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The insight should be worded according to the selected scope. For example, when a destination is selected, the insight should make clear that the finding relates to Posts within that destination scope where necessary.</li></ul><ul id="3dd5f8b2-37fc-80a0-b94c-fd7a88f4861b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">If there are not enough meaningful insights to populate all three cards, fewer cards may be displayed rather than showing irrelevant or repetitive insights.</li></ul><p id="3dd5f8b2-37fc-8069-903c-c40f5407bef8" class="" dir="auto"><strong>Example:</strong></p><blockquote id="3dd5f8b2-37fc-800a-b530-edf7337ec56c" class="" dir="auto"><strong>Video drives the most engagement</strong><p id="3dd5f8b2-37fc-8043-9243-fe9e71a8429d" class="" dir="auto">Video Posts generated 48% of engagement despite representing 22% of Posts.</p><p id="3dd5f8b2-37fc-803e-81ba-ccf879f51146" class="" dir="auto"><em>View content performance →</em></p></blockquote><blockquote id="3dd5f8b2-37fc-8055-9537-fc6154f237d7" class="" dir="auto"><strong>Beauty Enthusiasts drive the most engagement</strong><p id="3dd5f8b2-37fc-8029-b3d2-d2a3aea9b8d9" class="" dir="auto">Beauty Enthusiasts generated 34% of engagement with Posts.</p><p id="3dd5f8b2-37fc-80cc-98ce-f6306f7353a8" class="" dir="auto"><em>View audience →</em></p></blockquote><blockquote id="3dd5f8b2-37fc-805b-a7f5-f576e39ebcc3" class="" dir="auto"><strong>Post engagement is increasing</strong><p id="3dd5f8b2-37fc-800a-aaf0-d4ffb6e00445" class="" dir="auto">Engagement increased 24% compared with the previous period.</p><p id="3dd5f8b2-37fc-80e4-baf5-e988f962663d" class="" dir="auto"><em>View performance over time →</em></p></blockquote><aside class="block-color-yellow_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="yellow_background" style="white-space:pre-wrap;display:flex" id="3de5f8b2-37fc-809d-a63c-c861823d1f0d" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3dd5f8b2-37fc-8066-90c7-e21491e14b08" class="" dir="auto"><em>See Appendix A below — Synthesized Insights for the Insight Library and system selection requirements.</em></p></div></aside><h4 id="3de5f8b2-37fc-806b-836c-f1bc33838ac1" class="" dir="auto"><strong>3. View Key Post Metrics</strong></h4><blockquote id="3de5f8b2-37fc-80f4-807b-c556dc322d71" class="" dir="auto"><em>As a marketer, I want to see key post performance metrics at a glance so that I can quickly understand the scale and overall performance of my posts. </em></blockquote><ul id="3de5f8b2-37fc-8039-a2a7-d7cdaf8649b5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display the following metrics: <ul id="3de5f8b2-37fc-8066-86fa-f38953892064" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Posts published</li></ul><ul id="3de5f8b2-37fc-803f-84d1-de05b6d1afb3" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Total reach</li></ul><ul id="3de5f8b2-37fc-8030-9398-c49b9a268c1e" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Total impressions</li></ul><ul id="3de5f8b2-37fc-80c2-9019-c4bb6d2e604e" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Total comments</li></ul><ul id="3de5f8b2-37fc-8077-b99e-decd7e5cb8d8" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Total reactions</li></ul><ul id="3de5f8b2-37fc-8005-aa69-c9e7c35ea4bf" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engaged users</li></ul><ul id="3de5f8b2-37fc-805c-a5d0-ccfad7c9f26b" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engagement rate (%)</li></ul></li></ul><ul id="3de5f8b2-37fc-80f8-b400-f842d39f5153" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Metrics reflect the selected global filters</li></ul><ul id="3de5f8b2-37fc-80ff-930e-dfccd25c19dd" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Where applicable, display a comparison against the previous equivalent period</li></ul><ul id="3de5f8b2-37fc-80b2-993d-ccddc1e09d56" class="bulleted-list" dir="auto"><li style="list-style-type:disc">If the selected scope contains insufficient data to calculate a metric, display an appropriate unavailable state rather than a misleading value<ul id="3de5f8b2-37fc-80a3-875e-fd95bf5d3553" class="bulleted-list" dir="auto"><li style="list-style-type:circle">If engagement data is unavailable because engagement functionality is not enabled for the Posts within the selected scope, display an appropriate unavailable state rather than <code>0</code>.</li></ul><ul id="3de5f8b2-37fc-8075-886c-cbfaf226a35c" class="bulleted-list" dir="auto"><li style="list-style-type:circle">A value of <code>0</code> should only be displayed when engagement functionality is available and <strong>no eligible engagement actions occurred</strong> during the selected period.</li></ul><ul id="3de5f8b2-37fc-807b-8440-c7381cd702d9" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Potential metrics the above handling may apply to: <ul id="3de5f8b2-37fc-8089-aba6-e762d387b004" class="bulleted-list" dir="auto"><li style="list-style-type:square">Total comments </li></ul><ul id="3de5f8b2-37fc-8037-bd90-f184a3529170" class="bulleted-list" dir="auto"><li style="list-style-type:square">Total reactions</li></ul><ul id="3de5f8b2-37fc-80f0-9182-cabbaabc5e3d" class="bulleted-list" dir="auto"><li style="list-style-type:square">Engaged users </li></ul><ul id="3de5f8b2-37fc-8045-b352-f89113b26536" class="bulleted-list" dir="auto"><li style="list-style-type:square">Engagement rate (%)</li></ul></li></ul></li></ul><h4 id="3de5f8b2-37fc-80cc-a1ce-d06f716300df" class="" dir="auto"><strong>4. View Post Performance over Time</strong></h4><blockquote id="3de5f8b2-37fc-8067-b488-e0f31875f43d" class="" dir="auto"><em>As a marketer, I want to understand how post performance changes over time so that I can identify trends and changes in content creation, reach, impressions, and engagement.</em></blockquote><ul id="3de5f8b2-37fc-808b-908f-ddb8ab476671" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display post performance over the selected date range from the global filter</li></ul><ul id="3de5f8b2-37fc-80d0-b487-f459f5f34167" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each data point represents the selected metric for the corresponding time interval.</li></ul><ul id="3de5f8b2-37fc-80dd-a93b-eaf94e5df341" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Metrics are calculated based on the timestamp of the underlying activity, rather than when the post was published<ul id="3de5f8b2-37fc-8096-a743-e1e74ca0620d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">For example, if the filter selected was September, if a post published in August receives impressions in September, those impressions contribute to the September data point</li></ul></li></ul><ul id="3de5f8b2-37fc-8095-8200-fc9024b26fbc" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The time interval displayed should adapt to the selected date range </li></ul><ul id="3de5f8b2-37fc-80b6-ba56-dece9375bfdb" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can select which metric to visualize from the available post performance metrics, which are: <ul id="3de5f8b2-37fc-80e7-8628-ce850dc228de" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Posts created (Default)</li></ul><ul id="3de5f8b2-37fc-8073-b236-cc0489710866" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reach </li></ul><ul id="3de5f8b2-37fc-8057-b576-d62108b5c5a0" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Impressions</li></ul><ul id="3de5f8b2-37fc-80b2-8561-f5b60e2760a5" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Comments</li></ul><ul id="3de5f8b2-37fc-8034-88d5-cbddc75ca1c9" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reactions</li></ul><ul id="3de5f8b2-37fc-8066-a19e-f6427a781e85" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engaged Users </li></ul><ul id="3de5f8b2-37fc-80a5-91f4-d9b13b61a093" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engagement Rate (%)</li></ul></li></ul><ul id="3de5f8b2-37fc-80f9-8d23-f73f05f18218" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The selected global filters apply to the time-series data</li></ul><ul id="3de5f8b2-37fc-8047-a560-dd4f77c23261" class="bulleted-list" dir="auto"><li style="list-style-type:disc">When a metric is not available for the selected scope, display the appropriate unavailable state rather than interpreting unavailable data as zero</li></ul><h4 id="3de5f8b2-37fc-8018-9aa1-cb323e7fcc2a" class="" dir="auto"><strong>5. View Top Performing Posts</strong></h4><blockquote id="3de5f8b2-37fc-80b8-b975-d25996fb0efb" class="" dir="auto"><em>As a marketer, I want to see which posts are resonating with my audience and gaining traction so that I can understand what content is currently driving audience interest and engagement. </em></blockquote><ul id="3de5f8b2-37fc-80de-97c5-c3f84bc2978f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display the top X posts (TBD)</li></ul><ul id="3de5f8b2-37fc-80c5-beb4-e2be702034b7" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Posts are ranked based on <strong>activity generated during the selected date range</strong>, regardless of when the post was originally published.<ul id="3de5f8b2-37fc-805b-bac4-f7dc8c0ce2ab" class="bulleted-list" dir="auto"><li style="list-style-type:circle">A post published before the selected period can still appear if it generated significant activity during the period</li></ul><ul id="3de5f8b2-37fc-805e-9d72-f1c872591dff" class="bulleted-list" dir="auto"><li style="list-style-type:circle">This keep the widget aligned with the activity-based nature of the Overview</li></ul></li></ul><ul id="3de5f8b2-37fc-8005-9574-d292a952ecb6" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Allow users to sort by reach, impressions, comments, reactions, engaged users, and engagement rate (%)</li></ul><ul id="3de5f8b2-37fc-801e-9bae-fbcfdc5eecc7" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Performance metrics shown in the widget represent <strong>activity generated during the selected period</strong>, not lifetime performance.</li></ul><ul id="3de5f8b2-37fc-802e-959f-d19ea6ad6a98" class="bulleted-list" dir="auto"><li style="list-style-type:disc">All selected global filters apply</li></ul><ul id="3de5f8b2-37fc-8052-9af2-db8df968c343" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can select a Post to open its <strong>Post Detail</strong> view.<ul id="3de5f8b2-37fc-80f1-a6cc-daec636c2318" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Post Detail shows both:<ul id="3de5f8b2-37fc-805d-b492-eb63ac05ed2f" class="bulleted-list" dir="auto"><li style="list-style-type:square"><strong>Selected-period performance</strong> — activity during the Overview&#x27;s selected date range</li></ul><ul id="3de5f8b2-37fc-809d-92ec-f475aa61e799" class="bulleted-list" dir="auto"><li style="list-style-type:square"><strong>Lifetime performance</strong> — activity since the Post was published</li></ul></li></ul></li></ul><h4 id="3de5f8b2-37fc-8004-956e-ca5c84e19bc0" class="" dir="auto"><strong>6. Export Post Analytics</strong></h4><blockquote id="3de5f8b2-37fc-801b-919e-fa965b5c4f03" class="" dir="auto"><em>As a marketer, I want to export my post performance data so that I can perform further analysis and reporting outside of Social+</em></blockquote><ul id="3de5f8b2-37fc-8048-afed-e2128a4a0b60" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Provide an export button on the Overview page</li></ul><ul id="3de5f8b2-37fc-807f-a549-d5bd59a2136c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Selecting export exports the analytics data for the current analysis scope. The export should respect the currently selected global filters: <ul id="3de5f8b2-37fc-8068-8609-d5c13c0a96ee" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Date filter</li></ul><ul id="3de5f8b2-37fc-8078-b479-fb887bd18d04" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Destination</li></ul><ul id="3de5f8b2-37fc-808e-9d37-f9379aa1b6af" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Creator role</li></ul></li></ul><ul id="3de5f8b2-37fc-80d9-8a49-ca88f5d1eff8" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The export should contain two datasets: <ul id="3de5f8b2-37fc-808a-8443-c42078e1b0ee" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Post performance over time (all metrics, regardless of which metric the user selected on the chart) </li></ul><ul id="3de5f8b2-37fc-80a1-afbd-fc5bf96128aa" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Top performing posts </li></ul></li></ul><ul id="3de5f8b2-37fc-8019-a089-deaa99d0a508" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Dataset 1 — Post performance over time </strong><ul id="3de5f8b2-37fc-8002-9c87-f7f83fc39626" class="bulleted-list" dir="auto"><li style="list-style-type:circle">The export should contain the <strong>aggregated data represented by the performance over time chart for all metrics,</strong> regardless of which metrics is selected in the UI</li></ul><ul id="3de5f8b2-37fc-809f-9d77-c79f729ce58b" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Example: </li></ul><figure id="3de5f8b2-37fc-800a-9d2d-f38785330d4b" class="image" data-notion-image="Posts%20%E2%80%94%20Analytics/image.png" dir="ltr"><a href="Posts%20%E2%80%94%20Analytics/image.png"><img style="width:666px" src="Posts%20%E2%80%94%20Analytics/image.png"/></a></figure></li></ul><ul id="3de5f8b2-37fc-8008-bc54-d5b2bf5807a6" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Dataset 2</strong> — <strong>Top</strong> <strong>Post performance</strong><ul id="3de5f8b2-37fc-80ab-92bb-c3364463c1de" class="bulleted-list" dir="auto"><li style="list-style-type:circle">The export should contain <strong>post-level performance data</strong> for posts that generated activity based on the global filters selected. It should include <strong>all qualifying Posts</strong>, not only the top 5 or 10 Posts displayed in the widget.</li></ul><ul id="3de5f8b2-37fc-801b-9f4c-d443742bb23f" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Each row represents one post</li></ul><ul id="3de5f8b2-37fc-8054-89d8-fce2d2a6c7a1" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Performance metrics represent <strong>activity generated by each Post during the selected period</strong>, rather than lifetime performance.</li></ul><ul id="3de5f8b2-37fc-809e-a73e-c858327b24ec" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Include the same post attributes and performance metrics displayed in the Top Performing Posts widget.</li></ul></li></ul><h4 id="3de5f8b2-37fc-8027-8c8e-f1898c502fdd" class="" dir="auto"><strong>[Descoped] 7. Explore Further</strong></h4><blockquote id="3de5f8b2-37fc-8057-bdfa-ef5101adfd80" class="" dir="auto"><em>As a marketer, I want to explore my post and audience performance in more detail so that I can understand what is driving results and how different audiences are interacting with Social+ </em></blockquote><ul id="3de5f8b2-37fc-80e8-a1ab-ec59bf9ccebf" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Allow users to go deeper: <ul id="3de5f8b2-37fc-80e4-b94f-dd680b2e4af3" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Content Performance → navigate to Content Performance (Posts) </li></ul><ul id="3de5f8b2-37fc-807f-8d7d-fb782c78a87a" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Audience Intelligence → navigate to analytics dashboard</li></ul></li></ul><hr id="3de5f8b2-37fc-8007-b2dc-d6c4969db59c" dir="auto"/><h3 id="3de5f8b2-37fc-801c-9b52-f832b476f6b0" class="" dir="auto">Understand Content Performance of S+ Posts</h3><p id="3de5f8b2-37fc-80fa-af74-f8272e65d326" class="" dir="auto">As a marketer, I want to investigate what’s driving my post performance so that I can understand which content, destinations, and creators are contributing to performance.</p><p id="3de5f8b2-37fc-80ec-903f-c70a71f08845" class="" dir="auto"><strong>Page Structure:</strong></p><p id="3de5f8b2-37fc-809c-bdd1-f377d6375d5d" class="" dir="auto">The Content Performance page consists of: </p><ul id="3de5f8b2-37fc-80a3-a270-dad0afdcbfab" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Performance by Post Type — </strong>contribution of different post types to overall post performance</li></ul><ul id="3de5f8b2-37fc-80d9-bc82-ce578836cd3e" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Destination Performance — </strong>post performance across different publishing destinations</li></ul><ul id="3de5f8b2-37fc-80db-95a8-fe420e3ef7e9" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>All Posts — </strong>individual post performance</li></ul><ul id="3de5f8b2-37fc-80bb-be12-e780629bbd86" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Top Creators — </strong>creator contribution to post activity and performance </li></ul><p id="3de5f8b2-37fc-8016-bff6-cf59dae73d30" class="" dir="auto"><strong>Analytical Scope: </strong></p><p id="3de5f8b2-37fc-80aa-9169-d11bd707471a" class="" dir="auto">The user can define the scope of their analysis using: </p><ul id="3de5f8b2-37fc-80ec-ab80-fc56ea395128" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Date filter — </strong>the <strong>post creation</strong> date </li></ul><ul id="3de5f8b2-37fc-80a0-b75f-f085d0509835" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Destination — </strong>the destinations associated with the posts included in the analysis</li></ul><ul id="3de5f8b2-37fc-8060-ad11-e2530e4aeaa6" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Creator role — </strong>the creator roles associated with the posts included in the analysis</li></ul><ul id="3de5f8b2-37fc-803c-9f39-c4ad65759318" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Post type — </strong>filters to posts of the selected post type(s) (e.g. text, image, video, etc.)  </li></ul><p id="3de5f8b2-37fc-802d-8f27-ddccbdebdff1" class="" dir="auto">All widgets in the Content Performance page should reflect the selected scope</p><hr id="3dd5f8b2-37fc-8056-b00c-e2e9ea4fb045" dir="auto"/><h4 id="3de5f8b2-37fc-8079-b481-c99e204cb8cc" class="" dir="auto"><strong>1. Post Overview — Filters</strong></h4><blockquote id="3de5f8b2-37fc-8038-9aaf-c77aa69b94e5" class="" dir="auto"><em>As a marketer, I want to filter my analysis by date, destination, creator role, and post type so that I can focus on the posts that are relevant to me.</em></blockquote><ul id="3de5f8b2-37fc-8088-b5a3-fb645072843a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can filter Content Performance by:<ul id="3de5f8b2-37fc-8000-8861-d04ff0a007ad" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>Post Creation Date</strong></li></ul><ul id="3de5f8b2-37fc-80e2-9223-c47b64eb45bb" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>Destination</strong></li></ul><ul id="3de5f8b2-37fc-80ea-be69-cc834fd941a4" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>Creator Role (admin, moderator, user)</strong></li></ul><ul id="3de5f8b2-37fc-8099-8295-f75dc8ecb4e8" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>Post Type (text, image, video, audio, file, mixed)</strong></li></ul></li></ul><ul id="3de5f8b2-37fc-80b3-9faa-e87dedf88e5b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Filters apply across all Content Performance widgets.</li></ul><ul id="3de5f8b2-37fc-801b-801d-d23c5df586d5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Performance metrics for included Posts represent their <strong>lifetime performance</strong>, regardless of when that performance occurred.</li></ul><aside class="block-color-yellow_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="yellow_background" style="white-space:pre-wrap;display:flex" id="3de5f8b2-37fc-80f0-8314-c423d26eb4f9" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><blockquote id="3de5f8b2-37fc-8019-be7f-d9db059eaadc" class="" dir="auto"><strong>Important date semantics</strong>: Content Performance uses publication date to define the post cohort, while its performance metrics reflect the lifetime performance (from creation date until T) of posts in that cohort. </blockquote><p id="3de5f8b2-37fc-801f-9837-fb80e55ea540" class="" dir="auto">For example, if the user selects <strong>Sep 1–15</strong>:</p><ul id="3de5f8b2-37fc-8030-ace4-ea1942a338b7" class="bulleted-list" dir="auto"><li style="list-style-type:disc">A Post published Sep 5 → included, lifetime performance shown.</li></ul><ul id="3de5f8b2-37fc-80cc-84aa-f94b1b82c5ab" class="bulleted-list" dir="auto"><li style="list-style-type:disc">A Post published Aug 20 → excluded.</li></ul><ul id="3de5f8b2-37fc-8047-93f2-c77e065fb600" class="bulleted-list" dir="auto"><li style="list-style-type:disc">A Post published Sep 5 that continues receiving activity in October → October activity is still included in its lifetime metrics.</li></ul></div></aside><h4 id="3de5f8b2-37fc-80a9-9a3c-d832028bd2f3" class="" dir="auto"><strong>2. View Performance by Post Type</strong></h4><blockquote id="3de5f8b2-37fc-8086-9fba-e55421f4b1dc" class="" dir="auto"><em>As a marketer, I want to compare performance across content types so that I can understand which types of content are contributing most to post performance.</em></blockquote><ul id="3de5f8b2-37fc-803f-a0e0-fb5a6ed70a85" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display performance by post type in a list / table format </li></ul><ul id="3de5f8b2-37fc-8087-ab8c-ffaa33104a5a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display: <ul id="3de5f8b2-37fc-8060-85ce-eb581ee80572" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Posts created</li></ul><ul id="3de5f8b2-37fc-802a-8320-c4fa519cfc78" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reach</li></ul><ul id="3de5f8b2-37fc-80b8-bd5a-ccc778028194" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Impressions</li></ul><ul id="3de5f8b2-37fc-80dd-9538-d65ad9fcca69" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Comments</li></ul><ul id="3de5f8b2-37fc-8015-907d-f5481477683b" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reactions</li></ul><ul id="3de5f8b2-37fc-8007-a28d-f5e627e762fe" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engaged Users</li></ul><ul id="3de5f8b2-37fc-80b6-a7fd-dc6b65f9f1fb" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engagement Rate (%)</li></ul></li></ul><ul id="3de5f8b2-37fc-80c3-923a-d2fa902fe897" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can sort the list by any of the data points above</li></ul><ul id="3de5f8b2-37fc-80ea-b66d-fdff04cea336" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can export the data represented in the widget → Export the <strong>aggregated</strong> Post performance data by Post Type based on the selected filters. Each row represents a Post Type and includes the metrics displayed in the widget.</li></ul><ul id="3de5f8b2-37fc-80f1-acce-e3d193339c09" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can view all posts → view the individual posts contributing to the post types and their performance</li></ul><aside class="block-color-yellow_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="yellow_background" style="white-space:pre-wrap;display:flex" id="3de5f8b2-37fc-800e-9efe-c0d5117f7db5" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3de5f8b2-37fc-801a-aa29-e034e5ef23ca" class="" dir="auto"><strong>Why lists instead of a chart? </strong></p><p id="3de5f8b2-37fc-8077-b28a-c45a1e8d187e" class="" dir="auto">Post Type and Destination are both filters and analytical dimensions. A chart becomes less useful when the user filters to a single value, as the comparison collapses to a single data point. A list/table maintains a consistent structure whether the user is comparing multiple Post Types or viewing a single selected Post Type, while also allowing multiple performance metrics to be displayed and sorted.</p></div></aside><h4 id="3de5f8b2-37fc-8028-b78d-c31a7b7fc17f" class="" dir="auto"><strong>3. View Destination Performance</strong></h4><blockquote id="3de5f8b2-37fc-8080-92ae-e446711f35f0" class="" dir="auto"><em>As a marketer, I want to compare post performance across destinations so that I can understand where my content is performing</em></blockquote><ul id="3de5f8b2-37fc-8064-9578-d1133cc60462" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display performance broken down by Destination.</li></ul><ul id="3de5f8b2-37fc-80cc-998f-cec903469ca4" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Use a <strong>list/table format</strong> rather than a chart.</li></ul><ul id="3de5f8b2-37fc-80fa-a793-f33ca5d0287f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Each row represents a Destination within the selected analysis scope.</li></ul><ul id="3de5f8b2-37fc-8074-8439-c5f39b6fc4f4" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display:<ul id="3de5f8b2-37fc-801e-b6c2-d8de4906d47f" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Destination</li></ul><ul id="3de5f8b2-37fc-80e9-9402-e3aab0dff90b" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Posts created</li></ul><ul id="3de5f8b2-37fc-805e-b600-f3fbc1f43f12" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reach</li></ul><ul id="3de5f8b2-37fc-80e0-ab86-f26d128d79f8" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Impressions</li></ul><ul id="3de5f8b2-37fc-8040-acd1-dd7bf3f649d3" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reactions</li></ul><ul id="3de5f8b2-37fc-80ae-8fc2-f96454b389b0" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Comments</li></ul><ul id="3de5f8b2-37fc-8097-99fd-d4c71f46f33d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engaged Users </li></ul><ul id="3de5f8b2-37fc-80c0-9688-c2ae25dd645e" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engagement Rate (%)</li></ul></li></ul><ul id="3de5f8b2-37fc-80d9-9bc4-c5fae8d98a0c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can sort the list by any of the data points above</li></ul><ul id="3de5f8b2-37fc-8079-92a9-d06d388c9d14" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Show the top X destinations by default, with an option to view all destinations.</li></ul><ul id="3de5f8b2-37fc-8055-ba90-cca18ffe1032" class="bulleted-list" dir="auto"><li style="list-style-type:disc">If a specific Destination is selected in the global filter, display the selected Destination as a single row rather than changing the structure of the widget.</li></ul><ul id="3de5f8b2-37fc-808c-8f5d-e5276107aba6" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Results reflect all selected global filters.</li></ul><ul id="3de5f8b2-37fc-80cd-88d0-da39122abb11" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Performance metrics represent the lifetime performance of qualifying posts.</li></ul><ul id="3de5f8b2-37fc-808d-9129-ff7d70bb9680" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can export the data represented in the widget → Export the <strong>aggregated </strong>post performance data by destination based on the selected filters. Each row represents a single destination</li></ul><h4 id="3de5f8b2-37fc-804e-817f-f231c30ed568" class="" dir="auto"><strong>4. View All Posts Performance</strong></h4><blockquote id="3de5f8b2-37fc-8049-bf2b-cba9f0018448" class="" dir="auto"><em>As a marketer, I want to view and search individual posts and their performance so that I can investigate the content contributing to my overall post performance. </em></blockquote><ul id="3de5f8b2-37fc-805c-9388-e852703cf809" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display a list of posts that were published within the selected date range and meet the selected global filters</li></ul><ul id="3de5f8b2-37fc-809b-a24a-fce0b2492316" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display the following information for each post: <ul id="3de5f8b2-37fc-808f-9c9f-cdd5805296e1" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Media thumbnail</li></ul><ul id="3de5f8b2-37fc-801e-bb1c-ee14cf2ae031" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Post title &amp; content</li></ul><ul id="3de5f8b2-37fc-805a-b3b7-f1e5adec9a47" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Post type </li></ul><ul id="3de5f8b2-37fc-8021-a7f5-c7cc4847d2f5" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Creator &amp; creator role </li></ul><ul id="3de5f8b2-37fc-8068-9822-e4a8918fd1f9" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Destination</li></ul><ul id="3de5f8b2-37fc-8069-8c43-c7b89f5287eb" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Creation date</li></ul><ul id="3de5f8b2-37fc-80b7-b0e3-fd6adb71073b" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reach</li></ul><ul id="3de5f8b2-37fc-8005-a1b8-ef850f0e2fa8" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Impressions</li></ul><ul id="3de5f8b2-37fc-80d7-a5df-d43a01d2c79d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Comments</li></ul><ul id="3de5f8b2-37fc-8045-bbeb-c16cd25250ed" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reactions</li></ul><ul id="3de5f8b2-37fc-805e-a91e-e3de256642cd" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engaged Users</li></ul><ul id="3de5f8b2-37fc-8053-93e6-e9e973661fe2" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Engagement Rate (%)</li></ul></li></ul><ul id="3de5f8b2-37fc-80e8-b409-d676baffa678" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Performance metrics represent the lifetime performance of each post</li></ul><ul id="3de5f8b2-37fc-801f-9817-f3abe3c8adc9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Allow users to sort the list by post performance metrics</li></ul><ul id="3de5f8b2-37fc-80f0-866b-efd52cd3a74f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Provide keyword search to find posts based on post title / content </li></ul><ul id="3de5f8b2-37fc-800a-b202-c4675379a4b8" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can export the data represented in the widget → Exports individual post level performance data based on the selected global filters &amp; keyword search. Each row represents a single postId</li></ul><ul id="3de5f8b2-37fc-8079-96be-c726473917e0" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Selecting a post opens post detail, where user can view the full content (if needed) and its performance</li></ul><ul id="3de5f8b2-37fc-8024-a073-e79657ac80b2" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><code>should have</code> Allow users to <strong>select up to 3 Posts for comparison</strong><ul id="3de5f8b2-37fc-8090-94f5-fb25c79f6ce5" class="bulleted-list" dir="auto"><li style="list-style-type:circle">When Posts are selected, provide a <strong>Compare</strong> action.</li></ul><ul id="3de5f8b2-37fc-80e8-8f2d-f3874773c6e3" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Comparison displays the selected Posts <strong>side-by-side</strong> across key performance metrics.</li></ul><ul id="3de5f8b2-37fc-8093-bc93-fbc251f4573d" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Users can compare a minimum of 2 and maximum of 3 Posts</li></ul></li></ul><aside class="block-color-yellow_background callout" data-notion-callout="" data-notion-callout-icon="💡" data-notion-callout-background="yellow_background" style="white-space:pre-wrap;display:flex" id="3de5f8b2-37fc-80cd-b117-ef1347ed30bf" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p id="3de5f8b2-37fc-80f1-8796-d3c420cb3f79" class="" dir="auto">Post comparison will use a side-by-side comparison table rather than a cumulative trend line (that we have today). The primary use case is A/B testing, where customers need to quickly compare the performance of up to 3 posts across key metrics. A trend line adds visual complexity without providing meaningful additional value for this use case.</p></div></aside><h4 id="3de5f8b2-37fc-8052-bfe3-f71eeafc510a" class="" dir="auto"><strong>5. View Top Creators</strong></h4><blockquote id="3de5f8b2-37fc-80ab-8965-fa2063a82562" class="" dir="auto"><em>As a marketer, I want to understand which creators are contributing most to post activity and performance, so that I can identify the creators driving engagement and content production. </em></blockquote><ul id="3de5f8b2-37fc-806e-8e88-e76b08c1eaaa" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display a list of the top creators based on the Posts included in the current analysis scope.</li></ul><ul id="3de5f8b2-37fc-8094-b647-f0bde66f483c" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Inherit the global Content Performance filters:<ul id="3de5f8b2-37fc-80d3-8f1c-e6dc54b8226e" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Date / Time Period</li></ul><ul id="3de5f8b2-37fc-8013-813b-e89b3bac0f12" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Destination</li></ul><ul id="3de5f8b2-37fc-8035-84a4-ef782582bdc7" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Creator Role</li></ul><ul id="3de5f8b2-37fc-804d-b95a-cdc87a3414b1" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Post Type</li></ul></li></ul><ul id="3de5f8b2-37fc-8028-b074-d80c061bba02" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Provide the following views/sorting options:<ul id="3de5f8b2-37fc-8006-83e8-e04fe5c58c46" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>[Default] Most Posts</strong> — ranks creators by the number of qualifying posts</li></ul><ul id="3de5f8b2-37fc-80c2-9cfe-e6d39747e94a" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>Most Comments </strong>— ranks creators by the number of reactions generated across all of their qualifying posts </li></ul><ul id="3de5f8b2-37fc-80c7-9c1d-c4eabcb49e07" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>Most Reactions</strong> — ranks creators by the number of comments generated across all of their qualifying posts</li></ul><ul id="3de5f8b2-37fc-8091-939d-e2247f1dc0d8" class="bulleted-list" dir="auto"><li style="list-style-type:circle"><strong>Average Engagement Rate (%) per post </strong>— ranks creators by the average Engagement Rate across their qualifying posts. It tells us, on average, how well do this creator’s posts perform?</li></ul></li></ul><ul id="3de5f8b2-37fc-80b8-8da9-e5fc92e72801" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Display the following for each creator: <ul id="3de5f8b2-37fc-8023-9f21-d41e9c3919c9" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Creator display name &amp; userId, avatar where possible</li></ul><ul id="3de5f8b2-37fc-80dc-a9e4-e4d0be5bdc54" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Creator role </li></ul><ul id="3de5f8b2-37fc-8024-b007-d6a1e19baf01" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Posts created </li></ul><ul id="3de5f8b2-37fc-80ce-aec5-e941caa05875" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reach</li></ul><ul id="3de5f8b2-37fc-801c-ad90-dc30f453d749" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Impressions</li></ul><ul id="3de5f8b2-37fc-802a-a032-fd7a8d5fe04e" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Reactions</li></ul><ul id="3de5f8b2-37fc-80b8-8114-e9f707eb3297" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Comments</li></ul><ul id="3de5f8b2-37fc-80e6-b52b-ecb969b05dbf" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Average Engagement Rate (%) Per Post</li></ul></li></ul><ul id="3de5f8b2-37fc-8017-961f-c549f7609ac1" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Performance metrics represent the <strong>lifetime performance</strong> of posts </li></ul><ul id="3de5f8b2-37fc-80e3-b330-c6777cf72e12" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><code>nice to have</code> Selecting a creator allows the user to view all posts created by this creator, along with their post performance </li></ul><ul id="3de5f8b2-37fc-8092-8cec-ebc293de4d59" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Users can export the data represented in the widget → Export the aggregated post performance data by creator based on the selected filters. Each row represents a single creator.</li></ul><hr id="3de5f8b2-37fc-802b-8fcd-fb110bf756e3" dir="auto"/><h3 id="3dc5f8b2-37fc-80ab-b04f-c13097580bc9" class="" dir="auto">[Appendix A] Insight Library</h3><p id="3dd5f8b2-37fc-809c-a895-c0db0cec4f2e" class="" dir="auto">The system should maintain a library of predefined insight types that can be surfaced on the Post Overview.</p><p id="3dd5f8b2-37fc-80ea-9ee2-d78d48666b5d" class="" dir="auto">The initial library should include:</p><table id="3dd5f8b2-37fc-804b-a327-d0ce22494bf9" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="3dd5f8b2-37fc-805c-8afe-ed1061eedd0c" dir="ltr"><th id="nsT^" class="simple-table-header-color simple-table-header">Insight</th><th id="}Zl\" class="simple-table-header-color simple-table-header">Description</th><th id="ryXg" class="simple-table-header-color simple-table-header">Example</th></tr></thead><tbody><tr id="3dd5f8b2-37fc-8067-a409-f1e47875eb97" dir="ltr"><td id="nsT^" class=""><strong>Top Content</strong></td><td id="}Zl\" class="">Identifies the individual Post generating the most engagement.</td><td id="ryXg" class="">“Post X generated the most engagement.”</td></tr><tr id="3dd5f8b2-37fc-80ee-b70c-c753cee55ab9" dir="ltr"><td id="nsT^" class=""><strong>Post Type Leader</strong></td><td id="}Zl\" class="">Identifies the content type generating the most engagement.</td><td id="ryXg" class="">“Video generated the most engagement.”</td></tr><tr id="3dd5f8b2-37fc-801d-882e-df9ec4aa7c31" dir="ltr"><td id="nsT^" class=""><strong>Content Mix</strong></td><td id="}Zl\" class="">Identifies content types whose share of engagement differs meaningfully from their share of Posts.</td><td id="ryXg" class="">“Video represents 22% of Posts but drives 48% of engagement.”</td></tr><tr id="3dd5f8b2-37fc-80de-ba1f-ddc005bc4a5e" dir="ltr"><td id="nsT^" class=""><strong>Destination Leader</strong></td><td id="}Zl\" class="">Identifies the destination generating the most engagement.</td><td id="ryXg" class="">“Product Page generated the most engagement.”</td></tr><tr id="3dd5f8b2-37fc-80b8-bb2e-d266de7a0c69" dir="ltr"><td id="nsT^" class=""><strong>Destination Mix</strong></td><td id="}Zl\" class="">Identifies destinations whose share of engagement differs meaningfully from their share of Posts.</td><td id="ryXg" class="">“Product Page accounts for 30% of Posts but 52% of engagement.”</td></tr><tr id="3dd5f8b2-37fc-80ef-96b4-f0ee99c5f7dc" dir="ltr"><td id="nsT^" class=""><strong>Engagement Driver</strong></td><td id="}Zl\" class="">Identifies the engagement action contributing the largest share of engagement.</td><td id="ryXg" class="">“68% of engagement came from reactions.”</td></tr><tr id="3dd5f8b2-37fc-80d0-abbe-f49ad87cb4c1" dir="ltr"><td id="nsT^" class=""><strong>Growth / Decline</strong></td><td id="}Zl\" class="">Identifies a meaningful change in Post performance compared with a previous period.</td><td id="ryXg" class="">“Post engagement increased 24% vs. the previous period.”</td></tr><tr id="3dd5f8b2-37fc-802e-b1af-cea64d4cf1f0" dir="ltr"><td id="nsT^" class=""><strong>Audience Driver</strong></td><td id="}Zl\" class="">Identifies the audience segment (based on customer-defined user tags) generating the most engagement with Posts in the selected scope.</td><td id="ryXg" class="">“Beauty Enthusiasts generated the most engagement with Posts.”</td></tr></tbody></table><p id="3dd5f8b2-37fc-805d-b18e-c4db8c20d39b" class="" dir="auto">The library should be extensible so that additional insight types can be introduced without changing the overall Key Insights experience. </p><hr id="d5c5f8b2-37fc-827a-ad03-816507a1109f" dir="auto"/><h4 id="3dd5f8b2-37fc-808a-ad4e-c265056af6af" class="" dir="auto">A.1 Insight Selection</h4><ul id="3dd5f8b2-37fc-8088-a260-c0ae06dcad68" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The system should evaluate available insight types against the current filter state and underlying data.</li></ul><ul id="3dd5f8b2-37fc-808e-ae13-c0d2f7ec0ec0" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The system should select <strong>up to 3 eligible insights</strong>.</li></ul><ul id="3dd5f8b2-37fc-80ef-b3dd-d5cc6b7874de" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Insights should be selected based on eligibility, significance, and analytical diversity.</li></ul><ul id="3dd5f8b2-37fc-800c-9404-db52c275d3d5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The position of an insight card should not be permanently tied to a specific insight type.</li></ul><ul id="3dd5f8b2-37fc-8015-a4e9-fca52e713c35" class="bulleted-list" dir="auto"><li style="list-style-type:disc">If an insight is not eligible, another eligible insight should be selected where available.</li></ul><ul id="3dd5f8b2-37fc-803f-9e5c-d711f8b9f6a6" class="bulleted-list" dir="auto"><li style="list-style-type:disc">If fewer than 3 insights are eligible, the system should return only the eligible insights.</li></ul><hr id="3dd5f8b2-37fc-8070-8a21-e44517301ba7" dir="auto"/><h4 id="3dd5f8b2-37fc-808d-b12b-cb0c76f5e056" class="" dir="auto">A.2 Insight Eligibility</h4><p id="3dd5f8b2-37fc-8092-ac95-f1acc8a675e5" class="" dir="auto">An insight is eligible only when it provides a meaningful finding within the selected scope.</p><p id="3dd5f8b2-37fc-801e-93e9-fa0cf1bdb785" class="" dir="auto">An insight should not be surfaced when:</p><ul id="3dd5f8b2-37fc-8015-86a0-db99e341f26d" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The selected filters already determine the insight, making it redundant.</li></ul><ul id="3dd5f8b2-37fc-808c-95ef-c1c9b16f2620" class="bulleted-list" dir="auto"><li style="list-style-type:disc">There is insufficient data to support the finding.</li></ul><ul id="3dd5f8b2-37fc-80da-8a3d-de3273c7e5c3" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The underlying metric cannot be reliably calculated.</li></ul><ul id="3dd5f8b2-37fc-80ce-a3cb-f5256920cc31" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The insight substantially duplicates another selected insight.</li></ul><ul id="3dd5f8b2-37fc-8033-921e-c28185e6d810" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The relevant analytical dimension has been collapsed by the selected filters.</li></ul><ul id="3e35f8b2-37fc-8073-8c08-c9e220c2de8f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Exclude insights that might discourage the customer</li></ul><p id="3dd5f8b2-37fc-80af-ae3e-fad956ee9464" class="" dir="auto"><strong>Example:</strong></p><p id="3dd5f8b2-37fc-8085-8735-f4d20ea633a3" class="" dir="auto">If <strong>Destination = Product Page</strong>, the system should not surface:</p><blockquote id="3dd5f8b2-37fc-80b7-a518-c59609841ee3" class="" dir="auto">Product Page generated the most engagement.</blockquote><p id="3dd5f8b2-37fc-801d-8f47-c122fd781485" class="" dir="auto">because there is no longer a destination comparison.</p><p id="3dd5f8b2-37fc-804e-9b45-e56373f319b3" class="" dir="auto">However, the system may surface:</p><blockquote id="3dd5f8b2-37fc-801b-8d79-ea29a3cc91c2" class="" dir="auto">Video generated the most engagement with Posts associated with Product Page.</blockquote><hr id="3dd5f8b2-37fc-804c-9bfe-ffe5c4ebae0e" dir="auto"/><h4 id="3dd5f8b2-37fc-8006-be24-c29673672041" class="" dir="auto">A.3 Insight Diversity</h4><p id="3dd5f8b2-37fc-806b-958a-fb2ae37d61bd" class="" dir="auto">When selecting multiple insights, the system should prioritize <strong>distinct analytical dimensions</strong>.</p><p id="3dd5f8b2-37fc-8030-93aa-ca9aa1215f79" class="" dir="auto">Where sufficient eligible insights exist, the system should avoid selecting multiple insights that communicate essentially the same finding.</p><p id="3dd5f8b2-37fc-8049-8c88-de6f4f4b1b49" class="" dir="auto">For example, the following should not normally appear together:</p><ul id="3dd5f8b2-37fc-80c6-96d2-d2fb7a23f9f2" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Video generated the most engagement.</li></ul><ul id="3dd5f8b2-37fc-80aa-a97b-d2301b69b0f3" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Video had the highest engagement rate.</li></ul><ul id="3dd5f8b2-37fc-80ef-ba89-fa4ff70fa26b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Video generated 48% of total engagement.</li></ul><p id="3dd5f8b2-37fc-80f5-a372-d222ed77d284" class="" dir="auto">Instead, the system should prioritize a combination of different dimensions, such as:</p><ul id="3dd5f8b2-37fc-8035-82a0-ec4328dc49ea" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Content</li></ul><ul id="3dd5f8b2-37fc-8094-a820-cd71f0d7dca7" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Distribution</li></ul><ul id="3dd5f8b2-37fc-80dd-922f-fa0ae5ff0758" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Engagement</li></ul><ul id="3dd5f8b2-37fc-80cb-8560-d1ced45535ec" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Audience</li></ul><ul id="3dd5f8b2-37fc-808c-a7cd-f701c88c997e" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Momentum</li></ul><p id="3dd5f8b2-37fc-8083-a2a5-de5ed5560257" class="" dir="auto">The exact prioritization order is defined separately.</p><hr id="3dd5f8b2-37fc-801e-8c4f-debc0b812353" dir="auto"/><h4 id="3dd5f8b2-37fc-8052-978b-f4e31b042f60" class="" dir="auto">A.4 Filter Scope</h4><p id="3dd5f8b2-37fc-80fc-b427-d3b3eb4a1751" class="" dir="auto">Insights generated within Post Overview should respect the page&#x27;s global filters:</p><ul id="3dd5f8b2-37fc-8079-983b-f9417fd32a09" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Date / Time Period</li></ul><ul id="3dd5f8b2-37fc-8086-9c88-dfb1de92d965" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Destination</li></ul><ul id="3dd5f8b2-37fc-8095-bbd3-d00fa0bc3029" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Creator Role</li></ul><p id="3dd5f8b2-37fc-8061-a5bd-e25618cab324" class="" dir="auto">The system should ensure that the insight statement accurately represents the resulting scope.</p><p id="3dd5f8b2-37fc-8048-8e5e-c715de1ddd1b" class="" dir="auto">For example:</p><p id="3dd5f8b2-37fc-80c8-a50f-fdf11680f974" class="" dir="auto"><strong>Creator Role = Admin</strong></p><blockquote id="3dd5f8b2-37fc-806b-9e41-f15fb2728acd" class="" dir="auto">Video generated the most engagement among Admin-created Posts.</blockquote><p id="3dd5f8b2-37fc-8085-9d59-d187362af39f" class="" dir="auto"><strong>Destination = Product Page</strong></p><blockquote id="3dd5f8b2-37fc-80d5-b5f2-ce8f4ae5273b" class="" dir="auto">Beauty Enthusiasts generated the most engagement with Posts associated with Product Page.</blockquote><p id="3dd5f8b2-37fc-80c4-af84-dd20861367ed" class="" dir="auto">The <strong>Audience Driver</strong> insight is Post-scoped within this context. It describes the audience engaging with the Posts included in the current Post Overview scope; it does not represent overall audience behavior across Social+.</p><hr id="3dd5f8b2-37fc-80e1-9ef7-c09e3f644d32" dir="auto"/><h4 id="3dd5f8b2-37fc-80d8-9b96-ee6e573f79a1" class="" dir="auto">A.5 Data Traceability</h4><p id="3dd5f8b2-37fc-805f-b763-de7e2c3d225a" class="" dir="auto">Every synthesized insight must be supported by underlying data.</p><ul id="3dd5f8b2-37fc-80af-9988-c3edb6eba098" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The system must be able to identify the data used to generate the insight.</li></ul><ul id="3dd5f8b2-37fc-801f-99a9-fd372319f052" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Where the insight relates to specific Posts, those Posts should be available for further investigation.</li></ul><ul id="3dd5f8b2-37fc-8006-8dfa-d63fb001d521" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Where the insight relates to a dimension such as content type or destination, the corresponding breakdown should be available in Content Performance.</li></ul><ul id="3dd5f8b2-37fc-809c-9721-ed222f1b04fe" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Where the insight relates to an audience, the relevant audience analysis should be available through Audience Intelligence.</li></ul><p id="3dd5f8b2-37fc-804f-b5a9-fb442ddf1ed9" class="" dir="auto">This ensures:</p><blockquote id="3dd5f8b2-37fc-80ae-9c44-e70a8bf673fd" class="" dir="auto"><strong>Insight → Evidence → Investigation</strong></blockquote><hr id="3dd5f8b2-37fc-8011-9d67-ffb2d8a5fa93" dir="auto"/><h4 id="3dd5f8b2-37fc-8017-9e2e-f128fda6359d" class="" dir="auto">A.6 Insight Wording</h4><p id="3dd5f8b2-37fc-8071-80d0-fa0cf94f560b" class="" dir="auto">Insight statements should:</p><ul id="3dd5f8b2-37fc-806b-97bd-c679f44c11e5" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Clearly identify the metric or dimension being highlighted.</li></ul><ul id="3dd5f8b2-37fc-80c0-9fb5-ea6f6e28242b" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Avoid vague claims such as &quot;best&quot; or &quot;top-performing&quot; without specifying the measure.</li></ul><ul id="3dd5f8b2-37fc-8097-83b9-e150530c3be9" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Avoid subjective or evaluative language.</li></ul><ul id="3dd5f8b2-37fc-80cd-acda-e9255b2dd885" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Reflect the selected analytical scope.</li></ul><ul id="3dd5f8b2-37fc-807f-a777-fdf039fdb575" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Use specific values where they help explain why the finding is notable.</li></ul><ul id="3dd5f8b2-37fc-80e6-a0f0-ca3257ba0c66" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Avoid implying causation where the underlying data only demonstrates correlation or association.</li></ul><p id="3dd5f8b2-37fc-80cc-a4de-d691b93b189e" class="" dir="auto"><strong>Preferred:</strong></p><blockquote id="3dd5f8b2-37fc-80a4-90ca-d11d653feb8d" class="" dir="auto">Product Page generated the most engagement.</blockquote><p id="3dd5f8b2-37fc-80a6-a45c-fc67a99197d6" class="" dir="auto"><strong>Avoid:</strong></p><blockquote id="3dd5f8b2-37fc-807f-aa49-e3cfba3250e5" class="" dir="auto">Product Page is your top-performing destination.</blockquote><hr id="3dd5f8b2-37fc-80a0-9bc3-ff0e22553113" dir="auto"/><h4 id="3dd5f8b2-37fc-8081-a124-fc071727ddba" class="" dir="auto">A.7 Insufficient Data</h4><ul id="3dd5f8b2-37fc-80c6-8ed1-e34bbaf0744a" class="bulleted-list" dir="auto"><li style="list-style-type:disc">If there is insufficient data to generate an insight, the insight should not be displayed.</li></ul><ul id="3dd5f8b2-37fc-8056-bf4d-e96363e4da88" class="bulleted-list" dir="auto"><li style="list-style-type:disc">If no meaningful insights are available, the Key Insights section should display an appropriate empty state.</li></ul><ul id="3dd5f8b2-37fc-80aa-9466-fb211f0b8fd7" class="bulleted-list" dir="auto"><li style="list-style-type:disc">The system should not generate generic insights solely to fill an available card slot.</li></ul><hr id="1365f8b2-37fc-83de-9b26-81620acd0f0c" dir="auto"/><h2 id="dce5f8b2-37fc-8330-9adf-01e1e49798b1" class="" dir="auto">A3: 🎯 GTM Summary</h2><aside class="block-color-brown_background callout" data-notion-callout="" data-notion-callout-icon="❗" data-notion-callout-background="brown_background" style="white-space:pre-wrap;display:flex" id="bfa5f8b2-37fc-83ed-8d42-01851d0ad06c" dir="ltr"><div style="font-size:1.5em"><span class="icon" data-emoji="❗"></span></div><div style="width:100%"><p id="0725f8b2-37fc-8240-8b66-0162dadda6c9" class="" dir="auto"><em>PMs should complete this section to give marketing the information they need to prepare before the launch of this feature. This section should be completed within 1 week after kick-off. </em></p><p id="7b05f8b2-37fc-827e-9d88-81843718c9df" class="" dir="auto"><em>Use this to select checkboxes:</em> ✅</p></div></aside><table id="8a35f8b2-37fc-83f3-a74d-019e02490896" class="simple-table" dir="ltr"><thead class="simple-table-header"><tr id="f385f8b2-37fc-8311-80b6-812d8d94128e" dir="ltr"><th id="hBLE" class="block-color-purple_background simple-table-header" style="width:265.6458435058594px"><strong>QUESTIONS</strong></th><th id="PuQ~" class="block-color-purple_background simple-table-header" style="width:457.6527862548828px"><strong>DETAILS</strong></th></tr></thead><tbody><tr id="ec85f8b2-37fc-8340-baa2-818b3ae7821a" dir="ltr"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>What are we releasing? <br/></strong>Succinctly, what’s the new capability we’re introducing? </td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr><tr id="4b75f8b2-37fc-83ac-8e3c-01477e283809" dir="ltr"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>New or improvement? <br/></strong><em>Do you consider this a new feature or an update to an existing feature?</em></td><td id="PuQ~" class="" style="width:457.6527862548828px">☐ New feature <br/>☐ Improvement on an existing capability<br/>  • Feature improved:</td></tr><tr id="8095f8b2-37fc-82ee-b0ad-01cbe47362c8" dir="ltr"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>Is this update available to Core / Core Exceptional customers; is a paid add-on; is available upon request only? <br/></strong><em>Select all that apply</em></td><td id="PuQ~" class="" style="width:457.6527862548828px">☐ Core plan<br/>☐ Core Exceptional plan<br/>☐ Beta (Request Access required) <br/>☐ Paid add-on<br/><br/></td></tr><tr id="2f65f8b2-37fc-83cf-ae66-0172966d6d59" dir="ltr"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>Reference documentation<br/></strong><em>Please include links to any relevant Product Briefs</em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr><tr id="bc15f8b2-37fc-82a9-be95-814bf00318b8" dir="ltr"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>What tier would you place this feature as?<br/></strong><em>Tier 1 / 2 / 3 / 4. Reach out to Marketing to understand feature tiers </em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr><tr id="d975f8b2-37fc-8273-afd6-01f5f8959a2b" dir="ltr"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>Who will find the value from this release? <br/></strong><em>• Specific use case</em><br/><em>• Personas / industries </em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr><tr id="0585f8b2-37fc-83ec-bce4-0109a085697f" dir="ltr"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>Why does this release matter to the respective audience(s)?<br/></strong><em>What’s worth focusing on relative to the status quo? What current pain does it solve?</em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr><tr id="2175f8b2-37fc-82d6-b174-81e788d1bda3" dir="ltr"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>What are the game-changing differentiators of this release?</strong><br/><em>In what ways are we delivering something new to the market or a product that other companies haven’t been able to deliver? Be specific, if possible, on how this compares to offerings of our direct and in-direct competitors.</em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr><tr id="3e95f8b2-37fc-8283-8058-81e0d75a33e4" dir="ltr"><td id="hBLE" class="" style="width:265.6458435058594px"><strong>What are the key limitations of this release?</strong><br/><em>What aspects of this product could our customers, the press or industry analysts view as falling short compared to other products on the market? Be specific and candid.</em></td><td id="PuQ~" class="" style="width:457.6527862548828px"></td></tr></tbody></table><hr id="5dd5f8b2-37fc-82d8-a9b1-81da7be667f2" dir="auto"/><h2 id="fd15f8b2-37fc-830e-9d09-815c07174935" class="" dir="auto">A4: 🚀 Launch Checklist</h2><ul id="8a25f8b2-37fc-82f1-8294-81388e9b96ed" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Plan GTM with Marketing</span><div class="indented"></div></li></ul><ul id="5c25f8b2-37fc-8332-8922-01577de170e5" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Go through pricing with Sales &amp; CS (where necessary)</span><div class="indented"></div></li></ul><ul id="a8f5f8b2-37fc-83b3-a57a-816c2711d1a9" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Plan feature demo with customer-facing stakeholders </span><div class="indented"></div></li></ul><ul id="0365f8b2-37fc-822d-a2c8-011f1ae2ae4b" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Draft product brief (where necessary)</span><div class="indented"></div></li></ul><ul id="b875f8b2-37fc-8316-a85f-81e56422716f" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Test feature on staging and provide green light </span><div class="indented"></div></li></ul><ul id="fac5f8b2-37fc-833e-8de0-81db2350dcfb" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Update <a href="https://app.notion.com/p/Posts-Analytics-2475f8b237fc821f82468103bdb6655d?pvs=21">Master Feature Parity Sheet</a> </span><div class="indented"></div></li></ul><ul id="3b35f8b2-37fc-8215-b818-01056cfd5d70" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Draft public docs - Console, Dashboard, and Social Insights features only</span><div class="indented"></div></li></ul><ul id="3a35f8b2-37fc-83a7-8346-81c3c59f477f" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Announce release in Eko - All Company </span><div class="indented"></div></li></ul></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
